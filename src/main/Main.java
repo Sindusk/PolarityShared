@@ -1,4 +1,4 @@
-package mygame;
+package main;
 
 import com.jme3.app.Application;
 import com.jme3.renderer.queue.RenderQueue;
