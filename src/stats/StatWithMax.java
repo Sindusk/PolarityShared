@@ -24,6 +24,13 @@ public class StatWithMax extends Stat {
         return max;
     }
     
+    // Ensures that the capacity of the value is intact and fits within the range required.
+    private void ensureCapacity(){
+        if(value > max){
+            value = max;
+        }
+    }
+    
     // Increase the cap by the given amount. Used for temporary cap increases.
     public void increaseMax(float amount){
         max += amount;
@@ -32,8 +39,13 @@ public class StatWithMax extends Stat {
     // Reduce the cap by the given amount.
     public void decreaseMax(float amount){
         max -= amount;
-        if(value > max){
-            value = max;
-        }
+        ensureCapacity();
+    }
+    
+    // Override add method to ensure additions do not go over the limit.
+    @Override
+    public void add(float amount){
+        value += amount;
+        ensureCapacity();
     }
 }

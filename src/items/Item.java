@@ -4,7 +4,7 @@
  */
 package items;
 
-import stats.StatTable;
+import stats.StatList;
 
 /**
  *
@@ -12,7 +12,7 @@ import stats.StatTable;
  */
 public class Item {
     protected String icon;      // Icon (without path) to be used by the item.
-    protected StatTable stats;  // Stat table for tooltip & effects.
+    protected StatList stats;  // Stat table for tooltip & effects.
     
     // Default constructor.
     public Item(String icon){

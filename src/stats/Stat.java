@@ -10,6 +10,7 @@ package stats;
  */
 public abstract class Stat {
     protected String name;
+    protected int priority;
     protected float base;
     protected float value;
     

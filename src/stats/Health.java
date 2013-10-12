@@ -4,12 +4,13 @@
  */
 package stats;
 
-import java.util.ArrayList;
-
 /**
  *
  * @author SinisteRing
  */
-public class StatTable {
-    protected ArrayList<Stat> stats;
+public class Health extends StatWithMax{
+    public Health(float base, float max){
+        super(base, max);
+        priority = 100;
+    }
 }
