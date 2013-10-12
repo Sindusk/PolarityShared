@@ -79,6 +79,7 @@ public class ClientInputHandler implements ActionListener, AnalogListener{
         if(!MainScreen.isActive()){
             return;
         }
+        int x=3;
         MainScreen.update();
     }
 }
