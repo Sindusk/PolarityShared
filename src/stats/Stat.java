@@ -2,13 +2,14 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package character.stats;
+package stats;
 
 /**
  *
  * @author SinisteRing
  */
 public abstract class Stat {
+    protected String name;
     protected float base;
     protected float value;
     
@@ -26,7 +27,7 @@ public abstract class Stat {
         return base;
     }
     
-    // Add adds onto the value, which is independent of the base.
+    // Adds onto the value, which is independent of the base.
     public void add(float amount){
         value += amount;
     }
