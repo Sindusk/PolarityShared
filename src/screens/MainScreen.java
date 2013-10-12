@@ -6,9 +6,6 @@ import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import input.ClientInputHandler;
-import stats.Health;
-import stats.Mana;
-import stats.Stat;
 import stats.StatList;
 import tools.CG;
 import tools.S;
@@ -35,6 +32,7 @@ public class MainScreen {
         if(result == null){
             return;
         }
+        T.log("meow");
     }
     
     // Called when the user releases left click.
@@ -52,9 +50,6 @@ public class MainScreen {
         // Initialize camera location and facing.
         S.getCamera().setLocation(new Vector3f(0, 0, 50));
         S.getCamera().lookAt(Vector3f.ZERO, Vector3f.UNIT_Y);
-        
-        // Initialize input.
-        ClientInputHandler.initializeMenuInput();
         
         // Testing
         CG.createBox(node, "game", new Vector3f(10, 1, 0), new Vector3f(0, 10, 0), ColorRGBA.Blue);

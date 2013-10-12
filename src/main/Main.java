@@ -5,6 +5,7 @@ import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.system.AppSettings;
+import input.ClientInputHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import screens.MainScreen;
@@ -17,6 +18,7 @@ public class Main extends Application {
     private static final String CLIENT_VERSION = "0.01";
     public Node rootNode = new Node("Root Node");
     protected Node guiNode = new Node("Gui Node");
+    protected ClientInputHandler inputHandler;
     
     public static void main(String[] args) {
         Main app = new Main();
@@ -41,6 +43,9 @@ public class Main extends Application {
         guiNode.setCullHint(Spatial.CullHint.Never);
         viewPort.attachScene(rootNode);
         guiViewPort.attachScene(guiNode);
+        
+        inputHandler = new ClientInputHandler(inputManager);
+        inputHandler.setupInputs();
         
         // Initialize system variables.
         S.height = settings.getHeight();
