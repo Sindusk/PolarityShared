@@ -1,14 +1,11 @@
 package screens;
 
-import com.jme3.font.BitmapText;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import java.util.ArrayList;
-import tools.CG;
 import tools.S;
-import tools.T;
 import ui.Button;
 import ui.UIElement;
 
@@ -18,6 +15,7 @@ import ui.UIElement;
  */
 public class MenuScreen extends Screen {
     private Button gridButton;
+    private Button inventoryButton;
     
     public MenuScreen(Node rootNode, Node guiNode){
         super(rootNode, guiNode);
@@ -31,14 +29,14 @@ public class MenuScreen extends Screen {
         S.getCamera().lookAt(Vector3f.ZERO, Vector3f.UNIT_Y);
         
         // Generate testing objects for... testing...
-        BitmapText text = CG.createText(gui, 20, new Vector3f(425, 530, 1), "OCRAStd", ColorRGBA.Orange);
-        text.setText("Sphere Grid");
-        gridButton = new Button(gui, new Vector2f(350, 500), 300, 40, 0);
-        gridButton.changeColor(ColorRGBA.Blue);
+        gridButton = new Button(gui, new Vector2f(500, 500), 400, 40, 0);
+        gridButton.changeColor(new ColorRGBA(0, 0.7f, 0, 1));
+        gridButton.setText("Sphere Grid");
         ui.add(gridButton);
-        Button button2 = new Button(gui, new Vector2f(50, 30), 80, 50, -1);
-        button2.changeColor(ColorRGBA.Gray);
-        ui.add(button2);
+        inventoryButton = new Button(gui, new Vector2f(500, 400), 400, 40, 0);
+        inventoryButton.changeColor(ColorRGBA.Gray);
+        inventoryButton.setText("Inventory");
+        ui.add(inventoryButton);
     }
     
     private void action(UIElement e){

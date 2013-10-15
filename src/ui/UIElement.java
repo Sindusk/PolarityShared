@@ -20,6 +20,13 @@ public class UIElement {
         priority = z;
         parent.attachChild(node);
     }
+    public UIElement(Node parent, Vector2f center, float x, float y, float z){
+        x /= 2.0f;
+        y /= 2.0f;
+        bounds = new Vector4f(center.x-x, center.x+x, center.y-y, center.y+y);
+        priority = z;
+        parent.attachChild(node);
+    }
     
     // Getters
     public float getPriority(){

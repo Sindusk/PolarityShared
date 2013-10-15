@@ -34,7 +34,6 @@ public class CG {
         txt.setColor(color);
         txt.setSize(size);
         txt.setLocalTranslation(trans);
-        txt.setQueueBucket(Bucket.Transparent);
         txt.setText(text);
         txt.setAlignment(align);
         node.attachChild(txt.getNode());
