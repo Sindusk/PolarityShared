@@ -90,6 +90,9 @@ public class ClientInputHandler implements ActionListener, AnalogListener{
         }
     }
     public void onAnalog(String name, float value, float tpf){
-        // Placeholder
+        if(screen == null){
+            return;
+        }
+        screen.update(inputManager.getCursorPosition());
     }
 }

@@ -33,6 +33,7 @@ public abstract class Screen {
     
     // Required methods to be implemented
     public abstract void initialize();
+    public abstract void update(Vector2f cursorLoc);
     public abstract boolean handleClick(Vector2f cursorLoc);
     public abstract boolean handleUnclick(Vector2f cursorLoc);
     

@@ -45,6 +45,12 @@ public class MenuScreen extends Screen {
         }
     }
     
+    // Called when the mouse is moved
+    @Override
+    public void update(Vector2f cursorLoc){
+        //
+    }
+    
     // Called when the screen is clicked
     @Override
     public boolean handleClick(Vector2f cursorLoc){

@@ -40,6 +40,12 @@ public class GridScreen extends Screen {
         }
     }
     
+    // Called when the mouse is moved
+    @Override
+    public void update(Vector2f cursorLoc){
+        // do work
+    }
+    
     // Called when a click is sent to the screen
     @Override
     public boolean handleClick(Vector2f cursorLoc) {
