@@ -18,6 +18,7 @@ public abstract class Screen {
     
     // Default constructor
     public Screen(Node rootNode, Node guiNode){
+        rootNode.attachChild(root);
         guiNode.attachChild(gui);
         name = "Default Screen";
     }
