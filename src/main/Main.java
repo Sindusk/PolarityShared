@@ -1,6 +1,7 @@
 package main;
 
 import com.jme3.app.Application;
+import com.jme3.math.Vector2f;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -9,7 +10,9 @@ import input.ClientInputHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import screens.MainScreen;
+import screens.MenuScreen;
 import tools.S;
+import ui.Menu;
 
 /**
 
@@ -44,10 +47,7 @@ public class Main extends Application {
         viewPort.attachScene(rootNode);
         guiViewPort.attachScene(guiNode);
         
-        inputHandler = new ClientInputHandler(inputManager);
-        inputHandler.setupInputs();
-        
-        // Initialize system variables.
+        // Initialize system variables
         S.height = settings.getHeight();
         S.width = settings.getWidth();
         S.setAssetManager(assetManager);
@@ -58,6 +58,11 @@ public class Main extends Application {
         S.setTimer(timer);
         S.setVersion(CLIENT_VERSION);
         S.setViewPort(viewPort);
+        
+        // Initialize input handler
+        inputHandler = new ClientInputHandler(inputManager, guiNode);
+        inputHandler.setupInputs();
+        inputHandler.switchScreens(new MenuScreen(guiNode));
         
         // Initialize Main Screen.
         MainScreen.initialize(rootNode);
@@ -71,13 +76,13 @@ public class Main extends Application {
         }
         float tpf = timer.getTimePerFrame() * speed;    // Calculated time from last frame for keeping time consistency through FPS fluctuations.
         
-        // Update node states.
+        // Update node states
         rootNode.updateLogicalState(tpf);
         guiNode.updateLogicalState(tpf);
         rootNode.updateGeometricState();
         guiNode.updateGeometricState();
         
-        // Update renderer.
+        // Update renderer
         stateManager.render(renderManager);
         renderManager.render(tpf, context.isRenderable());
         stateManager.postRender();

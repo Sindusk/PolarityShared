@@ -10,7 +10,9 @@ import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.MouseAxisTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.input.controls.Trigger;
+import com.jme3.scene.Node;
 import screens.MainScreen;
+import screens.Screen;
 
 /**
  * ClientInputHandler - Handles all input from users and organizes them based on conditions.
@@ -20,6 +22,8 @@ public class ClientInputHandler implements ActionListener, AnalogListener{
     // Constant Variables:
     public static final float MOUSE_SENSITIVITY = 1;
     private final InputManager inputManager;
+    private final Node guiNode;
+    protected Screen screen;
     
     private enum Binding{
         MouseLeft(MouseInput.AXIS_X, true),
@@ -50,10 +54,11 @@ public class ClientInputHandler implements ActionListener, AnalogListener{
         }
     }
     
-    public ClientInputHandler(InputManager inputManager){
+    // Initialization
+    public ClientInputHandler(InputManager inputManager, Node guiNode){
+        this.guiNode = guiNode;
         this.inputManager = inputManager;
     }
-    
     public void setupInputs(){
         for(Binding bind : Binding.values()){
             inputManager.addMapping(bind.mapping, bind.trigger);
@@ -61,6 +66,16 @@ public class ClientInputHandler implements ActionListener, AnalogListener{
         }
     }
     
+    // Screen switching
+    public void switchScreens(Screen newScreen){
+        if(screen != null){
+            screen.destroy();
+        }
+        screen = newScreen;
+        screen.initialize();
+    }
+    
+    // Action handlers
     public void onAction(String bind, boolean down, float tpf){
         if(!MainScreen.isActive()){
             return;
@@ -68,10 +83,12 @@ public class ClientInputHandler implements ActionListener, AnalogListener{
         if(down){
             if(bind.equals("LClick")){
                 MainScreen.handleClick();
+                screen.handleClick(inputManager.getCursorPosition());
             }
         }else{
             if(bind.equals("LClick")){
                 MainScreen.handleUnclick();
+                screen.handleUnclick(inputManager.getCursorPosition());
             }
         }
     }
@@ -79,7 +96,6 @@ public class ClientInputHandler implements ActionListener, AnalogListener{
         if(!MainScreen.isActive()){
             return;
         }
-        int x=3;
         MainScreen.update();
     }
 }
