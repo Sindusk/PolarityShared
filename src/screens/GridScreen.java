@@ -14,7 +14,6 @@ import tools.S;
  * @author SinisteRing
  */
 public class GridScreen extends Screen {
-    
     public GridScreen(Node rootNode, Node guiNode){
         super(rootNode, guiNode);
         name="Sphere Screen";

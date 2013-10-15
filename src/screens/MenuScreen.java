@@ -15,7 +15,7 @@ import ui.UIElement;
  */
 public class MenuScreen extends Screen {
     private Button gridButton;
-    private Button inventoryButton;
+    private Button gameButton;
     
     public MenuScreen(Node rootNode, Node guiNode){
         super(rootNode, guiNode);
@@ -29,19 +29,21 @@ public class MenuScreen extends Screen {
         S.getCamera().lookAt(Vector3f.ZERO, Vector3f.UNIT_Y);
         
         // Generate testing objects for... testing...
-        gridButton = new Button(gui, new Vector2f(500, 500), 400, 40, 0);
+        gameButton = new Button(gui, new Vector2f(500, 500), 400, 40, 0);
+        gameButton.changeColor(ColorRGBA.Gray);
+        gameButton.setText("Start Game");
+        ui.add(gameButton);
+        gridButton = new Button(gui, new Vector2f(500, 400), 400, 40, 0);
         gridButton.changeColor(new ColorRGBA(0, 0.7f, 0, 1));
         gridButton.setText("Sphere Grid");
         ui.add(gridButton);
-        inventoryButton = new Button(gui, new Vector2f(500, 400), 400, 40, 0);
-        inventoryButton.changeColor(ColorRGBA.Gray);
-        inventoryButton.setText("Inventory");
-        ui.add(inventoryButton);
     }
     
     private void action(UIElement e){
         if(e.equals(gridButton)){
             S.getInputHandler().switchScreens(new GridScreen(root.getParent(), gui.getParent()));
+        }else if(e.equals(gameButton)){
+            S.getInputHandler().switchScreens(new GameScreen(root.getParent(), gui.getParent()));
         }
     }
     

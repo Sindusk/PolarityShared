@@ -16,7 +16,7 @@ import tools.S;
  */
 public class Main extends Application {
     private static final String CLIENT_VERSION = "0.01";
-    public Node rootNode = new Node("Root Node");
+    protected Node rootNode = new Node("Root Node");
     protected Node guiNode = new Node("Gui Node");
     protected ClientInputHandler inputHandler;
     
