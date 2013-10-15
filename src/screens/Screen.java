@@ -1,30 +1,30 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package screens;
 
 import com.jme3.math.Vector2f;
 import com.jme3.scene.Node;
+import java.util.ArrayList;
 import tools.T;
+import ui.UIElement;
 
 /**
  *
  * @author SinisteRing
  */
 public abstract class Screen {
-    protected Node node = new Node("Screen");
+    protected Node gui = new Node("Screen GUI");
+    protected Node root = new Node("Screen Root");
+    protected ArrayList<UIElement> ui = new ArrayList();
     protected String name;
     
     // Default constructor
-    public Screen(Node guiNode){
-        guiNode.attachChild(node);
+    public Screen(Node rootNode, Node guiNode){
+        guiNode.attachChild(gui);
         name = "Default Screen";
     }
     
-    // Getters:
+    // Getters
     public Node getNode(){
-        return node;
+        return gui;
     }
     public String getName(){
         return name;
@@ -37,8 +37,11 @@ public abstract class Screen {
     
     // Basic destroy method
     public void destroy(){
-        if(!node.removeFromParent()){
-            T.log("Error 1: Could not detach screen "+name);
+        if(!root.removeFromParent()){
+            T.log("Error 1: Could not detach screen root "+name);
+        }
+        if(!gui.removeFromParent()){
+            T.log("Error 2: Could not detach screen gui "+name);
         }
     }
 }

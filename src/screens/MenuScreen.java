@@ -1,16 +1,15 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package screens;
 
+import com.jme3.font.BitmapText;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
+import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import java.util.ArrayList;
+import tools.CG;
+import tools.S;
 import tools.T;
 import ui.Button;
-import ui.Menu;
 import ui.UIElement;
 
 /**
@@ -18,33 +17,42 @@ import ui.UIElement;
  * @author SinisteRing
  */
 public class MenuScreen extends Screen {
-    protected ArrayList<UIElement> elements = new ArrayList();
+    private Button gridButton;
     
-    public MenuScreen(Node guiNode){
-        super(guiNode);
+    public MenuScreen(Node rootNode, Node guiNode){
+        super(rootNode, guiNode);
         name = "Menu Screen";
     }
     
+    @Override
     public void initialize(){
-        Menu menu = new Menu(node, new Vector2f(300, 50), 200, 100, 0);
-        elements.add(menu);
-        Button button1 = new Button(node, new Vector2f(100, 50), 100, 100, 0);
-        button1.changeColor(ColorRGBA.White);
-        elements.add(button1);
-        Button button2 = new Button(node, new Vector2f(50, 30), 80, 50, -1);
+        // Initialize camera facing and location
+        S.getCamera().setLocation(new Vector3f(0, 0, 50));
+        S.getCamera().lookAt(Vector3f.ZERO, Vector3f.UNIT_Y);
+        
+        // Generate testing objects for... testing...
+        BitmapText text = CG.createText(gui, 20, new Vector3f(425, 530, 1), "OCRAStd", ColorRGBA.Orange);
+        text.setText("Sphere Grid");
+        gridButton = new Button(gui, new Vector2f(350, 500), 300, 40, 0);
+        gridButton.changeColor(ColorRGBA.Blue);
+        ui.add(gridButton);
+        Button button2 = new Button(gui, new Vector2f(50, 30), 80, 50, -1);
         button2.changeColor(ColorRGBA.Gray);
-        elements.add(button2);
+        ui.add(button2);
     }
     
     private void action(UIElement e){
-        // do work
+        if(e.equals(gridButton)){
+            S.getInputHandler().switchScreens(new GridScreen(root.getParent(), gui.getParent()));
+        }
     }
     
-    // Figure out what element of the screen was clicked
+    // Called when the screen is clicked
+    @Override
     public boolean handleClick(Vector2f cursorLoc){
         // Find all UI elements that are underneath the cursor location
         ArrayList<UIElement> results = new ArrayList();
-        for(UIElement e : elements){
+        for(UIElement e : ui){
             if(e.withinBounds(cursorLoc)){
                 results.add(e);
             }
@@ -71,6 +79,7 @@ public class MenuScreen extends Screen {
         return false;
     }
     
+    @Override
     public boolean handleUnclick(Vector2f cursorLoc){
         return false;
     }

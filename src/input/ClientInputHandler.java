@@ -11,7 +11,6 @@ import com.jme3.input.controls.MouseAxisTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.input.controls.Trigger;
 import com.jme3.scene.Node;
-import screens.MainScreen;
 import screens.Screen;
 
 /**
@@ -77,25 +76,20 @@ public class ClientInputHandler implements ActionListener, AnalogListener{
     
     // Action handlers
     public void onAction(String bind, boolean down, float tpf){
-        if(!MainScreen.isActive()){
+        if(screen == null){
             return;
         }
-        if(down){
+        if(down){ // When the key is pressed down
             if(bind.equals("LClick")){
-                MainScreen.handleClick();
                 screen.handleClick(inputManager.getCursorPosition());
             }
-        }else{
+        }else{ // When the key is released
             if(bind.equals("LClick")){
-                MainScreen.handleUnclick();
                 screen.handleUnclick(inputManager.getCursorPosition());
             }
         }
     }
     public void onAnalog(String name, float value, float tpf){
-        if(!MainScreen.isActive()){
-            return;
-        }
-        MainScreen.update();
+        // Placeholder
     }
 }

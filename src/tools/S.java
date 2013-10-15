@@ -9,6 +9,7 @@ import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Node;
 import com.jme3.system.Timer;
+import input.ClientInputHandler;
 
 /**
  *
@@ -86,6 +87,13 @@ public class S {
     }
     public static void setCamera(Camera camera){
         S.camera = camera;
+    }
+    private static ClientInputHandler inputHandler;
+    public static ClientInputHandler getInputHandler(){
+        return inputHandler;
+    }
+    public static void setInputHandler(ClientInputHandler inputHandler){
+        S.inputHandler = inputHandler;
     }
     
     private static String version;

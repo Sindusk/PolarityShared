@@ -1,7 +1,6 @@
 package main;
 
 import com.jme3.app.Application;
-import com.jme3.math.Vector2f;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -9,10 +8,8 @@ import com.jme3.system.AppSettings;
 import input.ClientInputHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import screens.MainScreen;
 import screens.MenuScreen;
 import tools.S;
-import ui.Menu;
 
 /**
 
@@ -62,10 +59,8 @@ public class Main extends Application {
         // Initialize input handler
         inputHandler = new ClientInputHandler(inputManager, guiNode);
         inputHandler.setupInputs();
-        inputHandler.switchScreens(new MenuScreen(guiNode));
-        
-        // Initialize Main Screen.
-        MainScreen.initialize(rootNode);
+        inputHandler.switchScreens(new MenuScreen(rootNode, guiNode));
+        S.setInputHandler(inputHandler);
     }
 
     @Override
