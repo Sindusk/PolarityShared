@@ -6,6 +6,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import grid.Grid;
 import grid.GridNode;
+import input.ClientInputHandler;
 import tools.CG;
 import tools.S;
 
@@ -21,7 +22,7 @@ public class GridScreen extends Screen {
     
     // Called when the screen first initializes
     @Override
-    public void initialize() {
+    public void initialize(ClientInputHandler inputHandler) {
         S.getCamera().setLocation(new Vector3f(0,0,100));
 
         Grid grid = new Grid();
@@ -45,16 +46,9 @@ public class GridScreen extends Screen {
         // do work
     }
     
-    // Called when a click is sent to the screen
+    // Called when a key is pressed or released
     @Override
-    public boolean handleClick(Vector2f cursorLoc) {
-        return false;
+    public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf) {
+        //
     }
-    
-    // Called when a click is released on the screen
-    @Override
-    public boolean handleUnclick(Vector2f cursorLoc) {
-        return false;
-    }
-    
 }

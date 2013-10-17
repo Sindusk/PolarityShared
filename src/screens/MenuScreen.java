@@ -4,6 +4,7 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
+import input.ClientInputHandler;
 import java.util.ArrayList;
 import tools.S;
 import ui.Button;
@@ -16,6 +17,7 @@ import ui.UIElement;
 public class MenuScreen extends Screen {
     private Button gridButton;
     private Button gameButton;
+    private Button invButton;
     
     public MenuScreen(Node rootNode, Node guiNode){
         super(rootNode, guiNode);
@@ -23,27 +25,35 @@ public class MenuScreen extends Screen {
     }
     
     @Override
-    public void initialize(){
+    public void initialize(final ClientInputHandler inputHandler){
         // Initialize camera facing and location
         S.getCamera().setLocation(new Vector3f(0, 0, 50));
         S.getCamera().lookAt(Vector3f.ZERO, Vector3f.UNIT_Y);
         
         // Generate testing objects for... testing...
-        gameButton = new Button(gui, new Vector2f(500, 500), 400, 40, 0);
+        gameButton = new Button(gui, new Vector2f(500, 600), 400, 40, 0);
         gameButton.changeColor(ColorRGBA.Gray);
         gameButton.setText("Start Game");
         ui.add(gameButton);
-        gridButton = new Button(gui, new Vector2f(500, 400), 400, 40, 0);
+        // Grid button
+        gridButton = new Button(gui, new Vector2f(500, 500), 400, 40, 0);
         gridButton.changeColor(new ColorRGBA(0, 0.7f, 0, 1));
         gridButton.setText("Sphere Grid");
         ui.add(gridButton);
+        invButton = new Button(gui, new Vector2f(500, 400), 400, 40, 0);
+        invButton.changeColor(new ColorRGBA(1, 0.9f, 0, 1));
+        invButton.setText("Inventory");
+        ui.add(invButton);
     }
     
-    private void action(UIElement e){
+    private void actionUI(UIElement e){
         if(e.equals(gridButton)){
+            //gridButton.onClick();
             S.getInputHandler().switchScreens(new GridScreen(root.getParent(), gui.getParent()));
         }else if(e.equals(gameButton)){
             S.getInputHandler().switchScreens(new GameScreen(root.getParent(), gui.getParent()));
+        }else if(e.equals(invButton)){
+            S.getInputHandler().switchScreens(new InventoryScreen(root.getParent(), gui.getParent()));
         }
     }
     
@@ -53,40 +63,12 @@ public class MenuScreen extends Screen {
         //
     }
     
-    // Called when the screen is clicked
+    // Called when a key is pressed or released
     @Override
-    public boolean handleClick(Vector2f cursorLoc){
-        // Find all UI elements that are underneath the cursor location
-        ArrayList<UIElement> results = new ArrayList();
-        for(UIElement e : ui){
-            if(e.withinBounds(cursorLoc)){
-                results.add(e);
-            }
+    public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
+        UIElement e = checkUI(cursorLoc);
+        if(e != null){
+            actionUI(e);
         }
-        // Parse the results and take an action according to how many there are
-        if(results.size() > 0){
-            // If one result, use it
-            if(results.size() == 1){
-                action(results.get(0));
-            }else{ // Otherwise, iterate through and find the one on top
-                int i = 1;
-                int result = 0;
-                float current = results.get(0).getPriority();
-                while(i < results.size()){
-                    if(current < results.get(i).getPriority()){
-                        result = i;
-                    }
-                    i++;
-                }
-                action(results.get(result));
-            }
-            return true;
-        }
-        return false;
-    }
-    
-    @Override
-    public boolean handleUnclick(Vector2f cursorLoc){
-        return false;
     }
 }

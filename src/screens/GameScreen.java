@@ -6,6 +6,7 @@ package screens;
 
 import com.jme3.math.Vector2f;
 import com.jme3.scene.Node;
+import input.ClientInputHandler;
 import world.World;
 
 /**
@@ -21,7 +22,7 @@ public class GameScreen extends Screen {
     }
     
     @Override
-    public void initialize() {
+    public void initialize(final ClientInputHandler inputHandler) {
         world = new World(50);
         world.generate();
         root.attachChild(world.getNode());
@@ -33,13 +34,7 @@ public class GameScreen extends Screen {
     }
 
     @Override
-    public boolean handleClick(Vector2f cursorLoc) {
-        return false;
+    public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf) {
+        //
     }
-
-    @Override
-    public boolean handleUnclick(Vector2f cursorLoc) {
-        return false;
-    }
-    
 }

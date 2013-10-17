@@ -20,8 +20,8 @@ public class Button extends UIElement {
         super(parent, loc, x, y, z);
         x /= 2.0f;
         y /= 2.0f;
-        text = CG.createSinText(node, y, new Vector3f(loc.x, loc.y+y, z+0.05f), "OCRAStd", " ", ColorRGBA.Blue, SinText.Alignment.Center);
-        geo = CG.createBox(node, "test", new Vector3f(x, y, 0), new Vector3f(loc.x, loc.y, z), ColorRGBA.Blue);
+        text = CG.createSinText(node, y, new Vector3f(0, y, 0.01f), "OCRAStd", " ", ColorRGBA.Blue, SinText.Alignment.Center);
+        geo = CG.createBox(node, "test", new Vector3f(x, y, 0), Vector3f.ZERO, ColorRGBA.Blue);
     }
     
     // Sets the location of the button (centered)
