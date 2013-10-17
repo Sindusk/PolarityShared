@@ -32,11 +32,11 @@ public class SinText extends BitmapText{
     // Custom Functions:
     public void setAlignment(Alignment align){
         if(align == Alignment.Left){
-            super.setLocalTranslation(new Vector3f(0, -this.getLineHeight()*0.5f, 0));
+            super.setLocalTranslation(new Vector3f(0, this.getLineHeight()*0.5f, 0));
         }else if(align == Alignment.Right){
-            super.setLocalTranslation(-this.getLineWidth(), -this.getLineHeight()*0.5f, 0);
+            super.setLocalTranslation(-this.getLineWidth(), this.getLineHeight()*0.5f, 0);
         }else if(align == Alignment.Center){
-            super.setLocalTranslation(-this.getLineWidth()*0.5f, -this.getLineHeight()*0.5f, 0);
+            super.setLocalTranslation(-this.getLineWidth()*0.5f, this.getLineHeight()*0.5f, 0);
         }
         this.align = align;
     }

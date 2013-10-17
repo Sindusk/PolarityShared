@@ -20,7 +20,7 @@ public class Button extends UIElement {
         super(parent, loc, x, y, z);
         x /= 2.0f;
         y /= 2.0f;
-        text = CG.createSinText(node, y, new Vector3f(0, y, 0.01f), "OCRAStd", " ", ColorRGBA.Blue, SinText.Alignment.Center);
+        text = CG.createSinText(node, y*1.5f, new Vector3f(0, 0, 0.01f), "TNR", " ", ColorRGBA.Blue, SinText.Alignment.Center);
         geo = CG.createBox(node, "test", new Vector3f(x, y, 0), Vector3f.ZERO, ColorRGBA.Blue);
     }
     
