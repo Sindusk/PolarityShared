@@ -85,7 +85,7 @@ public class Main extends Application {
         S.setViewPort(viewPort);
         
         // Initialize input handler
-        inputHandler = new ClientInputHandler(inputManager, guiNode);
+        inputHandler = new ClientInputHandler(inputManager);
         inputHandler.setupInputs();
         inputHandler.switchScreens(new MenuScreen(rootNode, guiNode));
         S.setInputHandler(inputHandler);

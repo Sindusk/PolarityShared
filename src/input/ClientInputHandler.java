@@ -3,8 +3,9 @@ package input;
 import com.jme3.input.InputManager;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
-import com.jme3.scene.Node;
 import screens.Screen;
+import tools.T;
+import ui.Frame;
 
 /**
  * ClientInputHandler - Handles all input from users and organizes them based on conditions.
@@ -14,12 +15,11 @@ public class ClientInputHandler implements ActionListener, AnalogListener{
     // Constant Variables:
     public static final float MOUSE_SENSITIVITY = 1;
     private final InputManager inputManager;
-    private final Node guiNode;
     protected Screen screen;
+    public Frame moving = null;
     
     // Initialization
-    public ClientInputHandler(InputManager inputManager, Node guiNode){
-        this.guiNode = guiNode;
+    public ClientInputHandler(InputManager inputManager){
         this.inputManager = inputManager;
     }
     public void setupInputs(){
@@ -43,20 +43,26 @@ public class ClientInputHandler implements ActionListener, AnalogListener{
         if(screen == null){
             return;
         }
+        if(bind.equals(Binding.LClick.toString()) && !down){
+            moving = null;
+        }
         screen.onAction(inputManager.getCursorPosition(), bind, down, tpf);
-        /*if(down){ // When the key is pressed down
-            if(bind.equals("LClick")){
-                screen.handleClick(inputManager.getCursorPosition());
-            }
-        }else{ // When the key is released
-            if(bind.equals("LClick")){
-                screen.handleUnclick(inputManager.getCursorPosition());
-            }
-        }*/
     }
     public void onAnalog(String name, float value, float tpf){
         if(screen == null){
             return;
+        }
+        value *= 1000f;
+        if(moving != null){
+            if(name.equals(Binding.MouseUp.toString())){
+                moving.move(value, true);
+            }else if(name.equals(Binding.MouseDown.toString())){
+                moving.move(-value, true);
+            }else if(name.equals(Binding.MouseRight.toString())){
+                moving.move(value, false);
+            }else if(name.equals(Binding.MouseLeft.toString())){
+                moving.move(-value, false);
+            }
         }
         screen.update(inputManager.getCursorPosition());
     }

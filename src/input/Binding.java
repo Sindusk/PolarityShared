@@ -18,7 +18,7 @@ import com.jme3.input.controls.Trigger;
  */
 public enum Binding {
     MouseLeft(MouseInput.AXIS_X, true),
-    MouseRight(MouseInput.AXIS_X, true),
+    MouseRight(MouseInput.AXIS_X, false),
     MouseUp(MouseInput.AXIS_Y, false),
     MouseDown(MouseInput.AXIS_Y, true),
     LClick(MouseInput.BUTTON_LEFT, MouseInput.class),

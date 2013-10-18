@@ -21,8 +21,9 @@ public class UIElement {
         x /= 2.0f;
         y /= 2.0f;
         node.setLocalTranslation(new Vector3f(center.x, center.y, z));
-        bounds = new Vector4f(center.x-x, center.x+x, center.y-y, center.y+y);
-        priority = z;
+        Vector3f offset = parent.getLocalTranslation();
+        bounds = new Vector4f(offset.x+center.x-x, offset.x+center.x+x, offset.y+center.y-y, offset.y+center.y+y);
+        priority = offset.z+z;
         parent.attachChild(node);
     }
     
@@ -34,6 +35,13 @@ public class UIElement {
     // Action definition placeholder
     public void onAction(String bind, boolean down, float tpf){
         T.log("Error 3: No override for onAction in class "+this.getClass().toString());
+    }
+    
+    // Update the bounds (when UI elements move)
+    public void updateBounds(float x, float y){
+        //T.log(bounds.toString());
+        bounds = new Vector4f(bounds.x+x, bounds.y+x, bounds.z+y, bounds.w+y);
+        //T.log(bounds.toString());
     }
     
     // Check if the location given is within the bounds of the current UI element.
