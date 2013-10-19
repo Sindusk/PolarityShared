@@ -222,10 +222,10 @@ public class T {
     
     // Logging
     public static void log(String s){
-        System.out.println("[REACH] "+s);
+        System.out.println(s);
     }
     public static void log(float f){
-        System.out.println("[REACH] "+f);
+        System.out.println(f);
     }
     public static void log(Throwable t){
         Logger.getLogger("polarity").log(Level.SEVERE, "{0}", t);

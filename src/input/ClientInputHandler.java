@@ -55,13 +55,13 @@ public class ClientInputHandler implements ActionListener, AnalogListener{
         value *= 1000f;
         if(moving != null){
             if(name.equals(Binding.MouseUp.toString())){
-                moving.move(value, true);
+                moving.move(0, value);
             }else if(name.equals(Binding.MouseDown.toString())){
-                moving.move(-value, true);
+                moving.move(0, -value);
             }else if(name.equals(Binding.MouseRight.toString())){
-                moving.move(value, false);
+                moving.move(value, 0);
             }else if(name.equals(Binding.MouseLeft.toString())){
-                moving.move(-value, false);
+                moving.move(-value, 0);
             }
         }
         screen.update(inputManager.getCursorPosition());

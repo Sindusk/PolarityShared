@@ -21,14 +21,10 @@ public class InventoryScreen extends Screen {
     
     @Override
     public void initialize(ClientInputHandler inputHandler) {
-        invFrame = new Inventory(gui, new Vector2f(500, 400), 300, 500, 1){
-            @Override
-            public void onAction(String bind, boolean down, float tpf){
-                // Do nothing
-            }
-        };
+        T.log("Initialize: "+this.getName());
+        invFrame = new Inventory(gui, new Vector2f(500, 400), 500, 700, 1);
+        invFrame.setTitle("Inventory");
         ui.add(invFrame);
-        ui.add(invFrame.getHeader());
     }
     
     @Override
@@ -36,17 +32,12 @@ public class InventoryScreen extends Screen {
         //
     }
     
-    // Handles the data that is filtered from onAction
-    private void actionUI(UIElement e, String bind, boolean down, float tpf){
-        e.onAction(bind, down, tpf);
-    }
-    
     // Called when a key is pressed or released
     @Override
     public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf) {
         UIElement e = checkUI(cursorLoc);
         if(e != null){
-            actionUI(e, bind, down, tpf);
+            e.onAction(cursorLoc, bind, down, tpf);
         }
     }
 }

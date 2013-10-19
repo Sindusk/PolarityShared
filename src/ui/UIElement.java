@@ -28,12 +28,15 @@ public class UIElement {
     }
     
     // Getters
+    public Node getNode(){
+        return node;
+    }
     public float getPriority(){
         return priority;
     }
     
     // Action definition placeholder
-    public void onAction(String bind, boolean down, float tpf){
+    public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
         T.log("Error 3: No override for onAction in class "+this.getClass().toString());
     }
     

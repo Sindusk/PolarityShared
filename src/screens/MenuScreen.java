@@ -34,7 +34,7 @@ public class MenuScreen extends Screen {
         // Game button
         gameButton = new Button(gui, new Vector2f(500, 600), 400, 40, 0){
             @Override
-            public void onAction(String bind, boolean down, float tpf){
+            public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
                 if(bind.equals(Binding.LClick.toString())){
                     inputHandler.switchScreens(new GameScreen(root.getParent(), gui.getParent()));
                 }
@@ -46,7 +46,7 @@ public class MenuScreen extends Screen {
         // Grid button
         gridButton = new Button(gui, new Vector2f(500, 500), 400, 40, 0){
             @Override
-            public void onAction(String bind, boolean down, float tpf){
+            public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
                 if(bind.equals(Binding.LClick.toString())){
                     inputHandler.switchScreens(new GridScreen(root.getParent(), gui.getParent()));
                 }
@@ -58,7 +58,7 @@ public class MenuScreen extends Screen {
         // Inventory button
         invButton = new Button(gui, new Vector2f(500, 400), 400, 40, 0){
             @Override
-            public void onAction(String bind, boolean down, float tpf){
+            public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
                 if(bind.equals(Binding.LClick.toString())){
                     inputHandler.switchScreens(new InventoryScreen(root.getParent(), gui.getParent()));
                 }
@@ -69,8 +69,8 @@ public class MenuScreen extends Screen {
         ui.add(invButton);
     }
     
-    private void actionUI(UIElement e, String bind, boolean down, float tpf){
-        e.onAction(bind, down, tpf);
+    private void actionUI(UIElement e, Vector2f cursorLoc, String bind, boolean down, float tpf){
+        e.onAction(cursorLoc, bind, down, tpf);
     }
     
     // Called when the mouse is moved
@@ -84,7 +84,7 @@ public class MenuScreen extends Screen {
     public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
         UIElement e = checkUI(cursorLoc);
         if(e != null){
-            actionUI(e, bind, down, tpf);
+            actionUI(e, cursorLoc, bind, down, tpf);
         }
     }
 }
