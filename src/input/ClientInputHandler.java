@@ -4,7 +4,6 @@ import com.jme3.input.InputManager;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
 import screens.Screen;
-import tools.T;
 import ui.Frame;
 
 /**
@@ -38,6 +37,12 @@ public class ClientInputHandler implements ActionListener, AnalogListener{
         screen.initialize(this);
     }
     
+    public void update(float tpf){
+        if(screen != null){
+            screen.update(tpf);
+        }
+    }
+    
     // Action handlers
     public void onAction(String bind, boolean down, float tpf){
         if(screen == null){
@@ -64,6 +69,6 @@ public class ClientInputHandler implements ActionListener, AnalogListener{
                 moving.move(-value, 0);
             }
         }
-        screen.update(inputManager.getCursorPosition());
+        screen.onCursorMove(inputManager.getCursorPosition());
     }
 }

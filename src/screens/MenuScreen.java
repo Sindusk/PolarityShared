@@ -6,7 +6,6 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import input.Binding;
 import input.ClientInputHandler;
-import java.util.ArrayList;
 import tools.S;
 import ui.Button;
 import ui.UIElement;
@@ -73,9 +72,14 @@ public class MenuScreen extends Screen {
         e.onAction(cursorLoc, bind, down, tpf);
     }
     
+    @Override
+    public void update(float tpf){
+        //
+    }
+    
     // Called when the mouse is moved
     @Override
-    public void update(Vector2f cursorLoc){
+    public void onCursorMove(Vector2f cursorLoc){
         //
     }
     

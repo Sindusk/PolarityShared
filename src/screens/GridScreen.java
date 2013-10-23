@@ -7,7 +7,7 @@ import com.jme3.scene.Node;
 import grid.Grid;
 import grid.GridNode;
 import input.ClientInputHandler;
-import tools.CG;
+import tools.GeoFactory;
 import tools.S;
 
 /**
@@ -36,13 +36,18 @@ public class GridScreen extends Screen {
         grid.connect(grid.getNodeById(2), grid.getNodeById(4));
 
         for (GridNode n: grid.getNodes().values()){
-            CG.createSphere(root, String.format("Node %d", n.getId()), 6, n.getPos(), ColorRGBA.Cyan);
+            GeoFactory.createSphere(root, String.format("Node %d", n.getId()), 6, n.getPos(), ColorRGBA.Cyan);
         }
+    }
+    
+    @Override
+    public void update(float tpf){
+        //
     }
     
     // Called when the mouse is moved
     @Override
-    public void update(Vector2f cursorLoc){
+    public void onCursorMove(Vector2f cursorLoc){
         // do work
     }
     

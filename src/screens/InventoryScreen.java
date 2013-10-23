@@ -28,7 +28,12 @@ public class InventoryScreen extends Screen {
     }
     
     @Override
-    public void update(Vector2f cursorLoc) {
+    public void update(float tpf){
+        //
+    }
+    
+    @Override
+    public void onCursorMove(Vector2f cursorLoc) {
         //
     }
     

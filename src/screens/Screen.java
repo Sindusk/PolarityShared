@@ -34,7 +34,8 @@ public abstract class Screen {
     
     // Required methods to be implemented
     public abstract void initialize(final ClientInputHandler inputHandler);
-    public abstract void update(Vector2f cursorLoc);
+    public abstract void update(float tpf);
+    public abstract void onCursorMove(Vector2f cursorLoc);
     public abstract void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf);
     
     // Helper method for detecting UI collision

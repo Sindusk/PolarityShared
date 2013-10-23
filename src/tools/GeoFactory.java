@@ -5,7 +5,6 @@ import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
-import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
@@ -19,7 +18,7 @@ import tools.SinText.Alignment;
  * CG (Create Geometry) - Used to create geometries of all types without multiple lines of code.
  * @author SinisteRing
  */
-public class CG {
+public class GeoFactory {
     // BitmapText:
     public static BitmapText createText(Node node, float size, Vector3f trans, String font, ColorRGBA color){
         BitmapText text = new BitmapText(T.getFont(S.getAssetManager(), font));
@@ -77,9 +76,8 @@ public class CG {
     }
 
     // Cylinders:
-    public static Geometry createCylinder(Node node, String name, float radius, float length, Vector3f trans, ColorRGBA color, Vector2f scale){
+    public static Geometry createCylinder(Node node, String name, float radius, float length, Vector3f trans, ColorRGBA color){
         Cylinder b = new Cylinder(16, 16, radius, length, true);
-        b.scaleTextureCoordinates(scale);
         Geometry g = new Geometry(name, b);
         Material m = T.getMaterial(S.getAssetManager(), color);
         g.setMaterial(m);

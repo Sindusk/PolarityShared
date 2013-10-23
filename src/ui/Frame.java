@@ -6,7 +6,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import input.Binding;
 import java.util.ArrayList;
-import tools.CG;
+import tools.GeoFactory;
 import tools.S;
 
 /**
@@ -34,7 +34,7 @@ public class Frame extends UIElement {
         };
         head.changeColor(ColorRGBA.Orange);
         controls.add(head);
-        geo = CG.createBox(node, new Vector3f(x, y, z), Vector3f.ZERO, ColorRGBA.Blue);
+        geo = GeoFactory.createBox(node, new Vector3f(x, y, z), Vector3f.ZERO, ColorRGBA.Blue);
     }
     
     // Default override to ensure all inner controls are interacted with

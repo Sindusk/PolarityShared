@@ -57,6 +57,8 @@ public class Main extends Application {
     public void start() {
         Logger.getLogger("com.jme3").setLevel(Level.WARNING);
         settings = new AppSettings(true);
+        settings.setSamples(0);
+        settings.setVSync(false);
         settings.setRenderer(AppSettings.LWJGL_OPENGL1);
         settings.setResolution(1000, 800);
         settings.setTitle("Reach");
@@ -98,6 +100,9 @@ public class Main extends Application {
             return;
         }
         float tpf = timer.getTimePerFrame() * speed;    // Calculated time from last frame for keeping time consistency through FPS fluctuations.
+        
+        // Custom updates
+        inputHandler.update(tpf);
         
         // Update node states
         rootNode.updateLogicalState(tpf);
