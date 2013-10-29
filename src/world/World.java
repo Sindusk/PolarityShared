@@ -1,6 +1,8 @@
 package world;
 
 import com.jme3.scene.Node;
+import entity.Entity;
+import java.util.ArrayList;
 import java.util.HashMap;
 import tools.T.Vector2i;
 
@@ -11,7 +13,9 @@ import tools.T.Vector2i;
 public class World {
     protected HashMap<Vector2i, Chunk> data = new HashMap();
     protected Node node = new Node("World");
+    protected ArrayList<Entity> entities=new ArrayList<Entity>();
     protected int seed;
+    
     
     public World(int seed){
         this.seed = seed;
@@ -21,6 +25,12 @@ public class World {
     public Node getNode(){
         return node;
     }
+    
+    public void update(float tpf){
+        for(Entity t:entities){
+        }
+    }
+    
     
     // World generation algorithm
     public void generate(){

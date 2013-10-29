@@ -6,6 +6,7 @@ package screens;
 
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
+import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import entity.PlayerEntity;
 import input.Binding;
@@ -50,31 +51,32 @@ public class GameScreen extends Screen {
     @Override
     public void update(float tpf){
         if(moveRight){
-            testChar.move(tpf*5, 0, 0);
+            testChar.move(tpf*5, 0);
         }
         if(moveLeft){
-            testChar.move(-tpf*5, 0, 0);
+            testChar.move(-tpf*5, 0);
         }
         if(moveDown){
-            testChar.move(0, -tpf*5, 0);
+            testChar.move(0, -tpf*5);
         }
         if(moveUp){
-            testChar.move(0, tpf*5, 0);
+            testChar.move(0, tpf*5);
         }
         
         if(moveRight2){
-            testChar2.move(tpf*5, 0, 0);
+            testChar2.move(tpf*5, 0);
         }
         if(moveLeft2){
-            testChar2.move(-tpf*5, 0, 0);
+            testChar2.move(-tpf*5, 0);
         }
         if(moveDown2){
-            testChar2.move(0, -tpf*5, 0);
+            testChar2.move(0, -tpf*5);
         }
         if(moveUp2){
-            testChar2.move(0, tpf*5, 0);
+            testChar2.move(0, tpf*5);
         }
-        S.getCamera().setLocation(testChar.getLocation().add(0, 0, 50));
+        Vector2f tempVect=testChar.getLocation();
+        S.getCamera().setLocation(new Vector3f(tempVect.x, tempVect.y, 50));
     }
     
     @Override

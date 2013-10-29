@@ -1,6 +1,7 @@
 package main;
 
 import com.jme3.app.Application;
+import com.jme3.renderer.Camera;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -79,6 +80,10 @@ public class Main extends Application {
         S.width = settings.getWidth();
         S.setAssetManager(assetManager);
         S.setCamera(cam);
+        
+        cam.setParallelProjection(true);
+        cam.setFrustum(1.0f, 100f, -20f, 20f, 20f, -20f);
+        cam.update();
         S.setInputManager(inputManager);
         S.setRenderManager(renderManager);
         S.setStateManager(stateManager);
