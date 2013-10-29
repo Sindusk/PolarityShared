@@ -61,7 +61,7 @@ public class Main extends Application {
         settings.setSamples(0);
         settings.setVSync(false);
         settings.setRenderer(AppSettings.LWJGL_OPENGL1);
-        settings.setResolution(1000, 800);
+        settings.setResolution(1400, 800);
         settings.setTitle("Reach");
         this.setSettings(settings);
         super.start();
@@ -82,7 +82,9 @@ public class Main extends Application {
         S.setCamera(cam);
         
         cam.setParallelProjection(true);
-        cam.setFrustum(1.0f, 100f, -20f, 20f, 20f, -20f);
+        float width=25f*S.width/1000f;
+        float height=25f*S.height/800f;
+        cam.setFrustum(1.0f, 100f, -width, width, height, -height);
         cam.update();
         S.setInputManager(inputManager);
         S.setRenderManager(renderManager);
