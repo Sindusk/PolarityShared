@@ -5,7 +5,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.math.Vector4f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
-import tools.T;
+import tools.Util;
 
 /**
  *
@@ -37,7 +37,7 @@ public class UIElement {
     
     // Action definition placeholder
     public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
-        T.log("Error 3: No override for onAction in class "+this.getClass().toString());
+        Util.log("Error 3: No override for onAction in class "+this.getClass().toString());
     }
     
     // Update the bounds (when UI elements move)

@@ -21,7 +21,7 @@ import tools.SinText.Alignment;
 public class GeoFactory {
     // BitmapText:
     public static BitmapText createText(Node node, float size, Vector3f trans, String font, ColorRGBA color){
-        BitmapText text = new BitmapText(T.getFont(S.getAssetManager(), font));
+        BitmapText text = new BitmapText(Util.getFont(Sys.getAssetManager(), font));
         text.setColor(color);
         text.setSize(size);
         text.setLocalTranslation(trans);
@@ -29,7 +29,7 @@ public class GeoFactory {
         return text;
     }
     public static SinText createSinText(Node node, float size, Vector3f trans, String font, String text, ColorRGBA color, Alignment align){
-        SinText txt = new SinText(T.getFont(S.getAssetManager(), font));
+        SinText txt = new SinText(Util.getFont(Sys.getAssetManager(), font));
         txt.setColor(color);
         txt.setSize(size);
         txt.setLocalTranslation(trans);
@@ -44,7 +44,7 @@ public class GeoFactory {
     public static Geometry createBox(Node node, String name, Vector3f size, Vector3f trans, ColorRGBA color){
         Box b = new Box(Vector3f.ZERO, size.getX(), size.getY(), size.getZ());
         Geometry g = new Geometry(name, b);
-        Material m = T.getMaterial(S.getAssetManager(), color);
+        Material m = Util.getMaterial(Sys.getAssetManager(), color);
         g.setMaterial(m);
         g.setLocalTranslation(trans);
         if(node != null) {
@@ -60,7 +60,7 @@ public class GeoFactory {
         Box b = new Box(Vector3f.ZERO, size.getX(), size.getY(), size.getZ());
         b.scaleTextureCoordinates(scale);
         Geometry g = new Geometry(name, b);
-        Material m = T.getMaterial(S.getAssetManager(), tex);
+        Material m = Util.getMaterial(Sys.getAssetManager(), tex);
         g.setMaterial(m);
         g.setLocalTranslation(trans);
         if(node != null) {
@@ -79,7 +79,7 @@ public class GeoFactory {
     public static Geometry createCylinder(Node node, String name, float radius, float length, Vector3f trans, ColorRGBA color){
         Cylinder b = new Cylinder(16, 16, radius, length, true);
         Geometry g = new Geometry(name, b);
-        Material m = T.getMaterial(S.getAssetManager(), color);
+        Material m = Util.getMaterial(Sys.getAssetManager(), color);
         g.setMaterial(m);
         g.setLocalTranslation(trans);
         if(node != null) {
@@ -91,7 +91,7 @@ public class GeoFactory {
         Cylinder b = new Cylinder(16, 16, radius, length, true);
         b.scaleTextureCoordinates(scale);
         Geometry g = new Geometry(name, b);
-        Material m = T.getMaterial(S.getAssetManager(), tex);
+        Material m = Util.getMaterial(Sys.getAssetManager(), tex);
         g.setMaterial(m);
         g.setLocalTranslation(trans);
         if(node != null) {
@@ -105,7 +105,7 @@ public class GeoFactory {
         Line b = new Line(start, stop);
         b.setLineWidth(width);
         Geometry g = new Geometry(name, b);
-        Material m = T.getMaterial(S.getAssetManager(), color);
+        Material m = Util.getMaterial(Sys.getAssetManager(), color);
         g.setMaterial(m);
         if(node != null) {
             node.attachChild(g);
@@ -117,7 +117,7 @@ public class GeoFactory {
     public static Geometry createQuad(Node node, String name, float width, float height, Vector3f trans, ColorRGBA color){
         Quad b = new Quad(width, height);
         Geometry g = new Geometry(name, b);
-        Material m = T.getMaterial(S.getAssetManager(), color);
+        Material m = Util.getMaterial(Sys.getAssetManager(), color);
         g.setMaterial(m);
         if(node != null){
             node.attachChild(g);
@@ -129,7 +129,7 @@ public class GeoFactory {
     public static Geometry createSphere(Node node, String name, float radius, Vector3f trans, ColorRGBA color){
         Sphere b = new Sphere(16, 16, radius);
         Geometry g = new Geometry(name, b);
-        Material m = T.getMaterial(S.getAssetManager(), color);
+        Material m = Util.getMaterial(Sys.getAssetManager(), color);
         g.setMaterial(m);
         g.setLocalTranslation(trans);
         if(node != null) {
@@ -141,7 +141,7 @@ public class GeoFactory {
         Sphere b = new Sphere(16, 16, radius);
         b.setTextureMode(mode);
         Geometry g = new Geometry(name, b);
-        Material m = T.getMaterial(S.getAssetManager(), tex);
+        Material m = Util.getMaterial(Sys.getAssetManager(), tex);
         g.setMaterial(m);
         g.setLocalTranslation(trans);
         if(node != null) {

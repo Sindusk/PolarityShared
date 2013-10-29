@@ -11,7 +11,7 @@ import com.jme3.scene.Node;
 import entity.PlayerEntity;
 import input.Binding;
 import input.ClientInputHandler;
-import tools.S;
+import tools.Sys;
 import world.World;
 
 /**
@@ -76,7 +76,7 @@ public class GameScreen extends Screen {
             testChar2.move(0, tpf*5);
         }
         Vector2f tempVect=testChar.getLocation();
-        S.getCamera().setLocation(new Vector3f(tempVect.x, tempVect.y, 50));
+        Sys.getCamera().setLocation(new Vector3f(tempVect.x, tempVect.y, 50));
     }
     
     @Override

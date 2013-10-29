@@ -4,7 +4,7 @@ import com.jme3.math.Vector2f;
 import com.jme3.scene.Node;
 import input.ClientInputHandler;
 import java.util.ArrayList;
-import tools.T;
+import tools.Util;
 import ui.UIElement;
 
 /**
@@ -71,10 +71,10 @@ public abstract class Screen {
     // Basic destroy method
     public void destroy(){
         if(!root.removeFromParent()){
-            T.log("Error 1: Could not detach screen root "+name);
+            Util.log("Error 1: Could not detach screen root "+name);
         }
         if(!gui.removeFromParent()){
-            T.log("Error 2: Could not detach screen gui "+name);
+            Util.log("Error 2: Could not detach screen gui "+name);
         }
     }
 }

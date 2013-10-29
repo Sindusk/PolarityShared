@@ -6,9 +6,10 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import grid.Grid;
 import grid.GridNode;
+import input.Binding;
 import input.ClientInputHandler;
 import tools.GeoFactory;
-import tools.S;
+import tools.Sys;
 
 /**
  *
@@ -23,7 +24,7 @@ public class GridScreen extends Screen {
     // Called when the screen first initializes
     @Override
     public void initialize(ClientInputHandler inputHandler) {
-        S.getCamera().setLocation(new Vector3f(0,0,100));
+        Sys.getCamera().setLocation(new Vector3f(0,0,100));
 
         Grid grid = new Grid();
 
@@ -54,6 +55,9 @@ public class GridScreen extends Screen {
     // Called when a key is pressed or released
     @Override
     public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf) {
-        //
+        // Default bind back to menu screen
+        if(bind.equals(Binding.Exit.toString())){
+            Sys.getInputHandler().switchScreens(new MenuScreen(root.getParent(), gui.getParent()));
+        }
     }
 }

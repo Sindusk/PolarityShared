@@ -15,7 +15,7 @@ import input.ClientInputHandler;
  *
  * @author SinisteRing
  */
-public class S {
+public class Sys {
     public static final int GROUP_TERRAIN = 0;
     public static final int GROUP_PLAYER = 1;
     public static final int GROUP_ENTITY = 2;
@@ -29,7 +29,7 @@ public class S {
         return rootNode;
     }
     public static void setRootNode(Node rootNode){
-        S.rootNode = rootNode;
+        Sys.rootNode = rootNode;
     }
     
     private static Node collisionNode;
@@ -37,7 +37,7 @@ public class S {
         return collisionNode;
     }
     public static void setCollisionNode(Node collisionNode){
-        S.collisionNode = collisionNode;
+        Sys.collisionNode = collisionNode;
     }
     
     // Managers:
@@ -46,7 +46,7 @@ public class S {
         return assetManager;
     }
     public static void setAssetManager(AssetManager assetManager){
-        S.assetManager = assetManager;
+        Sys.assetManager = assetManager;
     }
     
     private static InputManager inputManager;
@@ -54,7 +54,7 @@ public class S {
         return inputManager;
     }
     public static void setInputManager(InputManager inputManager){
-        S.inputManager = inputManager;
+        Sys.inputManager = inputManager;
     }
     
     private static RenderManager renderManager;
@@ -62,7 +62,7 @@ public class S {
         return renderManager;
     }
     public static void setRenderManager(RenderManager renderManager){
-        S.renderManager = renderManager;
+        Sys.renderManager = renderManager;
     }
     
     private static AppStateManager stateManager;
@@ -70,7 +70,7 @@ public class S {
         return stateManager;
     }
     public static void setStateManager(AppStateManager stateManager){
-        S.stateManager = stateManager;
+        Sys.stateManager = stateManager;
     }
     
     // Other:
@@ -79,21 +79,21 @@ public class S {
         return bulletAppState;
     }
     public static void setBulletAppState(BulletAppState bulletAppState){
-        S.bulletAppState = bulletAppState;
+        Sys.bulletAppState = bulletAppState;
     }
     private static Camera camera;
     public static Camera getCamera(){
         return camera;
     }
     public static void setCamera(Camera camera){
-        S.camera = camera;
+        Sys.camera = camera;
     }
     private static ClientInputHandler inputHandler;
     public static ClientInputHandler getInputHandler(){
         return inputHandler;
     }
     public static void setInputHandler(ClientInputHandler inputHandler){
-        S.inputHandler = inputHandler;
+        Sys.inputHandler = inputHandler;
     }
     
     private static String version;
@@ -101,7 +101,7 @@ public class S {
         return version;
     }
     public static void setVersion(String version){
-        S.version = version;
+        Sys.version = version;
     }
     
     private static ViewPort viewPort;
@@ -109,7 +109,7 @@ public class S {
         return viewPort;
     }
     public static void setViewPort(ViewPort viewPort){
-        S.viewPort = viewPort;
+        Sys.viewPort = viewPort;
     }
     
     private static Timer timer;
@@ -117,6 +117,6 @@ public class S {
         return timer;
     }
     public static void setTimer(Timer timer){
-        S.timer = timer;
+        Sys.timer = timer;
     }
 }

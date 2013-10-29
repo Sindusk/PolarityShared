@@ -2,8 +2,10 @@ package screens;
 
 import com.jme3.math.Vector2f;
 import com.jme3.scene.Node;
+import input.Binding;
 import input.ClientInputHandler;
-import tools.T;
+import tools.Sys;
+import tools.Util;
 import ui.Inventory;
 import ui.UIElement;
 
@@ -21,7 +23,7 @@ public class InventoryScreen extends Screen {
     
     @Override
     public void initialize(ClientInputHandler inputHandler) {
-        T.log("Initialize: "+this.getName());
+        Util.log("Initialize: "+this.getName());
         invFrame = new Inventory(gui, new Vector2f(500, 400), 500, 700, 1);
         invFrame.setTitle("Inventory");
         ui.add(invFrame);
@@ -43,6 +45,11 @@ public class InventoryScreen extends Screen {
         UIElement e = checkUI(cursorLoc);
         if(e != null){
             e.onAction(cursorLoc, bind, down, tpf);
+        }
+        
+        // Default bind back to menu screen
+        if(bind.equals(Binding.Exit.toString())){
+            Sys.getInputHandler().switchScreens(new MenuScreen(root.getParent(), gui.getParent()));
         }
     }
 }

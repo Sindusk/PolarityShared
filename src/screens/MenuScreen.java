@@ -6,7 +6,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import input.Binding;
 import input.ClientInputHandler;
-import tools.S;
+import tools.Sys;
 import ui.Button;
 import ui.UIElement;
 
@@ -27,8 +27,8 @@ public class MenuScreen extends Screen {
     @Override
     public void initialize(final ClientInputHandler inputHandler){
         // Initialize camera facing and location
-        S.getCamera().setLocation(new Vector3f(0, 0, 50));
-        S.getCamera().lookAt(Vector3f.ZERO, Vector3f.UNIT_Y);
+        Sys.getCamera().setLocation(new Vector3f(0, 0, 50));
+        Sys.getCamera().lookAt(Vector3f.ZERO, Vector3f.UNIT_Y);
         
         // Game button
         gameButton = new Button(gui, new Vector2f(500, 600), 400, 40, 0){

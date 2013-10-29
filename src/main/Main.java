@@ -10,7 +10,7 @@ import input.ClientInputHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import screens.MenuScreen;
-import tools.S;
+import tools.Sys;
 
 /**
 Copyright (c) 2003-2012 jMonkeyEngine
@@ -76,28 +76,28 @@ public class Main extends Application {
         guiViewPort.attachScene(guiNode);
         
         // Initialize system variables
-        S.height = settings.getHeight();
-        S.width = settings.getWidth();
-        S.setAssetManager(assetManager);
-        S.setCamera(cam);
+        Sys.height = settings.getHeight();
+        Sys.width = settings.getWidth();
+        Sys.setAssetManager(assetManager);
+        Sys.setCamera(cam);
         
         cam.setParallelProjection(true);
-        float width=25f*S.width/1000f;
-        float height=25f*S.height/800f;
+        float width=25f*Sys.width/1000f;
+        float height=25f*Sys.height/800f;
         cam.setFrustum(1.0f, 100f, -width, width, height, -height);
         cam.update();
-        S.setInputManager(inputManager);
-        S.setRenderManager(renderManager);
-        S.setStateManager(stateManager);
-        S.setTimer(timer);
-        S.setVersion(CLIENT_VERSION);
-        S.setViewPort(viewPort);
+        Sys.setInputManager(inputManager);
+        Sys.setRenderManager(renderManager);
+        Sys.setStateManager(stateManager);
+        Sys.setTimer(timer);
+        Sys.setVersion(CLIENT_VERSION);
+        Sys.setViewPort(viewPort);
         
         // Initialize input handler
         inputHandler = new ClientInputHandler(inputManager);
         inputHandler.setupInputs();
         inputHandler.switchScreens(new MenuScreen(rootNode, guiNode));
-        S.setInputHandler(inputHandler);
+        Sys.setInputHandler(inputHandler);
     }
 
     @Override

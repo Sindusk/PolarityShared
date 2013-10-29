@@ -29,7 +29,7 @@ import java.util.logging.Logger;
  * T (Tools) - Provides miscellaneous tools for various functions.
  * @author SinisteRing
  */
-public class T {
+public class Util {
     public static final float ROOT_HALF = 1.0f/FastMath.sqrt(2);
     
     public static class Vector2i{

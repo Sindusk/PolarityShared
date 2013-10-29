@@ -5,9 +5,9 @@ import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import tools.GeoFactory;
-import tools.S;
+import tools.Sys;
 import tools.SinText;
-import tools.T;
+import tools.Util;
 
 /**
  *
@@ -34,6 +34,6 @@ public class Button extends UIElement {
     }
     // Changes the color of the button box
     public void changeColor(ColorRGBA color){
-        geo.setMaterial(T.getMaterial(S.getAssetManager(), color));
+        geo.setMaterial(Util.getMaterial(Sys.getAssetManager(), color));
     }
 }
