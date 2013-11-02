@@ -16,6 +16,8 @@ public class Panel extends UIElement {
     
     public Panel(Node parent, Vector2f loc, float x, float y, float z){
         super(parent, loc, x, y, z);
+        x /= 2.0f;
+        y /= 2.0f;
         geo = GeoFactory.createBox(node, new Vector3f(x, y, z), Vector3f.ZERO, ColorRGBA.Blue);
     }
     

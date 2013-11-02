@@ -24,8 +24,13 @@ public class InventoryScreen extends Screen {
     @Override
     public void initialize(ClientInputHandler inputHandler) {
         Util.log("Initialize: "+this.getName());
-        invFrame = new Inventory(gui, new Vector2f(500, 400), 500, 700, 1);
+        invFrame = new Inventory(gui, new Vector2f(Sys.width*0.5f, Sys.height*0.5f), 600, 600, 1);
         invFrame.setTitle("Inventory");
+        invFrame.addTab("weapons");
+        invFrame.addTab("ammo");
+        invFrame.addTab("tools");
+        invFrame.addTab("crafting");
+        invFrame.addTab("alchemy");
         ui.add(invFrame);
     }
     

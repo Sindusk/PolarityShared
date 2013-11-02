@@ -29,9 +29,11 @@ public class MenuScreen extends Screen {
         // Initialize camera facing and location
         Sys.getCamera().setLocation(new Vector3f(0, 0, 50));
         Sys.getCamera().lookAt(Vector3f.ZERO, Vector3f.UNIT_Y);
+        float width = Sys.width;
+        float height = Sys.height;
         
         // Game button
-        gameButton = new Button(gui, new Vector2f(500, 600), 400, 40, 0){
+        gameButton = new Button(gui, new Vector2f(width*0.5f, height*0.7f), width*0.4f, height*0.05f, 0){
             @Override
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
                 if(bind.equals(Binding.LClick.toString())){
@@ -39,11 +41,11 @@ public class MenuScreen extends Screen {
                 }
             }
         };
-        gameButton.changeColor(ColorRGBA.Gray);
+        gameButton.setColor(ColorRGBA.Gray);
         gameButton.setText("Start Game");
         ui.add(gameButton);
         // Grid button
-        gridButton = new Button(gui, new Vector2f(500, 500), 400, 40, 0){
+        gridButton = new Button(gui, new Vector2f(width*0.5f, height*0.6f), width*0.4f, height*0.05f, 0){
             @Override
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
                 if(bind.equals(Binding.LClick.toString())){
@@ -51,11 +53,11 @@ public class MenuScreen extends Screen {
                 }
             }
         };
-        gridButton.changeColor(new ColorRGBA(0, 0.7f, 0, 1));
+        gridButton.setColor(new ColorRGBA(0, 0.7f, 0, 1));
         gridButton.setText("Sphere Grid");
         ui.add(gridButton);
         // Inventory button
-        invButton = new Button(gui, new Vector2f(500, 400), 400, 40, 0){
+        invButton = new Button(gui, new Vector2f(width*0.5f, height*0.5f), width*0.4f, height*0.05f, 0){
             @Override
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
                 if(bind.equals(Binding.LClick.toString())){
@@ -63,7 +65,7 @@ public class MenuScreen extends Screen {
                 }
             }
         };
-        invButton.changeColor(new ColorRGBA(1, 0.9f, 0, 1));
+        invButton.setColor(new ColorRGBA(1, 0.9f, 0, 1));
         invButton.setText("Inventory");
         ui.add(invButton);
     }

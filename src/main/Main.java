@@ -1,7 +1,6 @@
 package main;
 
 import com.jme3.app.Application;
-import com.jme3.renderer.Camera;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -11,6 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import screens.MenuScreen;
 import tools.Sys;
+import tools.Util;
 
 /**
 Copyright (c) 2003-2012 jMonkeyEngine
@@ -61,7 +61,7 @@ public class Main extends Application {
         settings.setSamples(0);
         settings.setVSync(false);
         settings.setRenderer(AppSettings.LWJGL_OPENGL1);
-        settings.setResolution(1400, 800);
+        settings.setResolution(1200, 750);
         settings.setTitle("Reach");
         this.setSettings(settings);
         super.start();
@@ -80,18 +80,19 @@ public class Main extends Application {
         Sys.width = settings.getWidth();
         Sys.setAssetManager(assetManager);
         Sys.setCamera(cam);
-        
-        cam.setParallelProjection(true);
-        float width=25f*Sys.width/1000f;
-        float height=25f*Sys.height/800f;
-        cam.setFrustum(1.0f, 100f, -width, width, height, -height);
-        cam.update();
         Sys.setInputManager(inputManager);
         Sys.setRenderManager(renderManager);
         Sys.setStateManager(stateManager);
         Sys.setTimer(timer);
         Sys.setVersion(CLIENT_VERSION);
         Sys.setViewPort(viewPort);
+        
+        // Initialize camera
+        cam.setParallelProjection(true);
+        float width=25f*Sys.width/1000f;
+        float height=25f*Sys.height/800f;
+        cam.setFrustum(1.0f, 100f, -width, width, height, -height);
+        cam.update();
         
         // Initialize input handler
         inputHandler = new ClientInputHandler(inputManager);

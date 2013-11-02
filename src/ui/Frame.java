@@ -28,7 +28,7 @@ public class Frame extends Panel {
                 }
             }
         };
-        head.changeColor(ColorRGBA.Orange);
+        head.setColor(ColorRGBA.Orange);
         controls.add(head);
     }
     
