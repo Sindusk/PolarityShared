@@ -9,8 +9,8 @@ import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import entity.PlayerEntity;
-import input.Binding;
-import input.ClientInputHandler;
+import input.ClientBinding;
+import input.InputHandler;
 import tools.Sys;
 import world.World;
 
@@ -40,7 +40,7 @@ public class GameScreen extends Screen {
     }
     
     @Override
-    public void initialize(final ClientInputHandler inputHandler) {
+    public void initialize(final InputHandler inputHandler) {
         world = new World(50);
         world.generate();
         root.attachChild(world.getNode());
@@ -86,23 +86,23 @@ public class GameScreen extends Screen {
     
     @Override
     public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf) {
-        if(bind.equals(Binding.Right.toString())){
+        if(bind.equals(ClientBinding.Right.toString())){
             moveRight = down;
-        }else if(bind.equals(Binding.Left.toString())){
+        }else if(bind.equals(ClientBinding.Left.toString())){
             moveLeft = down;
-        }else if(bind.equals(Binding.Down.toString())){
+        }else if(bind.equals(ClientBinding.Down.toString())){
             moveDown = down;
-        }else if(bind.equals(Binding.Up.toString())){
+        }else if(bind.equals(ClientBinding.Up.toString())){
             moveUp = down;
         }
         
-        if(bind.equals(Binding.ArrowRight.toString())){
+        if(bind.equals(ClientBinding.ArrowRight.toString())){
             moveRight2 = down;
-        }else if(bind.equals(Binding.ArrowLeft.toString())){
+        }else if(bind.equals(ClientBinding.ArrowLeft.toString())){
             moveLeft2 = down;
-        }else if(bind.equals(Binding.ArrowDown.toString())){
+        }else if(bind.equals(ClientBinding.ArrowDown.toString())){
             moveDown2 = down;
-        }else if(bind.equals(Binding.ArrowUp.toString())){
+        }else if(bind.equals(ClientBinding.ArrowUp.toString())){
             moveUp2 = down;
         }
     }

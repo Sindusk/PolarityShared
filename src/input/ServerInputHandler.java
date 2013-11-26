@@ -8,9 +8,9 @@ import com.jme3.input.controls.AnalogListener;
  * ClientInputHandler - Handles all input from users and organizes them based on conditions.
  * @author SinisteRing
  */
-public class ClientInputHandler extends InputHandler implements ActionListener, AnalogListener{
+public class ServerInputHandler extends InputHandler implements ActionListener, AnalogListener{
     // Initialization
-    public ClientInputHandler(InputManager inputManager){
+    public ServerInputHandler(InputManager inputManager){
         super(inputManager);
     }
     public void setupInputs(){

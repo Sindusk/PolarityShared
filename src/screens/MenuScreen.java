@@ -4,8 +4,8 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
-import input.Binding;
-import input.ClientInputHandler;
+import input.ClientBinding;
+import input.InputHandler;
 import tools.Sys;
 import ui.Button;
 import ui.UIElement;
@@ -25,7 +25,7 @@ public class MenuScreen extends Screen {
     }
     
     @Override
-    public void initialize(final ClientInputHandler inputHandler){
+    public void initialize(final InputHandler inputHandler){
         // Initialize camera facing and location
         Sys.getCamera().setLocation(new Vector3f(0, 0, 50));
         Sys.getCamera().lookAt(Vector3f.ZERO, Vector3f.UNIT_Y);
@@ -36,7 +36,7 @@ public class MenuScreen extends Screen {
         gameButton = new Button(gui, new Vector2f(width*0.5f, height*0.7f), width*0.4f, height*0.05f, 0){
             @Override
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
-                if(bind.equals(Binding.LClick.toString())){
+                if(bind.equals(ClientBinding.LClick.toString())){
                     inputHandler.switchScreens(new GameScreen(root.getParent(), gui.getParent()));
                 }
             }
@@ -48,7 +48,7 @@ public class MenuScreen extends Screen {
         gridButton = new Button(gui, new Vector2f(width*0.5f, height*0.6f), width*0.4f, height*0.05f, 0){
             @Override
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
-                if(bind.equals(Binding.LClick.toString())){
+                if(bind.equals(ClientBinding.LClick.toString())){
                     inputHandler.switchScreens(new GridScreen(root.getParent(), gui.getParent()));
                 }
             }
@@ -60,7 +60,7 @@ public class MenuScreen extends Screen {
         invButton = new Button(gui, new Vector2f(width*0.5f, height*0.5f), width*0.4f, height*0.05f, 0){
             @Override
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
-                if(bind.equals(Binding.LClick.toString())){
+                if(bind.equals(ClientBinding.LClick.toString())){
                     inputHandler.switchScreens(new InventoryScreen(root.getParent(), gui.getParent()));
                 }
             }

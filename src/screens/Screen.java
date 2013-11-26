@@ -2,7 +2,7 @@ package screens;
 
 import com.jme3.math.Vector2f;
 import com.jme3.scene.Node;
-import input.ClientInputHandler;
+import input.InputHandler;
 import java.util.ArrayList;
 import tools.Util;
 import ui.UIElement;
@@ -33,7 +33,7 @@ public abstract class Screen {
     }
     
     // Required methods to be implemented
-    public abstract void initialize(final ClientInputHandler inputHandler);
+    public abstract void initialize(final InputHandler inputHandler);
     public abstract void update(float tpf);
     public abstract void onCursorMove(Vector2f cursorLoc);
     public abstract void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf);

@@ -12,7 +12,7 @@ import com.jme3.input.controls.Trigger;
  *
  * @author SinisteRing
  */
-public enum Binding {
+public enum ClientBinding {
     // Mouse input
     MouseLeft(MouseInput.AXIS_X, true),
     MouseRight(MouseInput.AXIS_X, false),
@@ -35,12 +35,12 @@ public enum Binding {
     public final int key;
     public final Trigger trigger;
     
-    Binding(int key, boolean dir){
+    ClientBinding(int key, boolean dir){
         mapping = this.toString();
         this.key = key;
         trigger = new MouseAxisTrigger(key, dir);
     }
-    Binding(int key, Class <? extends Input> input){
+    ClientBinding(int key, Class <? extends Input> input){
         mapping = this.toString();
         this.key = key;
         if(input == MouseInput.class){

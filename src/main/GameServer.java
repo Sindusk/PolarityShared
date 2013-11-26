@@ -1,19 +1,21 @@
 package main;
 
 import com.jme3.app.Application;
-import com.jme3.renderer.queue.RenderQueue;
+import com.jme3.math.ColorRGBA;
+import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Node;
-import com.jme3.scene.Spatial;
+import com.jme3.scene.Spatial.CullHint;
 import com.jme3.system.AppSettings;
-import input.ClientInputHandler;
+import input.ServerInputHandler;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import screens.MenuScreen;
+import network.ServerNetwork;
 import tools.Sys;
 import tools.Util;
 
 /**
-Copyright (c) 2003-2012 jMonkeyEngine
+Copyright (c) 2003-2011 jMonkeyEngine
 All rights reserved.
  
 Redistribution and use in source and binary forms, with or without
@@ -42,85 +44,102 @@ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
 LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+ * Game Server
+ * @author SinisteRing
  */
-public class Main extends Application {
-    private static final String CLIENT_VERSION = "0.01";
-    protected Node rootNode = new Node("Root Node");
-    protected Node guiNode = new Node("Gui Node");
-    protected ClientInputHandler inputHandler;
+public class GameServer extends Application{
+    protected ServerInputHandler inputHandler;
+    protected ServerNetwork serverNetwork;
     
-    public static void main(String[] args) {
-        Main app = new Main();
+    // Global Constant Variables:
+    private static final String SERVER_VERSION = "DEV 0.10";
+    
+    // Nodes:
+    private Node root = new Node("Root");
+    private Node gui = new Node("GUI");
+    
+    // Getters for Nodes:
+    public Node getGUI(){
+        return gui;
+    }
+    public Node getRoot(){
+        return root;
+    }
+    public String getVersion(){
+        return SERVER_VERSION;
+    }
+    
+    public static void main(String[] args) throws IOException {
+        GameServer app = new GameServer();
         app.start();
     }
     
     @Override
-    public void start() {
+    public void start(){
         Logger.getLogger("com.jme3").setLevel(Level.WARNING);
         settings = new AppSettings(true);
         settings.setSamples(0);
         settings.setVSync(false);
         settings.setRenderer(AppSettings.LWJGL_OPENGL1);
-        settings.setResolution(1200, 750);
-        settings.setTitle("Reach");
+        settings.setResolution(600, 400);
+        settings.setTitle("Reach Server");
         this.setSettings(settings);
         super.start();
     }
-
+    
     @Override
-    public void initialize() {
+    public void initialize(){
         super.initialize();
-        guiNode.setQueueBucket(RenderQueue.Bucket.Gui);
-        guiNode.setCullHint(Spatial.CullHint.Never);
-        viewPort.attachScene(rootNode);
-        guiViewPort.attachScene(guiNode);
         
-        // Initialize system variables
-        Sys.height = settings.getHeight();
-        Sys.width = settings.getWidth();
+        // Initialize Root and GUI:
+        Util.log("Initializing Viewport...");
+        gui.setQueueBucket(Bucket.Gui);
+        gui.setCullHint(CullHint.Never);
+        viewPort.attachScene(root);
+        guiViewPort.attachScene(gui);
+        
+        // Viewport Init:
+        viewPort.setBackgroundColor(ColorRGBA.Black);
+        setPauseOnLostFocus(false);
+        
+        // Initialize Tools:
         Sys.setAssetManager(assetManager);
         Sys.setCamera(cam);
         Sys.setInputManager(inputManager);
-        Sys.setRenderManager(renderManager);
-        Sys.setStateManager(stateManager);
-        Sys.setTimer(timer);
-        Sys.setVersion(CLIENT_VERSION);
-        Sys.setViewPort(viewPort);
         
-        // Initialize camera
-        cam.setParallelProjection(true);
-        float width=25f*Sys.width/1000f;
-        float height=25f*Sys.height/800f;
-        cam.setFrustum(1.0f, 100f, -width, width, height, -height);
-        cam.update();
-        
-        // Initialize input handler
-        inputHandler = new ClientInputHandler(inputManager);
-        inputHandler.setupInputs();
-        inputHandler.switchScreens(new MenuScreen(rootNode, guiNode));
-        Sys.setInputHandler(inputHandler);
+        Util.log("Initializing Input...");
+        inputHandler = new ServerInputHandler(inputManager);
+        Util.log("Starting Server Network...");
+        serverNetwork = new ServerNetwork(this);
     }
 
     @Override
     public void update() {
-        super.update(); 
+        super.update(); // makes sure to execute AppTasks
         if (speed == 0 || paused) {
             return;
         }
-        float tpf = timer.getTimePerFrame() * speed;    // Calculated time from last frame for keeping time consistency through FPS fluctuations.
+        float tpf = timer.getTimePerFrame() * speed;
         
-        // Custom updates
-        inputHandler.update(tpf);
+        // Update States:
+        stateManager.update(tpf);
         
-        // Update node states
-        rootNode.updateLogicalState(tpf);
-        guiNode.updateLogicalState(tpf);
-        rootNode.updateGeometricState();
-        guiNode.updateGeometricState();
-        
-        // Update renderer
+        // Update logical and geometric states:
+        root.updateLogicalState(tpf);
+        gui.updateLogicalState(tpf);
+        root.updateGeometricState();
+        gui.updateGeometricState();
+
+        // Render display:
         stateManager.render(renderManager);
         renderManager.render(tpf, context.isRenderable());
         stateManager.postRender();
+    }
+    
+    @Override
+    public void destroy(){
+        serverNetwork.stop();
+        super.destroy();
     }
 }

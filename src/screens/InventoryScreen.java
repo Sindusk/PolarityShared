@@ -2,8 +2,8 @@ package screens;
 
 import com.jme3.math.Vector2f;
 import com.jme3.scene.Node;
-import input.Binding;
-import input.ClientInputHandler;
+import input.ClientBinding;
+import input.InputHandler;
 import tools.Sys;
 import tools.Util;
 import ui.Inventory;
@@ -22,15 +22,16 @@ public class InventoryScreen extends Screen {
     }
     
     @Override
-    public void initialize(ClientInputHandler inputHandler) {
+    public void initialize(InputHandler inputHandler) {
         Util.log("Initialize: "+this.getName());
         invFrame = new Inventory(gui, new Vector2f(Sys.width*0.5f, Sys.height*0.5f), 600, 600, 1);
         invFrame.setTitle("Inventory");
-        invFrame.addTab("weapons");
-        invFrame.addTab("ammo");
-        invFrame.addTab("tools");
-        invFrame.addTab("crafting");
-        invFrame.addTab("alchemy");
+        invFrame.addTab("all", "all");
+        invFrame.addTab("weapons", "weapons");
+        invFrame.addTab("ammo", "ammo");
+        invFrame.addTab("tools", "tools");
+        invFrame.addTab("crafting", "crafting");
+        invFrame.addTab("alchemy", "alchemy");
         ui.add(invFrame);
     }
     
@@ -53,7 +54,7 @@ public class InventoryScreen extends Screen {
         }
         
         // Default bind back to menu screen
-        if(bind.equals(Binding.Exit.toString())){
+        if(bind.equals(ClientBinding.Exit.toString())){
             Sys.getInputHandler().switchScreens(new MenuScreen(root.getParent(), gui.getParent()));
         }
     }

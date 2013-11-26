@@ -5,7 +5,7 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
-import input.Binding;
+import input.ClientBinding;
 import java.util.ArrayList;
 
 /**
@@ -42,15 +42,15 @@ public class FrameWithTabs extends Frame {
     }
     
     // Adds a tab button to the frame
-    public void addTab(String icon){
+    public void addTab(String icon, final String key){
         final FrameWithTabs thisFrame = this;
         final int curTab = tabs;
         Button button = new Button(buttonsNode, icon, new Vector2f((buttonScalingUnit*buttonSpacingX)*curTab,
                 (buttonScalingUnit*buttonSpacingY)*curTab), buttonScalingUnit*buttonScale, buttonScalingUnit*buttonScale, 0){
             @Override
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
-                if(bind.equals(Binding.LClick.toString()) && down){
-                    thisFrame.setTab(curTab);
+                if(bind.equals(ClientBinding.LClick.toString()) && down){
+                    thisFrame.setTab(curTab, key);
                 }
             }
         };
@@ -63,7 +63,7 @@ public class FrameWithTabs extends Frame {
         tabs++;
     }
     
-    public void setTab(int tab){
+    public void setTab(int tab, String key){
         if(currentPanel != null){
             if(currentPanel.equals(panels.get(tab))){
                 return;

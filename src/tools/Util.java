@@ -98,6 +98,11 @@ public class Util {
         }
     }
     
+    // Commands
+    public static void handleCommand(String command){
+        //TBI
+    }
+    
     // Parsing Assist:
     public static ArrayList<String> getArgs(String s){
         if(s.contains("(") && s.contains(")")){

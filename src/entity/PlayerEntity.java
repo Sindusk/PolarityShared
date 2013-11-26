@@ -12,8 +12,6 @@ import tools.GeoFactory;
  */
 public class PlayerEntity extends Entity {
     protected Geometry geo;
-
-            
     
     public PlayerEntity(Node parent, ColorRGBA color){
         super(parent);
