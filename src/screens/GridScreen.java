@@ -1,5 +1,6 @@
 package screens;
 
+import com.jme3.app.Application;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
@@ -16,8 +17,8 @@ import tools.Sys;
  * @author SinisteRing
  */
 public class GridScreen extends Screen {
-    public GridScreen(Node rootNode, Node guiNode){
-        super(rootNode, guiNode);
+    public GridScreen(Application app, Node rootNode, Node guiNode){
+        super(app, rootNode, guiNode);
         name="Sphere Screen";
     }
     
@@ -57,7 +58,7 @@ public class GridScreen extends Screen {
     public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf) {
         // Default bind back to menu screen
         if(bind.equals(ClientBinding.Exit.toString())){
-            Sys.getInputHandler().switchScreens(new MenuScreen(root.getParent(), gui.getParent()));
+            Sys.getInputHandler().switchScreens(new MenuScreen(app, root.getParent(), gui.getParent()));
         }
     }
 }

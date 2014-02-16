@@ -48,6 +48,6 @@ public class Player {
         //TBI
     }
     public void destroy(){
-        //TBI
+        connected = false;
     }
 }

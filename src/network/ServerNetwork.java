@@ -1,6 +1,5 @@
 package network;
 
-import player.PlayerManager;
 import com.jme3.network.ConnectionListener;
 import com.jme3.network.Filters;
 import com.jme3.network.HostedConnection;
@@ -13,6 +12,7 @@ import java.io.IOException;
 import java.util.concurrent.Callable;
 import main.GameServer;
 import netdata.*;
+import player.PlayerManager;
 import tools.Util;
 
 /**

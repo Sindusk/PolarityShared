@@ -4,6 +4,7 @@
  */
 package screens;
 
+import com.jme3.app.Application;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
@@ -34,8 +35,8 @@ public class GameScreen extends Screen {
     private boolean moveUp2 = false;
     private boolean moveDown2 = false;
     
-    public GameScreen(Node rootNode, Node guiNode){
-        super(rootNode, guiNode);
+    public GameScreen(Application app, Node rootNode, Node guiNode){
+        super(app, rootNode, guiNode);
         name="Game Screen";
     }
     

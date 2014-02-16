@@ -1,7 +1,5 @@
 package main;
 
-
-
 import com.jme3.app.Application;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Node;
@@ -51,7 +49,7 @@ public class GameClient extends Application {
     protected Node guiNode = new Node("Gui Node");
     protected ClientInputHandler inputHandler;
     
-    public static void main(String[] args) {
+    public static void main(String[] args){
         GameClient app = new GameClient();
         app.start();
     }
@@ -100,14 +98,14 @@ public class GameClient extends Application {
         // Initialize input handler
         inputHandler = new ClientInputHandler(inputManager);
         inputHandler.setupInputs();
-        inputHandler.switchScreens(new MenuScreen(rootNode, guiNode));
+        inputHandler.switchScreens(new MenuScreen(this, rootNode, guiNode));
         Sys.setInputHandler(inputHandler);
     }
 
     @Override
     public void update() {
-        super.update(); 
-        if (speed == 0 || paused) {
+        super.update();
+        if (speed == 0 || paused){
             return;
         }
         float tpf = timer.getTimePerFrame() * speed;    // Calculated time from last frame for keeping time consistency through FPS fluctuations.

@@ -53,7 +53,7 @@ public class GameServer extends Application{
     protected ServerNetwork serverNetwork;
     
     // Global Constant Variables:
-    private static final String SERVER_VERSION = "DEV 0.10";
+    private static final String SERVER_VERSION = "0.01";
     
     // Nodes:
     private Node root = new Node("Root");
