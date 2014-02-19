@@ -8,7 +8,9 @@ import com.jme3.system.AppSettings;
 import input.ClientInputHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import network.ClientNetwork;
 import screens.MenuScreen;
+import screens.Screen;
 import tools.Sys;
 import tools.Util;
 
@@ -48,10 +50,15 @@ public class GameClient extends Application {
     protected Node rootNode = new Node("Root Node");
     protected Node guiNode = new Node("Gui Node");
     protected ClientInputHandler inputHandler;
+    protected ClientNetwork clientNetwork;
     
     public static void main(String[] args){
         GameClient app = new GameClient();
         app.start();
+    }
+    
+    public ClientNetwork getNetwork(){
+        return clientNetwork;
     }
     
     @Override
@@ -70,11 +77,15 @@ public class GameClient extends Application {
     @Override
     public void initialize() {
         super.initialize();
-        Util.log("Initialize: Main");
+        if(Sys.debug > 0){
+            Util.log("[GameClient] <initialize> Starting Initialization...");
+        }
         guiNode.setQueueBucket(RenderQueue.Bucket.Gui);
         guiNode.setCullHint(Spatial.CullHint.Never);
         viewPort.attachScene(rootNode);
         guiViewPort.attachScene(guiNode);
+        
+        setPauseOnLostFocus(false);
         
         // Initialize system variables
         Sys.height = settings.getHeight();
@@ -98,6 +109,16 @@ public class GameClient extends Application {
         // Initialize input handler
         inputHandler = new ClientInputHandler(inputManager);
         inputHandler.setupInputs();
+        
+        // Initialize networking
+        clientNetwork = new ClientNetwork(this, rootNode, guiNode);
+        clientNetwork.setInputHandler(inputHandler);
+        
+        // Initialize Screen static vars
+        Screen.setApplication(this);
+        Screen.setClientNetwork(clientNetwork);
+        Screen.setNodes(rootNode, guiNode);
+        
         inputHandler.switchScreens(new MenuScreen(this, rootNode, guiNode));
         Sys.setInputHandler(inputHandler);
     }

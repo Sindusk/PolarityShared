@@ -5,8 +5,6 @@ import com.jme3.math.Vector2f;
 import com.jme3.scene.Node;
 import input.InputHandler;
 import java.util.ArrayList;
-import main.GameClient;
-import main.GameServer;
 import network.ClientNetwork;
 import network.ServerNetwork;
 import tools.Util;
@@ -17,24 +15,21 @@ import ui.UIElement;
  * @author SinisteRing
  */
 public abstract class Screen {
-    protected Application app;
+    // Top-level variables
+    protected static Application app;
+    protected static Node topRoot;
+    protected static Node topGUI;
+    protected static ClientNetwork clientNetwork;
+    protected static ServerNetwork serverNetwork;
+    
+    // Class-level variables
     protected Node gui = new Node("Screen GUI");
     protected Node root = new Node("Screen Root");
     protected ArrayList<UIElement> ui = new ArrayList();
-    protected ClientNetwork clientNetwork;
-    protected ServerNetwork serverNetwork;
     protected String name;
     
     // Default constructor
     public Screen(Application app, Node rootNode, Node guiNode){
-        this.app = app;
-        if(app instanceof GameClient){
-            GameClient gc = (GameClient) app;
-            clientNetwork = new ClientNetwork(gc);
-        }else if(app instanceof GameServer){
-            GameServer gs = (GameServer) app;
-            serverNetwork = new ServerNetwork(gs);
-        }
         rootNode.attachChild(root);
         guiNode.attachChild(gui);
         name = "Default Screen";
@@ -46,6 +41,26 @@ public abstract class Screen {
     }
     public String getName(){
         return name;
+    }
+    
+    // Returns the top-level root node. Parent of Screen-level root.
+    public static Node getTopRoot(){
+        return topRoot;
+    }
+    // Returns the top-level gui node. Parent of Screen-level gui.
+    public static Node getTopGUI(){
+        return topGUI;
+    }
+    
+    public static void setApplication(Application app){
+        Screen.app = app;
+    }
+    public static void setClientNetwork(ClientNetwork clientNetwork){
+        Screen.clientNetwork = clientNetwork;
+    }
+    public static void setNodes(Node topRoot, Node topGUI){
+        Screen.topRoot = topRoot;
+        Screen.topGUI = topGUI;
     }
     
     // Required methods to be implemented

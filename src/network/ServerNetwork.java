@@ -26,7 +26,7 @@ public class ServerNetwork{
     protected Server server;
     
     // Game variables:
-    protected PlayerManager playerManager;
+    protected PlayerManager playerManager = new PlayerManager();
     
     public ServerNetwork(GameServer app){
         this.app = app;
@@ -74,17 +74,21 @@ public class ServerNetwork{
             }
             server.broadcast(new DisconnectData(id));
             conn.close("Disconnected");
-            Util.log("Player "+id+" has disconnected.");
+            Util.log("[Connection Removed] Player "+id+" has disconnected.");
         }
         
+        // Recieved when a player first pings the server, checking if a slot is open.
+        // This method determines if the player has the correct version & if there's an open
+        // slot in the server before telling the client it's a successful connection.
+        // If the checks pass, this will send an ID back to the player for connection.
         private void ConnectMessage(ConnectData d){
-            Util.log("Connecting new player...");
+            Util.log("[Connect Message] Connecting new player...");
             if(d.GetVersion().equals(app.getVersion())){
                 app.enqueue(new Callable<Void>(){
                     public Void call() throws Exception{
-                        int id = playerManager.findEmptyPlayer();
+                        int id = playerManager.findEmptyID();
                         if(id == -1){
-                            Util.log("Server full. Player was denied connection.");
+                            Util.log("[Connect Message] ERROR: Server full. Player was denied connection.");
                         }else{
                             connection.send(new IDData(id, false));
                         }
@@ -92,7 +96,7 @@ public class ServerNetwork{
                     }
                 });
             }else{
-                Util.log("Client has incorrect version. Player "+d.getID()+" was denied connection.");
+                Util.log("[Connect Message] ERROR: Client has incorrect version. Player "+d.getID()+" was denied connection.");
                 connection.close("Invalid Version.");
             }
         }

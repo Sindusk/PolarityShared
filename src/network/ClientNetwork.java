@@ -10,11 +10,15 @@ import com.jme3.network.Message;
 import com.jme3.network.MessageListener;
 import com.jme3.network.Network;
 import com.jme3.network.serializing.Serializer;
+import com.jme3.scene.Node;
+import input.InputHandler;
 import java.io.IOException;
 import java.util.concurrent.Callable;
 import main.GameClient;
 import netdata.*;
 import player.PlayerManager;
+import screens.GameScreen;
+import screens.Screen;
 import tools.Sys;
 import tools.Util;
 
@@ -29,6 +33,9 @@ public class ClientNetwork{
     protected Client client = null;  // For SpiderMonkey connectivity.
     
     // Game variables:
+    //protected Node root;
+    //protected Node gui;
+    protected InputHandler inputHandler;
     protected PlayerManager playerManager;
     
     // Constants:
@@ -49,8 +56,11 @@ public class ClientNetwork{
     private float[] timers = new float[2];
     private float time;
     
-    public ClientNetwork(GameClient app){
+    public ClientNetwork(GameClient app, Node root, Node gui){
+        Util.log("[ClientNetwork] <Initialize> Initializing ClientNetwork...");
         this.app = app;
+        //this.root = root;
+        //this.gui = gui;
         playerManager = new PlayerManager();
     }
     
@@ -58,7 +68,16 @@ public class ClientNetwork{
         return CLIENT_CONNECTED;
     }
     public int getID(){
+        if(Sys.debug > 4){
+            Util.log("[ClientNetwork] <getID> CLIENT_ID = "+CLIENT_ID);
+        }
         return CLIENT_ID;
+    }
+    public PlayerManager getPlayerManager(){
+        return playerManager;
+    }
+    public void setInputHandler(InputHandler inputHandler){
+        this.inputHandler = inputHandler;
     }
     
     private void registerClass(Class c){
@@ -144,6 +163,9 @@ public class ClientNetwork{
                 }
             });
         }
+        
+        // Of course, this is the message sent when the player is disconnected.
+        // It holds certain data for the disconnect message, and potentially other misc data.
         private void DisconnectMessage(DisconnectData d){
             final int id = d.getID();
             app.enqueue(new Callable<Void>(){
@@ -154,10 +176,35 @@ public class ClientNetwork{
                 }
             });
         }
+        
+        // When the server has determined the players ID, this message sends it to the player.
+        // This is also only recieved if the player connects successfully, so it is best used
+        // to actually begin entering the game and starting play.
         private void IDMessage(IDData d){
+            if(Sys.debug > 3){
+                Util.log("[ClientNetwork] <IDMessage> d.getID() = "+d.getID());
+            }
             CLIENT_ID = d.getID();
-            client.send(new PlayerData(CLIENT_ID, new Vector2f(0, 0)));
+            if(Sys.debug > 3){
+                Util.log("[ClientNetwork] <IDMessage> CLIENT_ID = "+CLIENT_ID);
+            }
+            final PlayerData pd = new PlayerData(CLIENT_ID, new Vector2f(0, 0));
+            client.send(pd);
+            app.enqueue(new Callable<Void>(){
+                public Void call() throws Exception{
+                    playerManager.add(pd);
+                    if(Sys.debug > 1){
+                        Util.log("[ClientNetwork] <IDMessage> Switching to GameScreen...");
+                    }
+                    inputHandler.switchScreens(new GameScreen(app, Screen.getTopRoot(), Screen.getTopGUI()));
+                    return null;
+                }
+            });
         }
+        
+        // When a player moves to a new position, this message is recieved to update all clients
+        // of the player's new position. The client will interpet the interpolation over time to
+        // the new location, but this will give the final location of where they're at on the server.
         private void MoveMessage(MoveData d){
             final MoveData m = d;
             app.enqueue(new Callable<Void>(){
@@ -176,6 +223,8 @@ public class ClientNetwork{
                 }
             });
         }
+        
+        // Recieved when a sound is played in the server world, and the client needs to know.
         private void SoundMessage(SoundData d){
             if(d.getID() == CLIENT_ID) {
                 return;
@@ -192,8 +241,16 @@ public class ClientNetwork{
                 }
             });
         }
-        // Player:
+        
+        // When a new player joins the server, this message is
+        // sent to update all clients with the new Player data.
         private void PlayerMessage(PlayerData d){
+            if(Sys.debug > 2){
+                Util.log("[ClientNetwork] <PlayerMessage> Recieving new PlayerMessage...");
+            }
+            if(d.getID() == CLIENT_ID){
+                return;
+            }
             final PlayerData m = d;
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{

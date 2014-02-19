@@ -12,7 +12,10 @@ import com.jme3.scene.Node;
 import entity.PlayerEntity;
 import input.ClientBinding;
 import input.InputHandler;
+import main.GameClient;
+import player.PlayerManager;
 import tools.Sys;
+import tools.Util;
 import world.World;
 
 /**
@@ -21,14 +24,11 @@ import world.World;
  */
 public class GameScreen extends Screen {
     protected World world;
-    protected PlayerEntity testChar;
+    protected PlayerManager playerManager;
     protected PlayerEntity testChar2;
     
     // Movement testing
-    private boolean moveLeft = false;
-    private boolean moveRight = false;
-    private boolean moveUp = false;
-    private boolean moveDown = false;
+    protected int playerID;
     
     private boolean moveLeft2 = false;
     private boolean moveRight2 = false;
@@ -37,6 +37,11 @@ public class GameScreen extends Screen {
     
     public GameScreen(Application app, Node rootNode, Node guiNode){
         super(app, rootNode, guiNode);
+        playerManager = clientNetwork.getPlayerManager();
+        playerID = clientNetwork.getID();
+        if(Sys.debug > 3){
+            Util.log("[GameScreen] <Initialize> playerID = "+playerID);
+        }
         name="Game Screen";
     }
     
@@ -45,24 +50,16 @@ public class GameScreen extends Screen {
         world = new World(50);
         world.generate();
         root.attachChild(world.getNode());
-        testChar = new PlayerEntity(root, ColorRGBA.Orange);
+        root.attachChild(playerManager.getNode());
         testChar2 = new PlayerEntity(root, ColorRGBA.Red);
     }
     
     @Override
     public void update(float tpf){
-        if(moveRight){
-            testChar.move(tpf*5, 0);
+        if(Sys.debug > 4){
+            Util.log("[GameScreen] <update> playerID = "+playerID);
         }
-        if(moveLeft){
-            testChar.move(-tpf*5, 0);
-        }
-        if(moveDown){
-            testChar.move(0, -tpf*5);
-        }
-        if(moveUp){
-            testChar.move(0, tpf*5);
-        }
+        playerManager.getPlayer(playerID).update(tpf);
         
         if(moveRight2){
             testChar2.move(tpf*5, 0);
@@ -76,7 +73,7 @@ public class GameScreen extends Screen {
         if(moveUp2){
             testChar2.move(0, tpf*5);
         }
-        Vector2f tempVect=testChar.getLocation();
+        Vector2f tempVect=playerManager.getPlayer(playerID).getLocation();
         Sys.getCamera().setLocation(new Vector3f(tempVect.x, tempVect.y, 50));
     }
     
@@ -87,14 +84,14 @@ public class GameScreen extends Screen {
     
     @Override
     public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf) {
-        if(bind.equals(ClientBinding.Right.toString())){
-            moveRight = down;
-        }else if(bind.equals(ClientBinding.Left.toString())){
-            moveLeft = down;
+        if(bind.equals(ClientBinding.Up.toString())){
+            playerManager.getPlayer(playerID).setMovement(0, down);
+        }else if(bind.equals(ClientBinding.Right.toString())){
+            playerManager.getPlayer(playerID).setMovement(1, down);
         }else if(bind.equals(ClientBinding.Down.toString())){
-            moveDown = down;
-        }else if(bind.equals(ClientBinding.Up.toString())){
-            moveUp = down;
+            playerManager.getPlayer(playerID).setMovement(2, down);
+        }else if(bind.equals(ClientBinding.Left.toString())){
+            playerManager.getPlayer(playerID).setMovement(3, down);
         }
         
         if(bind.equals(ClientBinding.ArrowRight.toString())){

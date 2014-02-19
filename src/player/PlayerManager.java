@@ -2,9 +2,12 @@ package player;
 
 import com.jme3.network.HostedConnection;
 import com.jme3.scene.Node;
+import java.util.ArrayList;
+import java.util.HashMap;
 import netdata.MoveData;
 import netdata.PlayerData;
-import network.ServerNetwork;
+import tools.Sys;
+import tools.Util;
 
 /**
  * PlayerManager - Used for the creation and management of networked players.
@@ -12,73 +15,78 @@ import network.ServerNetwork;
  */
 public class PlayerManager{
     private Node node = new Node("PlayerNode");
-    private Player[] player = new Player[16];
+    private HashMap<Integer,Integer> playerID = new HashMap();
+    private ArrayList<Player> players = new ArrayList();
     
     public PlayerManager(){
-        
+        if(Sys.debug > 0){
+            Util.log("[PlayerManager] <Instance> Creating...");
+        }
     }
     
     public Node getNode(){
         return node;
     }
     public Player getPlayer(int index){
-        return player[index];
+        if(Sys.debug > 4){
+            Util.log("[PlayerManager] <getPlayer> Getting player "+index);
+        }
+        return players.get(playerID.get(index));
     }
-    public Player[] getPlayers(){
-        return player;
+    public ArrayList<Player> getPlayers(){
+        return players;
     }
     
     public void sendData(HostedConnection conn){
         int i = 0;
-        while(i < player.length){
-            if(player[i] != null && player[i].isConnected() && player[i].getConnection() != conn){
-                conn.send(player[i].getData());
+        while(i < players.size()){
+            if(players.get(i) != null && players.get(i).isConnected() && players.get(i).getConnection() != conn){
+                conn.send(players.get(i).getData());
             }
             i++;
         }
     }
     public void updatePlayerLocation(MoveData d){
-        if(player[d.getID()] != null){
-            player[d.getID()].setLocation(d.getLocation());
+        if(players.get(playerID.get(d.getID())) != null){
+            players.get(playerID.get(d.getID())).setLocation(d.getLocation());
         }
     }
     public void update(float tpf){
         int i = 0;
-        while(i < player.length){
-            if(player[i] != null && player[i].isConnected()){
-                player[i].update(tpf);
+        while(i < players.size()){
+            if(players.get(i) != null && players.get(i).isConnected()){
+                players.get(i).update(tpf);
             }
             i++;
         }
     }
     
-    public int findEmptyPlayer(){
+    public int findEmptyID(){
         int i = 0;
-        while(i < player.length){
-            if(player[i] == null || !player[i].isConnected()){
+        while(true){
+            if(!playerID.containsKey(i)){
                 return i;
             }
             i++;
         }
-        return -1;
     }
     public void add(PlayerData d){
         int id = d.getID();
-        if(player[id] == null || !player[id].isConnected()){
-            if(player[id] == null){
-                player[id] = new Player();
-            }
-            player[id] = new Player(d);
+        if(Sys.debug > 2){
+            Util.log("[PlayerManager] <add> Adding new Player with ID: "+id);
         }
+        Player p = new Player(node, d);
+        players.add(p);
+        playerID.put(id,players.indexOf(p));
     }
     public void remove(int id){
-        player[id].destroy();
+        players.get(playerID.get(id)).destroy();
     }
     public int remove(HostedConnection conn){
         int i = 0;
-        while(i < player.length){
-            if(player[i] != null && conn == player[i].getConnection()){
-                player[i].destroy();
+        while(i < players.size()){
+            if(players.get(i) != null && conn == players.get(i).getConnection()){
+                players.get(i).destroy();
                 return i;
             }
             i++;

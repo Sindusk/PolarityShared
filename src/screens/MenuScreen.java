@@ -8,6 +8,7 @@ import com.jme3.scene.Node;
 import input.ClientBinding;
 import input.InputHandler;
 import tools.Sys;
+import tools.Util;
 import ui.Button;
 import ui.UIElement;
 
@@ -23,6 +24,9 @@ public class MenuScreen extends Screen {
     
     public MenuScreen(Application app, Node rootNode, Node guiNode){
         super(app, rootNode, guiNode);
+        if(Sys.debug > 3){
+            Util.log("[MenuScreen] Initializing New MenuScreen...");
+        }
         name = "Menu Screen";
     }
     
@@ -35,7 +39,7 @@ public class MenuScreen extends Screen {
         float height = Sys.height;
         
         // Game button
-        gameButton = new Button(gui, new Vector2f(width*0.5f, height*0.7f), width*0.4f, height*0.05f, 0){
+        /*gameButton = new Button(gui, new Vector2f(width*0.5f, height*0.7f), width*0.4f, height*0.05f, 0){
             @Override
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
                 if(bind.equals(ClientBinding.LClick.toString()) && down){
@@ -45,10 +49,10 @@ public class MenuScreen extends Screen {
         };
         gameButton.setColor(ColorRGBA.Gray);
         gameButton.setText("Start Game");
-        ui.add(gameButton);
+        ui.add(gameButton);*/
         
         // Multiplayer button
-        multiButton = new Button(gui, new Vector2f(width*0.5f, height*0.6f), width*0.4f, height*0.05f, 0){
+        multiButton = new Button(gui, new Vector2f(width*0.5f, height*0.7f), width*0.4f, height*0.05f, 0){
             @Override
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
                 if(bind.equals(ClientBinding.LClick.toString()) && down){
@@ -61,7 +65,7 @@ public class MenuScreen extends Screen {
         ui.add(multiButton);
         
         // Grid button
-        gridButton = new Button(gui, new Vector2f(width*0.5f, height*0.5f), width*0.4f, height*0.05f, 0){
+        gridButton = new Button(gui, new Vector2f(width*0.5f, height*0.6f), width*0.4f, height*0.05f, 0){
             @Override
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
                 if(bind.equals(ClientBinding.LClick.toString()) && down){
@@ -74,7 +78,7 @@ public class MenuScreen extends Screen {
         ui.add(gridButton);
         
         // Inventory button
-        invButton = new Button(gui, new Vector2f(width*0.5f, height*0.4f), width*0.4f, height*0.05f, 0){
+        invButton = new Button(gui, new Vector2f(width*0.5f, height*0.5f), width*0.4f, height*0.05f, 0){
             @Override
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
                 if(bind.equals(ClientBinding.LClick.toString()) && down){

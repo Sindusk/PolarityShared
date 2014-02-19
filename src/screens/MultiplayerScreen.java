@@ -18,6 +18,7 @@ import ui.UIElement;
  */
 public class MultiplayerScreen extends Screen {
     private Button localButton;
+    private Button hamachiButton;
     
     public MultiplayerScreen(Application app, Node rootNode, Node guiNode){
         super(app, rootNode, guiNode);
@@ -37,14 +38,26 @@ public class MultiplayerScreen extends Screen {
             @Override
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
                 if(bind.equals(ClientBinding.LClick.toString()) && down){
-                    clientNetwork.connect("192.168.0.1");
-                    //inputHandler.switchScreens(new GameScreen(root.getParent(), gui.getParent()));
+                    clientNetwork.connect("127.0.0.1");
                 }
             }
         };
         localButton.setColor(new ColorRGBA(0.8f, 0, 0.8f, 1));
         localButton.setText("Localhost");
         ui.add(localButton);
+        
+        // Hamachi button:
+        hamachiButton = new Button(gui, new Vector2f(width*0.5f, height*0.5f), width*0.4f, height*0.05f, 0){
+            @Override
+            public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
+                if(bind.equals(ClientBinding.LClick.toString()) && down){
+                    clientNetwork.connect("25.183.100.124");
+                }
+            }
+        };
+        hamachiButton.setColor(new ColorRGBA(0.4f, 0.4f, 0.8f, 1));
+        hamachiButton.setText("Hamachi");
+        ui.add(hamachiButton);
     }
     
     @Override

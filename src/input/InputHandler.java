@@ -18,6 +18,11 @@ public abstract class InputHandler {
         this.inputManager = inputManager;
     }
     
+    // Getters
+    public Screen getScreen(){
+        return screen;
+    }
+    
     public abstract void setupInputs();
     
     // Screen switching
