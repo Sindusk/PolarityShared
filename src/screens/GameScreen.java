@@ -25,20 +25,15 @@ import world.World;
 public class GameScreen extends Screen {
     protected World world;
     protected PlayerManager playerManager;
-    protected PlayerEntity testChar2;
     
     // Movement testing
     protected int playerID;
-    
-    private boolean moveLeft2 = false;
-    private boolean moveRight2 = false;
-    private boolean moveUp2 = false;
-    private boolean moveDown2 = false;
     
     public GameScreen(Application app, Node rootNode, Node guiNode){
         super(app, rootNode, guiNode);
         playerManager = clientNetwork.getPlayerManager();
         playerID = clientNetwork.getID();
+        playerManager.setMyID(playerID);
         if(Sys.debug > 3){
             Util.log("[GameScreen] <Initialize> playerID = "+playerID);
         }
@@ -47,11 +42,11 @@ public class GameScreen extends Screen {
     
     @Override
     public void initialize(final InputHandler inputHandler) {
+        this.inputHandler = inputHandler;
         world = new World(50);
         world.generate();
         root.attachChild(world.getNode());
         root.attachChild(playerManager.getNode());
-        testChar2 = new PlayerEntity(root, ColorRGBA.Red);
     }
     
     @Override
@@ -59,22 +54,13 @@ public class GameScreen extends Screen {
         if(Sys.debug > 4){
             Util.log("[GameScreen] <update> playerID = "+playerID);
         }
-        playerManager.getPlayer(playerID).update(tpf);
+        playerManager.getPlayer(playerID).setMousePosition(inputHandler.getCursorLocation());
+        playerManager.getPlayer(playerID).updateMovement(tpf);
+        playerManager.update(tpf);
         
-        if(moveRight2){
-            testChar2.move(tpf*5, 0);
-        }
-        if(moveLeft2){
-            testChar2.move(-tpf*5, 0);
-        }
-        if(moveDown2){
-            testChar2.move(0, -tpf*5);
-        }
-        if(moveUp2){
-            testChar2.move(0, tpf*5);
-        }
         Vector2f tempVect=playerManager.getPlayer(playerID).getLocation();
         Sys.getCamera().setLocation(new Vector3f(tempVect.x, tempVect.y, 50));
+        clientNetwork.update(tpf);
     }
     
     @Override
@@ -92,16 +78,6 @@ public class GameScreen extends Screen {
             playerManager.getPlayer(playerID).setMovement(2, down);
         }else if(bind.equals(ClientBinding.Left.toString())){
             playerManager.getPlayer(playerID).setMovement(3, down);
-        }
-        
-        if(bind.equals(ClientBinding.ArrowRight.toString())){
-            moveRight2 = down;
-        }else if(bind.equals(ClientBinding.ArrowLeft.toString())){
-            moveLeft2 = down;
-        }else if(bind.equals(ClientBinding.ArrowDown.toString())){
-            moveDown2 = down;
-        }else if(bind.equals(ClientBinding.ArrowUp.toString())){
-            moveUp2 = down;
         }
     }
 }

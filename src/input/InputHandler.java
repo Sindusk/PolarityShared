@@ -1,7 +1,11 @@
 package input;
 
 import com.jme3.input.InputManager;
+import com.jme3.math.Vector2f;
+import com.jme3.math.Vector3f;
 import screens.Screen;
+import tools.Sys;
+import tools.Util;
 import ui.Frame;
 
 /**
@@ -39,5 +43,12 @@ public abstract class InputHandler {
         if(screen != null){
             screen.update(tpf);
         }
+    }
+    
+    public Vector2f getCursorLocation(){
+        Vector3f worldPos = Sys.getCamera().getWorldCoordinates(inputManager.getCursorPosition(), 0f).clone();
+        Vector2f worldPos2D = new Vector2f(worldPos.x, worldPos.y);
+        //inputManager.getCursorPosition();
+        return worldPos2D;
     }
 }

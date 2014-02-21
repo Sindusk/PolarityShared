@@ -23,6 +23,7 @@ public abstract class Screen {
     protected static ServerNetwork serverNetwork;
     
     // Class-level variables
+    protected InputHandler inputHandler;
     protected Node gui = new Node("Screen GUI");
     protected Node root = new Node("Screen Root");
     protected ArrayList<UIElement> ui = new ArrayList();

@@ -10,11 +10,13 @@ import com.jme3.network.serializing.Serializable;
  */
 @Serializable
 public class MoveData extends AbstractMessage {
-  private int id;           //Client ID
-  private Vector2f loc;     // Message Data
+  private int id;           // Client ID
+  private Vector2f cLoc;    // Cursor Location
+  private Vector2f loc;     // Entity Location
   public MoveData() {}
-  public MoveData(int ID, Vector2f location){
+  public MoveData(int ID, Vector2f location, Vector2f cursorLoc){
       loc = location;
+      cLoc = cursorLoc;
       id = ID;
   }
   public int getID(){
@@ -22,5 +24,8 @@ public class MoveData extends AbstractMessage {
   }
   public Vector2f getLocation(){
       return loc;
+  }
+  public Vector2f getCursorLocation(){
+      return cLoc;
   }
 }

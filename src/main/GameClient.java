@@ -145,4 +145,12 @@ public class GameClient extends Application {
         renderManager.render(tpf, context.isRenderable());
         stateManager.postRender();
     }
+    
+    @Override
+    public void destroy(){
+        if(clientNetwork != null && clientNetwork.isConnected()){
+            clientNetwork.disconnect();
+        }
+        super.destroy();
+    }
 }

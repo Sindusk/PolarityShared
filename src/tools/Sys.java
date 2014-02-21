@@ -23,7 +23,7 @@ public class Sys {
     public static int height = 0;
     public static int width = 0;
     
-    public static int debug = 0;
+    public static int debug = 1;
     
     // Nodes:
     private static Node rootNode;

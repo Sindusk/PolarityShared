@@ -4,6 +4,7 @@ import com.jme3.network.HostedConnection;
 import com.jme3.scene.Node;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 import netdata.MoveData;
 import netdata.PlayerData;
 import tools.Sys;
@@ -16,7 +17,9 @@ import tools.Util;
 public class PlayerManager{
     private Node node = new Node("PlayerNode");
     private HashMap<Integer,Integer> playerID = new HashMap();
+    private Set<Integer> playerIDSet = playerID.keySet();
     private ArrayList<Player> players = new ArrayList();
+    private int myID = -1;
     
     public PlayerManager(){
         if(Sys.debug > 0){
@@ -37,27 +40,38 @@ public class PlayerManager{
         return players;
     }
     
+    public void setMyID(int id){
+        this.myID = id;
+    }
+    
     public void sendData(HostedConnection conn){
         int i = 0;
         while(i < players.size()){
-            if(players.get(i) != null && players.get(i).isConnected() && players.get(i).getConnection() != conn){
+            if(players.get(i).isConnected() && players.get(i).getConnection() != conn){
                 conn.send(players.get(i).getData());
             }
             i++;
         }
     }
     public void updatePlayerLocation(MoveData d){
-        if(players.get(playerID.get(d.getID())) != null){
-            players.get(playerID.get(d.getID())).setLocation(d.getLocation());
+        if(Sys.debug > 4){
+            Util.log("[PlayerManager] <updatePlayerLocation> Updating player "+d.getID()+" location to "+d.getLocation().toString());
+            Util.log("playerID = "+playerID.toString());
+        }
+        if(playerID.containsKey(d.getID())){
+            players.get(playerID.get(d.getID())).updateLocation(d.getLocation());
+            players.get(playerID.get(d.getID())).updateRotation(d.getCursorLocation());
+        }else{
+            if(Sys.debug > 1){
+                Util.log("[PlayerManager] <updatePlayerLocation> Key not found: "+d.getID());
+            }
         }
     }
     public void update(float tpf){
-        int i = 0;
-        while(i < players.size()){
-            if(players.get(i) != null && players.get(i).isConnected()){
-                players.get(i).update(tpf);
+        for(Integer i : playerIDSet){
+            if(i != myID){
+                players.get(playerID.get(i)).update(tpf);
             }
-            i++;
         }
     }
     

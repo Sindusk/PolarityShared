@@ -15,6 +15,7 @@ public class Player {
     protected PlayerEntity entity;
     protected PlayerData data;
     protected HostedConnection conn;
+    protected Vector2f mousePos;
     protected boolean[] movement = new boolean[4];  // Up, Right, Down, Left
     protected boolean connected = false;
     
@@ -26,6 +27,7 @@ public class Player {
             i++;
         }
         entity = new PlayerEntity(node, ColorRGBA.Orange);
+        this.data = d;
     }
     
     public HostedConnection getConnection(){
@@ -41,8 +43,15 @@ public class Player {
     public void setConnection(HostedConnection conn){
         this.conn = conn;
     }
-    public void setLocation(Vector2f loc){
-        entity.setLocation(loc);
+    public void setMousePosition(Vector2f mousePos){
+        this.mousePos = mousePos;
+    }
+    public void updateLocation(Vector2f loc){
+        entity.updateLocation(loc);
+    }
+    public void updateRotation(Vector2f loc){
+        this.mousePos = loc.clone();
+        entity.updateRotation(loc);
     }
     public void setMovement(int dir, boolean value){
         movement[dir] = value;
@@ -53,7 +62,7 @@ public class Player {
         return connected;
     }
     
-    public void update(float tpf){
+    public void updateMovement(float tpf){
         Vector2f move = new Vector2f(0, 0);
         tpf *= 5; //Temporary, for scaling.
         if(movement[0]){
@@ -68,8 +77,14 @@ public class Player {
         if(movement[3]){
             move.x -= tpf;
         }
+        entity.updateRotation(mousePos);
         entity.move(move);
     }
+    
+    public void update(float tpf){
+        entity.update(tpf);
+    }
+    
     public void destroy(){
         connected = false;
     }

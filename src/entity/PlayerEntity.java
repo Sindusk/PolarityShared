@@ -12,9 +12,11 @@ import tools.GeoFactory;
  */
 public class PlayerEntity extends Entity {
     protected Geometry geo;
+    protected Geometry point;
     
     public PlayerEntity(Node parent, ColorRGBA color){
         super(parent);
-        geo = GeoFactory.createBox(node, "Entity", new Vector3f(0.5f, 1.5f, 1), Vector3f.ZERO, color);
+        geo = GeoFactory.createBox(node, "PlayerEntity", new Vector3f(0.7f, 0.5f, 1), Vector3f.ZERO, color);
+        point = GeoFactory.createBox(node, "PlayerEntity", new Vector3f(0.5f, 0.3f, 0.7f), new Vector3f(1f, 0f, 0), ColorRGBA.Red);
     }
 }

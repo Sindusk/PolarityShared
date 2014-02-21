@@ -39,9 +39,9 @@ public class ClientNetwork{
     protected PlayerManager playerManager;
     
     // Constants:
-    public final float PING_INTERVAL = 1;
-    public final float MOVE_INTERVAL = 0.05f;
-    public final float MOVE_INVERSE = 1.0f/MOVE_INTERVAL;
+    public static final float PING_INTERVAL = 1;
+    public static final float MOVE_INTERVAL = 0.05f;
+    public static final float MOVE_INVERSE = 1.0f/MOVE_INTERVAL;
     
     // ClientNetwork Variables:
     private boolean CLIENT_CONNECTED = false;
@@ -57,11 +57,53 @@ public class ClientNetwork{
     private float time;
     
     public ClientNetwork(GameClient app, Node root, Node gui){
-        Util.log("[ClientNetwork] <Initialize> Initializing ClientNetwork...");
+        if(Sys.debug > 2){
+            Util.log("[ClientNetwork] <Initialize> Initializing ClientNetwork...");
+        }
         this.app = app;
-        //this.root = root;
-        //this.gui = gui;
         playerManager = new PlayerManager();
+    }
+    
+    // Attempted connection, will fail if the server is not available.
+    public boolean connect(String ip){
+        try {
+            client = Network.connectToServer(ip, 6143);
+            registerSerials();
+            client.addClientStateListener(listener);
+            client.start();
+            client.send(new ConnectData(Sys.getVersion()));
+            timers[PING] = 1;
+            timers[MOVE] = 0;
+            return true;
+        } catch (IOException ex) {
+            Util.log(ex);
+            return false;
+        }
+    }
+    
+    // Primary update loop
+    public void update(float tpf){
+        int i = 0;
+        while(i < timers.length){
+            timers[i] += tpf;
+            i++;
+        }
+        
+        // Ping:
+        if(timers[PING] >= PING_INTERVAL && !pinging){
+            time = Sys.getTimer().getTimeInSeconds();
+            client.send(new PingData());
+            timers[PING] = 0;
+        }
+        
+        // Send updated movement data:
+        if(timers[MOVE] >= MOVE_INTERVAL){
+            if(Sys.debug > 4){
+                Util.log("[ClientNetwork] <update> Sending my ("+CLIENT_ID+") movement...");
+            }
+            client.send(new MoveData(CLIENT_ID, playerManager.getPlayer(CLIENT_ID).getLocation(), inputHandler.getCursorLocation()));
+            timers[MOVE] = 0;
+        }
     }
     
     public boolean isConnected(){
@@ -90,21 +132,6 @@ public class ClientNetwork{
         }
     }
     
-    public boolean connect(String ip){
-        try {
-            client = Network.connectToServer(ip, 6143);
-            registerSerials();
-            client.addClientStateListener(listener);
-            client.start();
-            client.send(new ConnectData(Sys.getVersion()));
-            timers[PING] = 1;
-            timers[MOVE] = 0;
-            return true;
-        } catch (IOException ex) {
-            Util.log(ex);
-            return false;
-        }
-    }
     public void disconnect(){
         if(!CLIENT_CONNECTED){
             return;
@@ -115,26 +142,6 @@ public class ClientNetwork{
     }
     public void close(){
         client.close();
-    }
-    public void update(float tpf){
-        int i = 0;
-        while(i < timers.length){
-            timers[i] += tpf;
-            i++;
-        }
-
-        // Ping:
-        if(timers[PING] >= PING_INTERVAL && !pinging){
-            time = Sys.getTimer().getTimeInSeconds();
-            client.send(new PingData());
-            timers[PING] = 0;
-        }
-
-        // Send updated movement data:
-        if(timers[MOVE] >= MOVE_INTERVAL){
-            client.send(new MoveData(CLIENT_ID, playerManager.getPlayer(CLIENT_ID).getLocation()));
-            timers[MOVE] = 0;
-        }
     }
     
     public void send(Message message){
@@ -206,6 +213,9 @@ public class ClientNetwork{
         // of the player's new position. The client will interpet the interpolation over time to
         // the new location, but this will give the final location of where they're at on the server.
         private void MoveMessage(MoveData d){
+            if(Sys.debug > 4){
+                Util.log("[ClientNetwork] <MoveMessage> Recieving MoveMessage...");
+            }
             final MoveData m = d;
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
@@ -218,7 +228,9 @@ public class ClientNetwork{
             final float pingTime = app.getTimer().getTimeInSeconds() - time;
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
-                    Util.log("Ping: "+(int) FastMath.ceil(pingTime*1000)+" ms"); //Temporary
+                    if(Sys.debug > 3){
+                        Util.log("[ClientNetwork] <PingMessage> Current Ping: "+(int) FastMath.ceil(pingTime*1000)+" ms"); //Temporary
+                    }
                     return null;
                 }
             });
@@ -255,14 +267,13 @@ public class ClientNetwork{
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
                     playerManager.add(m);
-                    if(m.getID() == CLIENT_ID){
-                        // Connect player
-                    }
                     return null;
                 }
             });
         }
-
+        
+        // Handler for when any message (generic) is recieved.
+        // It then separates it by type and calls the proper sub-method to handle each instance.
         public void messageReceived(Client source, Message m) {
             client = source;
             

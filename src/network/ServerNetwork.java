@@ -13,6 +13,7 @@ import java.util.concurrent.Callable;
 import main.GameServer;
 import netdata.*;
 import player.PlayerManager;
+import tools.Sys;
 import tools.Util;
 
 /**
@@ -82,13 +83,17 @@ public class ServerNetwork{
         // slot in the server before telling the client it's a successful connection.
         // If the checks pass, this will send an ID back to the player for connection.
         private void ConnectMessage(ConnectData d){
-            Util.log("[Connect Message] Connecting new player...");
+            if(Sys.debug > 2){
+                Util.log("[ServerNetwork] <ConnectMessage> Recieving new connection...");
+            }
             if(d.GetVersion().equals(app.getVersion())){
                 app.enqueue(new Callable<Void>(){
                     public Void call() throws Exception{
                         int id = playerManager.findEmptyID();
                         if(id == -1){
-                            Util.log("[Connect Message] ERROR: Server full. Player was denied connection.");
+                            if(Sys.debug > 1){
+                                Util.log("[ServerNetwork] ERROR: Server full. Player was denied connection.");
+                            }
                         }else{
                             connection.send(new IDData(id, false));
                         }
@@ -100,6 +105,9 @@ public class ServerNetwork{
                 connection.close("Invalid Version.");
             }
         }
+        
+        // Recieved when a player moves. This method is mainly used to broadcast the movement
+        // to all other players currently connected.
         private void MoveMessage(MoveData d){
             server.broadcast(Filters.notEqualTo(connection), d);
             final MoveData m = d;
@@ -119,10 +127,10 @@ public class ServerNetwork{
         }
         // Players:
         private void PlayerMessage(PlayerData d){
-            Util.log("Player "+d.getID()+" [Version "+app.getVersion()+"] connected successfully.");
+            Util.log("[ServerNetwork] <PlayerMessage> Player "+d.getID()+" (v"+app.getVersion()+") connected successfully.");
             int id = d.getID();
             playerManager.add(d);
-            server.broadcast(d);
+            server.broadcast(Filters.notEqualTo(connection), d);
             playerManager.getPlayer(id).setConnection(connection);
             playerManager.sendData(connection);
         }
