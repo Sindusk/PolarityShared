@@ -226,6 +226,11 @@ public class Util {
     }
     
     // Logging
+    public static void log(String s, int debug){
+        if(Sys.debug >= debug){
+            System.out.println(s);
+        }
+    }
     public static void log(String s){
         System.out.println(s);
     }

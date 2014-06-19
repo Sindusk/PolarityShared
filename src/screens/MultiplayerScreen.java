@@ -1,6 +1,7 @@
 package screens;
 
 import com.jme3.app.Application;
+import com.jme3.input.event.KeyInputEvent;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
@@ -19,6 +20,7 @@ import ui.UIElement;
 public class MultiplayerScreen extends Screen {
     private Button localButton;
     private Button hamachiButton;
+    private Button addServerButton;
     
     public MultiplayerScreen(Application app, Node rootNode, Node guiNode){
         super(app, rootNode, guiNode);
@@ -27,7 +29,7 @@ public class MultiplayerScreen extends Screen {
     
     @Override
     public void initialize(final InputHandler inputHandler) {
-        Util.log("Initialize: "+this.getName());
+        Util.log("[MultiplayerScreen] Initializing...", 1);
         Sys.getCamera().setLocation(new Vector3f(0, 0, 50));
         Sys.getCamera().lookAt(Vector3f.ZERO, Vector3f.UNIT_Y);
         float width = Sys.width;
@@ -57,7 +59,20 @@ public class MultiplayerScreen extends Screen {
         };
         hamachiButton.setColor(new ColorRGBA(0.4f, 0.4f, 0.8f, 1));
         hamachiButton.setText("Hamachi");
-        ui.add(hamachiButton);
+        ui.add(hamachiButton);// Hamachi button:
+        
+        addServerButton = new Button(gui, "aluminumPlate", new Vector2f(width*0.35f, height*0.3f), width*0.2f, height*0.05f, 0){
+            @Override
+            public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
+                if(bind.equals(ClientBinding.LClick.toString()) && down){
+                    inputHandler.switchScreens(new ServerEntryScreen(app, root.getParent(), gui.getParent()));
+                }
+            }
+        };
+        //addServerButton.setColor(new ColorRGBA(0.4f, 0.4f, 0.8f, 1));
+        addServerButton.setText("Add Server");
+        addServerButton.setTextColor(new ColorRGBA(0.4f, 0, 0, 1));
+        ui.add(addServerButton);
     }
     
     @Override
@@ -82,5 +97,10 @@ public class MultiplayerScreen extends Screen {
         if(bind.equals(ClientBinding.Exit.toString())){
             Sys.getInputHandler().switchScreens(new MenuScreen(app, root.getParent(), gui.getParent()));
         }
+    }
+    
+    @Override
+    public void onKeyEvent(KeyInputEvent evt){
+        // implement
     }
 }

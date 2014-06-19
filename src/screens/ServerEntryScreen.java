@@ -1,3 +1,7 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package screens;
 
 import com.jme3.app.Application;
@@ -6,48 +10,37 @@ import com.jme3.math.Vector2f;
 import com.jme3.scene.Node;
 import input.ClientBinding;
 import input.InputHandler;
+import static screens.Screen.app;
 import tools.Sys;
 import tools.Util;
-import ui.advanced.InventoryFrame;
 import ui.UIElement;
 
 /**
  *
  * @author SinisteRing
  */
-public class InventoryScreen extends Screen {
-    private InventoryFrame invFrame;
+public class ServerEntryScreen extends Screen {
     
-    public InventoryScreen(Application app, Node rootNode, Node guiNode){
+    public ServerEntryScreen(Application app, Node rootNode, Node guiNode){
         super(app, rootNode, guiNode);
-        name="Inventory Screen";
+        name = "ServerEntryScreen";
     }
-    
+
     @Override
     public void initialize(InputHandler inputHandler) {
-        Util.log("Initialize: "+this.getName());
-        invFrame = new InventoryFrame(gui, new Vector2f(Sys.width*0.5f, Sys.height*0.5f), 600, 600, 1);
-        invFrame.setTitle("Inventory");
-        invFrame.addTab("all", "all");
-        invFrame.addTab("weapons", "weapons");
-        invFrame.addTab("ammo", "ammo");
-        invFrame.addTab("tools", "tools");
-        invFrame.addTab("crafting", "crafting");
-        invFrame.addTab("alchemy", "alchemy");
-        ui.add(invFrame);
+        Util.log("[ServerEntryScreen] Initializing...", 1);
     }
-    
+
     @Override
-    public void update(float tpf){
+    public void update(float tpf) {
         //
     }
-    
+
     @Override
     public void onCursorMove(Vector2f cursorLoc) {
         //
     }
-    
-    // Called when a key is pressed or released
+
     @Override
     public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf) {
         UIElement e = checkUI(cursorLoc);
@@ -60,9 +53,10 @@ public class InventoryScreen extends Screen {
             Sys.getInputHandler().switchScreens(new MenuScreen(app, root.getParent(), gui.getParent()));
         }
     }
-    
+
     @Override
-    public void onKeyEvent(KeyInputEvent evt){
-        // implement
+    public void onKeyEvent(KeyInputEvent evt) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+    
 }

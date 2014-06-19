@@ -12,12 +12,14 @@ import com.jme3.network.Network;
 import com.jme3.network.serializing.Serializer;
 import com.jme3.scene.Node;
 import input.InputHandler;
+import items.Equipment;
 import java.io.IOException;
 import java.util.concurrent.Callable;
 import main.GameClient;
 import netdata.*;
 import player.PlayerManager;
 import screens.GameScreen;
+import screens.MultiplayerScreen;
 import screens.Screen;
 import tools.Sys;
 import tools.Util;
@@ -33,10 +35,9 @@ public class ClientNetwork{
     protected Client client = null;  // For SpiderMonkey connectivity.
     
     // Game variables:
-    //protected Node root;
-    //protected Node gui;
     protected InputHandler inputHandler;
     protected PlayerManager playerManager;
+    protected ServerStatus serverStatus;
     
     // Constants:
     public static final float PING_INTERVAL = 1;
@@ -154,7 +155,7 @@ public class ClientNetwork{
         private Client client;
         
         public void clientConnected(Client c){
-            Util.log("Welcome to the server.");
+            Util.log("Connection to server successful.");
         }
         public void clientDisconnected(Client c, DisconnectInfo info){
             Util.log(info.reason);
@@ -188,21 +189,13 @@ public class ClientNetwork{
         // This is also only recieved if the player connects successfully, so it is best used
         // to actually begin entering the game and starting play.
         private void IDMessage(IDData d){
-            if(Sys.debug > 3){
-                Util.log("[ClientNetwork] <IDMessage> d.getID() = "+d.getID());
-            }
+            Util.log("[ClientNetwork] <IDMessage> Recieving IDMessage...", 4);
             CLIENT_ID = d.getID();
-            if(Sys.debug > 3){
-                Util.log("[ClientNetwork] <IDMessage> CLIENT_ID = "+CLIENT_ID);
-            }
-            final PlayerData pd = new PlayerData(CLIENT_ID, new Vector2f(0, 0));
+            final PlayerData pd = new PlayerData(CLIENT_ID, new Vector2f(0, 0), new Equipment());
             client.send(pd);
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
                     playerManager.add(pd);
-                    if(Sys.debug > 1){
-                        Util.log("[ClientNetwork] <IDMessage> Switching to GameScreen...");
-                    }
                     inputHandler.switchScreens(new GameScreen(app, Screen.getTopRoot(), Screen.getTopGUI()));
                     return null;
                 }
@@ -213,9 +206,7 @@ public class ClientNetwork{
         // of the player's new position. The client will interpet the interpolation over time to
         // the new location, but this will give the final location of where they're at on the server.
         private void MoveMessage(MoveData d){
-            if(Sys.debug > 4){
-                Util.log("[ClientNetwork] <MoveMessage> Recieving MoveMessage...");
-            }
+            Util.log("[ClientNetwork] <MoveMessage> Recieving MoveMessage...", 4);
             final MoveData m = d;
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
@@ -228,9 +219,42 @@ public class ClientNetwork{
             final float pingTime = app.getTimer().getTimeInSeconds() - time;
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
-                    if(Sys.debug > 3){
-                        Util.log("[ClientNetwork] <PingMessage> Current Ping: "+(int) FastMath.ceil(pingTime*1000)+" ms"); //Temporary
+                    Util.log("[ClientNetwork] <PingMessage> Current Ping: "+(int) FastMath.ceil(pingTime*1000)+" ms", 3); //Temporary
+                    return null;
+                }
+            });
+        }
+        
+        // When a new player joins the server, this message is
+        // sent to update all clients with the new Player data.
+        private void PlayerMessage(PlayerData d){
+            Util.log("[ClientNetwork] <PlayerMessage> Recieving new PlayerMessage...", 2);
+            if(d.getID() == CLIENT_ID){
+                return;
+            }
+            final PlayerData m = d;
+            app.enqueue(new Callable<Void>(){
+                public Void call() throws Exception{
+                    playerManager.add(m);
+                    return null;
+                }
+            });
+        }
+        
+        // When the player first attempts connection with a server,
+        // the server sends this data to inform the client of crucial
+        // information before allowing entry.
+        private void ServerStatusMessage(ServerStatusData d){
+            Util.log("[ClientNetwork] <PlayerMessage> Recieving new ServerStatusMessage...", 2);
+            final ServerStatusData m = d;
+            app.enqueue(new Callable(){
+                public Void call() throws Exception{
+                    if(inputHandler.getScreen() instanceof MultiplayerScreen){
+                        
+                    }else{
+                        Util.log("Error 5: Server sent status when multiplayer screen was not open.", 0);
                     }
+                    serverStatus = m.getStatus();
                     return null;
                 }
             });
@@ -254,24 +278,6 @@ public class ClientNetwork{
             });
         }
         
-        // When a new player joins the server, this message is
-        // sent to update all clients with the new Player data.
-        private void PlayerMessage(PlayerData d){
-            if(Sys.debug > 2){
-                Util.log("[ClientNetwork] <PlayerMessage> Recieving new PlayerMessage...");
-            }
-            if(d.getID() == CLIENT_ID){
-                return;
-            }
-            final PlayerData m = d;
-            app.enqueue(new Callable<Void>(){
-                public Void call() throws Exception{
-                    playerManager.add(m);
-                    return null;
-                }
-            });
-        }
-        
         // Handler for when any message (generic) is recieved.
         // It then separates it by type and calls the proper sub-method to handle each instance.
         public void messageReceived(Client source, Message m) {
@@ -287,10 +293,12 @@ public class ClientNetwork{
                 MoveMessage((MoveData) m);
             }else if(m instanceof PingData){
                 PingMessage();
-            }else if(m instanceof SoundData){
-                SoundMessage((SoundData) m);
             }else if(m instanceof PlayerData){
                 PlayerMessage((PlayerData) m);
+            }else if(m instanceof ServerStatusData){
+                ServerStatusMessage((ServerStatusData) m);
+            }else if(m instanceof SoundData){
+                SoundMessage((SoundData) m);
             }
         }
     }

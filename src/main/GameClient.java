@@ -77,9 +77,7 @@ public class GameClient extends Application {
     @Override
     public void initialize() {
         super.initialize();
-        if(Sys.debug > 0){
-            Util.log("[GameClient] <initialize> Starting Initialization...");
-        }
+        Util.log("[GameClient] <initialize> Starting Initialization...", 1);
         guiNode.setQueueBucket(RenderQueue.Bucket.Gui);
         guiNode.setCullHint(Spatial.CullHint.Never);
         viewPort.attachScene(rootNode);

@@ -16,7 +16,6 @@ public class World {
     protected ArrayList<Entity> entities=new ArrayList<Entity>();
     protected int seed;
     
-    
     public World(int seed){
         this.seed = seed;
     }
@@ -30,7 +29,6 @@ public class World {
         for(Entity t:entities){
         }
     }
-    
     
     // World generation algorithm
     public void generate(){

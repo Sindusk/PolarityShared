@@ -93,9 +93,7 @@ public class GameServer extends Application{
         super.initialize();
         
         // Initialize Root and GUI:
-        if(Sys.debug > 0){
-            Util.log("[GameServer] <initialize> Creating Viewport...");
-        }
+        Util.log("[GameServer] <initialize> Creating Viewport...", 1);
         gui.setQueueBucket(Bucket.Gui);
         gui.setCullHint(CullHint.Never);
         viewPort.attachScene(root);
@@ -110,13 +108,9 @@ public class GameServer extends Application{
         Sys.setCamera(cam);
         Sys.setInputManager(inputManager);
         
-        if(Sys.debug > 0){
-            Util.log("[GameServer] <initialize> Creating InputHandler...");
-        }
+        Util.log("[GameServer] <initialize> Creating InputHandler...", 1);
         inputHandler = new ServerInputHandler(inputManager);
-        if(Sys.debug > 0){
-            Util.log("[GameServer] <initialize> Starting Network...");
-        }
+        Util.log("[GameServer] <initialize> Starting Network...", 1);
         serverNetwork = new ServerNetwork(this);
     }
 

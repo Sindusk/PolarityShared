@@ -4,14 +4,20 @@
  */
 package stats;
 
+import com.jme3.network.serializing.Serializable;
+
 /**
  *
  * @author SinisteRing
  */
+@Serializable
 public class StatWithMax extends Stat {
     protected float baseMax;    // The base cap for the stat.
     protected float max;        // The current cap for the stat.
     
+    public StatWithMax(){
+        //
+    }
     // Initialize with stat value and base stat cap.
     public StatWithMax(float amount, float max){
         super(amount);

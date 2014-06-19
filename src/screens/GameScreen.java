@@ -5,14 +5,12 @@
 package screens;
 
 import com.jme3.app.Application;
-import com.jme3.math.ColorRGBA;
+import com.jme3.input.event.KeyInputEvent;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
-import entity.PlayerEntity;
 import input.ClientBinding;
 import input.InputHandler;
-import main.GameClient;
 import player.PlayerManager;
 import tools.Sys;
 import tools.Util;
@@ -34,9 +32,7 @@ public class GameScreen extends Screen {
         playerManager = clientNetwork.getPlayerManager();
         playerID = clientNetwork.getID();
         playerManager.setMyID(playerID);
-        if(Sys.debug > 3){
-            Util.log("[GameScreen] <Initialize> playerID = "+playerID);
-        }
+        Util.log("[GameScreen] <Initialize> playerID = "+playerID, 3);
         name="Game Screen";
     }
     
@@ -51,14 +47,12 @@ public class GameScreen extends Screen {
     
     @Override
     public void update(float tpf){
-        if(Sys.debug > 4){
-            Util.log("[GameScreen] <update> playerID = "+playerID);
-        }
+        Util.log("[GameScreen] <update> playerID = "+playerID, 4);
         playerManager.getPlayer(playerID).setMousePosition(inputHandler.getCursorLocation());
         playerManager.getPlayer(playerID).updateMovement(tpf);
         playerManager.update(tpf);
         
-        Vector2f tempVect=playerManager.getPlayer(playerID).getLocation();
+        Vector2f tempVect = playerManager.getPlayer(playerID).getLocation();
         Sys.getCamera().setLocation(new Vector3f(tempVect.x, tempVect.y, 50));
         clientNetwork.update(tpf);
     }
@@ -70,7 +64,11 @@ public class GameScreen extends Screen {
     
     @Override
     public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf) {
-        if(bind.equals(ClientBinding.Up.toString())){
+        // Actions
+        if(bind.equals(ClientBinding.LClick.toString())){
+            playerManager.getPlayer(playerID).attack(cursorLoc, down);
+        // Movement
+        }else if(bind.equals(ClientBinding.Up.toString())){
             playerManager.getPlayer(playerID).setMovement(0, down);
         }else if(bind.equals(ClientBinding.Right.toString())){
             playerManager.getPlayer(playerID).setMovement(1, down);
@@ -79,5 +77,10 @@ public class GameScreen extends Screen {
         }else if(bind.equals(ClientBinding.Left.toString())){
             playerManager.getPlayer(playerID).setMovement(3, down);
         }
+    }
+    
+    @Override
+    public void onKeyEvent(KeyInputEvent evt){
+        // implement
     }
 }

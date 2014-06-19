@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Set;
 import netdata.MoveData;
 import netdata.PlayerData;
-import tools.Sys;
 import tools.Util;
 
 /**
@@ -22,18 +21,14 @@ public class PlayerManager{
     private int myID = -1;
     
     public PlayerManager(){
-        if(Sys.debug > 0){
-            Util.log("[PlayerManager] <Instance> Creating...");
-        }
+        Util.log("[PlayerManager] <Instance> Creating...", 1);
     }
     
     public Node getNode(){
         return node;
     }
     public Player getPlayer(int index){
-        if(Sys.debug > 4){
-            Util.log("[PlayerManager] <getPlayer> Getting player "+index);
-        }
+        Util.log("[PlayerManager] <getPlayer> Getting player "+index, 4);
         return players.get(playerID.get(index));
     }
     public ArrayList<Player> getPlayers(){
@@ -54,17 +49,13 @@ public class PlayerManager{
         }
     }
     public void updatePlayerLocation(MoveData d){
-        if(Sys.debug > 4){
-            Util.log("[PlayerManager] <updatePlayerLocation> Updating player "+d.getID()+" location to "+d.getLocation().toString());
-            Util.log("playerID = "+playerID.toString());
-        }
+        Util.log("[PlayerManager] <updatePlayerLocation> Updating player "+d.getID()+" location to "+d.getLocation().toString(), 4);
+        Util.log("playerID = "+playerID.toString(), 4);
         if(playerID.containsKey(d.getID())){
             players.get(playerID.get(d.getID())).updateLocation(d.getLocation());
             players.get(playerID.get(d.getID())).updateRotation(d.getCursorLocation());
         }else{
-            if(Sys.debug > 1){
-                Util.log("[PlayerManager] <updatePlayerLocation> Key not found: "+d.getID());
-            }
+            Util.log("[PlayerManager] <updatePlayerLocation> Key not found: "+d.getID(), 1);
         }
     }
     public void update(float tpf){
@@ -86,9 +77,6 @@ public class PlayerManager{
     }
     public void add(PlayerData d){
         int id = d.getID();
-        if(Sys.debug > 2){
-            Util.log("[PlayerManager] <add> Adding new Player with ID: "+id);
-        }
         Player p = new Player(node, d);
         players.add(p);
         playerID.put(id,players.indexOf(p));

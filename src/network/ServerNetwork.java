@@ -25,6 +25,8 @@ public class ServerNetwork{
     private ServerListener listener = new ServerListener();
     protected final GameServer app;
     protected Server server;
+    protected ServerSettings settings = new ServerSettings();
+    protected ServerStatus status = new ServerStatus();
     
     // Game variables:
     protected PlayerManager playerManager = new PlayerManager();
@@ -33,8 +35,9 @@ public class ServerNetwork{
         this.app = app;
         try {
             server = Network.createServer(6143);
-            listener = new ServerListener();
             registerSerials();
+            settings.load();
+            status.loadSettings(settings);
             server.addConnectionListener(listener);
             server.start();
         }catch (IOException ex){
@@ -83,26 +86,22 @@ public class ServerNetwork{
         // slot in the server before telling the client it's a successful connection.
         // If the checks pass, this will send an ID back to the player for connection.
         private void ConnectMessage(ConnectData d){
-            if(Sys.debug > 2){
+            if(Sys.debug > 4){
                 Util.log("[ServerNetwork] <ConnectMessage> Recieving new connection...");
             }
             if(d.GetVersion().equals(app.getVersion())){
                 app.enqueue(new Callable<Void>(){
                     public Void call() throws Exception{
                         int id = playerManager.findEmptyID();
-                        if(id == -1){
-                            if(Sys.debug > 1){
-                                Util.log("[ServerNetwork] ERROR: Server full. Player was denied connection.");
-                            }
-                        }else{
-                            connection.send(new IDData(id, false));
+                        if(id != -1){
+                            connection.send(new ServerStatusData(status));
                         }
                         return null;
                     }
                 });
             }else{
-                Util.log("[Connect Message] ERROR: Client has incorrect version. Player "+d.getID()+" was denied connection.");
-                connection.close("Invalid Version.");
+                Util.log("[Connect Message] ERROR: Client has incorrect version. A player was denied connection.");
+                connection.close("Invalid Version. [Client: "+d.GetVersion()+"] [Server: "+app.getVersion()+"]");
             }
         }
         

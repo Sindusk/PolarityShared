@@ -4,10 +4,13 @@
  */
 package stats;
 
+import com.jme3.network.serializing.Serializable;
+
 /**
  *
  * @author SinisteRing
  */
+@Serializable
 public abstract class Stat {
     protected String name;
     protected int priority;
@@ -15,6 +18,9 @@ public abstract class Stat {
     protected float value;
     
     // Common initializer for a new stat
+    public Stat(){
+        //
+    }
     public Stat(float base){
         this.base = base;
         this.value = base;

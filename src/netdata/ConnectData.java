@@ -9,18 +9,11 @@ import com.jme3.network.serializing.Serializable;
  */
 @Serializable
 public class ConnectData extends AbstractMessage {
-    private int id;
     private String version;
     public ConnectData() {}
     public ConnectData(String ver){
         version = ver;
         this.setReliable(true);
-    }
-    public ConnectData(int id){
-        this.id = id;
-    }
-    public int getID(){
-        return id;
     }
     public String GetVersion(){
         return version;

@@ -1,6 +1,7 @@
 package screens;
 
 import com.jme3.app.Application;
+import com.jme3.input.event.KeyInputEvent;
 import com.jme3.math.Vector2f;
 import com.jme3.scene.Node;
 import input.InputHandler;
@@ -69,6 +70,7 @@ public abstract class Screen {
     public abstract void update(float tpf);
     public abstract void onCursorMove(Vector2f cursorLoc);
     public abstract void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf);
+    public abstract void onKeyEvent(KeyInputEvent evt);
     
     // Helper method for detecting UI collision
     protected UIElement checkUI(Vector2f cursorLoc){

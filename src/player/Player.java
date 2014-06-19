@@ -5,13 +5,18 @@ import com.jme3.math.Vector2f;
 import com.jme3.network.HostedConnection;
 import com.jme3.scene.Node;
 import entity.PlayerEntity;
+import items.Equipment;
+import items.Weapon;
 import netdata.PlayerData;
+import tools.Util;
+import types.AttackType;
 
 /**
  *
  * @author SinisteRing
  */
 public class Player {
+    protected Equipment equipment;
     protected PlayerEntity entity;
     protected PlayerData data;
     protected HostedConnection conn;
@@ -27,6 +32,7 @@ public class Player {
             i++;
         }
         entity = new PlayerEntity(node, ColorRGBA.Orange);
+        equipment = d.getEquipment();
         this.data = d;
     }
     
@@ -60,6 +66,18 @@ public class Player {
     // For networking
     public boolean isConnected(){
         return connected;
+    }
+    
+    public void attack(Vector2f cursorLoc, boolean down){
+        Weapon weapon = equipment.getWeapon();
+        if(weapon == null){
+            Util.log("Error: No weapon ["+data.getID()+"]");
+        }
+        if(weapon.getAttackType() == AttackType.Charged){
+            //chargeAttack(weapon, cursorLoc, down);
+        }else if(down){
+            //fireAttack(weapon, cursorLoc, down);
+        }
     }
     
     public void updateMovement(float tpf){

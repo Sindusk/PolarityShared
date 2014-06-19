@@ -1,14 +1,22 @@
 package input;
 
 import com.jme3.input.InputManager;
+import com.jme3.input.RawInputListener;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
+import com.jme3.input.event.JoyAxisEvent;
+import com.jme3.input.event.JoyButtonEvent;
+import com.jme3.input.event.KeyInputEvent;
+import com.jme3.input.event.MouseButtonEvent;
+import com.jme3.input.event.MouseMotionEvent;
+import com.jme3.input.event.TouchEvent;
+import tools.Util;
 
 /**
  * ClientInputHandler - Handles all input from users and organizes them based on conditions.
  * @author SinisteRing
  */
-public class ClientInputHandler extends InputHandler implements ActionListener, AnalogListener{
+public class ClientInputHandler extends InputHandler implements ActionListener, AnalogListener, RawInputListener{
     // Initialization
     public ClientInputHandler(InputManager inputManager){
         super(inputManager);
@@ -18,6 +26,7 @@ public class ClientInputHandler extends InputHandler implements ActionListener, 
             inputManager.addMapping(bind.mapping, bind.trigger);
             inputManager.addListener(this, bind.mapping);
         }
+        inputManager.addRawInputListener(this);
     }
     
     // Action handlers
@@ -48,4 +57,22 @@ public class ClientInputHandler extends InputHandler implements ActionListener, 
         }
         screen.onCursorMove(inputManager.getCursorPosition());
     }
+    public void onKeyEvent(KeyInputEvent evt){
+        if(evt.isPressed()){
+            Util.log(evt.getKeyChar()+" = "+evt.getKeyCode(), 0);
+        }
+        if(screen == null){
+            return;
+        }
+        screen.onKeyEvent(evt);
+    }
+    
+    // Excess methods because of RawInputListener implementation
+    public void beginInput() {}
+    public void endInput() {}
+    public void onJoyAxisEvent(JoyAxisEvent evt) {}
+    public void onJoyButtonEvent(JoyButtonEvent evt) {}
+    public void onMouseMotionEvent(MouseMotionEvent evt) {}
+    public void onMouseButtonEvent(MouseButtonEvent evt) {}
+    public void onTouchEvent(TouchEvent evt) {}
 }

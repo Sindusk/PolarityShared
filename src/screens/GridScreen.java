@@ -1,6 +1,7 @@
 package screens;
 
 import com.jme3.app.Application;
+import com.jme3.input.event.KeyInputEvent;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
@@ -60,5 +61,10 @@ public class GridScreen extends Screen {
         if(bind.equals(ClientBinding.Exit.toString())){
             Sys.getInputHandler().switchScreens(new MenuScreen(app, root.getParent(), gui.getParent()));
         }
+    }
+    
+    @Override
+    public void onKeyEvent(KeyInputEvent evt){
+        // implement
     }
 }

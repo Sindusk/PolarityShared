@@ -1,6 +1,7 @@
 package screens;
 
 import com.jme3.app.Application;
+import com.jme3.input.event.KeyInputEvent;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
@@ -19,14 +20,11 @@ import ui.UIElement;
 public class MenuScreen extends Screen {
     private Button gridButton;
     private Button multiButton;
-    private Button gameButton;
     private Button invButton;
     
     public MenuScreen(Application app, Node rootNode, Node guiNode){
         super(app, rootNode, guiNode);
-        if(Sys.debug > 3){
-            Util.log("[MenuScreen] Initializing New MenuScreen...");
-        }
+        Util.log("[MenuScreen] Initializing New MenuScreen...", 3);
         name = "Menu Screen";
     }
     
@@ -37,19 +35,6 @@ public class MenuScreen extends Screen {
         Sys.getCamera().lookAt(Vector3f.ZERO, Vector3f.UNIT_Y);
         float width = Sys.width;
         float height = Sys.height;
-        
-        // Game button
-        /*gameButton = new Button(gui, new Vector2f(width*0.5f, height*0.7f), width*0.4f, height*0.05f, 0){
-            @Override
-            public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
-                if(bind.equals(ClientBinding.LClick.toString()) && down){
-                    inputHandler.switchScreens(new GameScreen(app, root.getParent(), gui.getParent()));
-                }
-            }
-        };
-        gameButton.setColor(ColorRGBA.Gray);
-        gameButton.setText("Start Game");
-        ui.add(gameButton);*/
         
         // Multiplayer button
         multiButton = new Button(gui, new Vector2f(width*0.5f, height*0.7f), width*0.4f, height*0.05f, 0){
@@ -113,5 +98,10 @@ public class MenuScreen extends Screen {
         if(e != null){
             actionUI(e, cursorLoc, bind, down, tpf);
         }
+    }
+    
+    @Override
+    public void onKeyEvent(KeyInputEvent evt){
+        // implement
     }
 }

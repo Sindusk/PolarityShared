@@ -1,5 +1,6 @@
 package ui;
 
+import com.jme3.input.event.KeyInputEvent;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
@@ -51,6 +52,9 @@ public class UIElement {
     // Action definition placeholder
     public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
         Util.log("Error 3: No override for onAction in class "+this.getClass().toString());
+    }
+    public void onKeyEvent(KeyInputEvent evt){
+        Util.log("Error 3: No override for onKeyEvent in class "+this.getClass().toString());
     }
     
     // Changes the color of the main geometry
