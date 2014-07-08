@@ -73,11 +73,11 @@ public class Player {
         if(weapon == null){
             Util.log("Error: No weapon ["+data.getID()+"]");
         }
-        if(weapon.getAttackType() == AttackType.Charged){
+        /*if(weapon.getAttackType() == AttackType.Charged){
             //chargeAttack(weapon, cursorLoc, down);
         }else if(down){
             //fireAttack(weapon, cursorLoc, down);
-        }
+        }*/
     }
     
     public void updateMovement(float tpf){

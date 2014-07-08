@@ -94,7 +94,8 @@ public class ServerNetwork{
                     public Void call() throws Exception{
                         int id = playerManager.findEmptyID();
                         if(id != -1){
-                            connection.send(new ServerStatusData(status));
+                            //connection.send(new ServerStatusData(status));
+                            connection.send(new IDData(id, true));
                         }
                         return null;
                     }

@@ -61,7 +61,7 @@ public class MultiplayerScreen extends Screen {
         hamachiButton.setText("Hamachi");
         ui.add(hamachiButton);// Hamachi button:
         
-        addServerButton = new Button(gui, "aluminumPlate", new Vector2f(width*0.35f, height*0.3f), width*0.2f, height*0.05f, 0){
+        addServerButton = new Button(gui, new Vector2f(width*0.35f, height*0.3f), width*0.2f, height*0.05f, 0){
             @Override
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
                 if(bind.equals(ClientBinding.LClick.toString()) && down){
@@ -69,7 +69,7 @@ public class MultiplayerScreen extends Screen {
                 }
             }
         };
-        //addServerButton.setColor(new ColorRGBA(0.4f, 0.4f, 0.8f, 1));
+        addServerButton.setColor(new ColorRGBA(0.4f, 0.4f, 0.8f, 1));
         addServerButton.setText("Add Server");
         addServerButton.setTextColor(new ColorRGBA(0.4f, 0, 0, 1));
         ui.add(addServerButton);

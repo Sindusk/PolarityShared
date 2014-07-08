@@ -59,7 +59,7 @@ public class ClientInputHandler extends InputHandler implements ActionListener, 
     }
     public void onKeyEvent(KeyInputEvent evt){
         if(evt.isPressed()){
-            Util.log(evt.getKeyChar()+" = "+evt.getKeyCode(), 0);
+            Util.log(evt.getKeyChar()+" = "+evt.getKeyCode(), 2);
         }
         if(screen == null){
             return;
