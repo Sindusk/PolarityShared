@@ -1,6 +1,6 @@
 package items;
+
 import java.util.ArrayList;
-import stats.Stat;
 
 /**
  *
@@ -24,11 +24,6 @@ public class Inventory {
     
     // Add an item priority-wise.
     public void add(Item item){
-        for(Item i : items){
-            if(i.getClass().equals(item.getClass())){
-                //i.add(item.getCurrent());
-            }
-        }
         items.add(item);
     }
 }
