@@ -25,8 +25,8 @@ public class UIElement {
     public UIElement(Node parent, Vector2f center, float x, float y, float z){
         sizeX = x;
         sizeY = y;
-        x /= 2.0f;
-        y /= 2.0f;
+        x /= 2.0f;  // Divide size by half, since the objects are drawn
+        y /= 2.0f;  // from the center outward (i.e. 100px object would be 50px in both directions)
         // This whole series of recursive offset checking is used to figure out the bounds of a control.
         // By checking the translation of every node above it, we can figure out where on the screen of the player
         // any given element is. This allows us to create a bounds which detects player input for that area.

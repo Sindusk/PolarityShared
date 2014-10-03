@@ -12,7 +12,6 @@ import com.jme3.scene.shape.Cylinder;
 import com.jme3.scene.shape.Line;
 import com.jme3.scene.shape.Quad;
 import com.jme3.scene.shape.Sphere;
-import com.jme3.shader.VarType;
 import tools.SinText.Alignment;
 
 /**

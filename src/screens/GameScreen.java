@@ -13,6 +13,9 @@ import input.ClientBinding;
 import input.InputHandler;
 import character.CharacterManager;
 import hud.FPSCounter;
+import hud.HUDElement;
+import hud.Locator;
+import java.util.ArrayList;
 import tools.Sys;
 import tools.Util;
 import world.World;
@@ -25,6 +28,7 @@ public class GameScreen extends Screen {
     protected World world;
     protected CharacterManager characterManager;
     protected FPSCounter fpsCounter;
+    protected ArrayList<HUDElement> hud = new ArrayList();
     
     // Movement testing
     protected int playerID;
@@ -43,7 +47,8 @@ public class GameScreen extends Screen {
         this.inputHandler = inputHandler;
         world = new World(50);
         world.generate();
-        fpsCounter = new FPSCounter(gui, new Vector2f(0, Sys.height-15), 15, 0);
+        hud.add(new FPSCounter(gui, new Vector2f(10, Sys.height-15), 15));   // Creates the FPS Counter
+        hud.add(new Locator(gui, new Vector2f(10, Sys.height-35), 15));      // Creates the Locator
         root.attachChild(world.getNode());
         root.attachChild(characterManager.getNode());
     }
@@ -55,7 +60,9 @@ public class GameScreen extends Screen {
         characterManager.getPlayer(playerID).updateMovement(tpf);
         characterManager.update(tpf);
         world.update(tpf);
-        fpsCounter.update(tpf);
+        for(HUDElement h:hud){
+            h.update(characterManager.getPlayer(playerID), tpf);
+        }
         
         Vector2f tempVect = characterManager.getPlayer(playerID).getLocation();
         Sys.getCamera().setLocation(new Vector3f(tempVect.x, tempVect.y, 50));

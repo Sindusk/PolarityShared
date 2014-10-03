@@ -6,6 +6,7 @@ import com.jme3.scene.Node;
 import entity.Entity;
 import entity.PlayerEntity;
 import entity.Projectile;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.HashMap;
 import tools.Sys;
@@ -19,6 +20,7 @@ public class World {
     protected HashMap<Vector2i, Chunk> data = new HashMap();
     protected Node node = new Node("World");
     protected ArrayList<Entity> entities=new ArrayList<Entity>();
+    protected QuadTree quadTree = new QuadTree(0, new Rectangle(-100, -100, 200, 200));
     protected int seed;
     
     public World(int seed){
@@ -45,8 +47,10 @@ public class World {
     public void update(float tpf){
         // Updates all entities currently in the world
         // Might need to be changed, sounds super inefficient...
+        quadTree.clear();
         for(Entity t:entities){
             t.update(tpf);
+            quadTree.insert(t);
         }
     }
     

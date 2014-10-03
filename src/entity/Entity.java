@@ -5,9 +5,9 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import network.ClientNetwork;
-import tools.Sys;
 import tools.Util;
 import world.Chunk;
 import world.World;
@@ -18,8 +18,10 @@ import world.World;
  */
 public abstract class Entity {
     protected Node node = new Node("Entity");
+    protected Rectangle bounds;
     protected Vector2f oldLoc = new Vector2f(0, 0);
     protected Vector2f newLoc = new Vector2f(0, 0);
+    protected float radius = 2;
     protected float length; //half length
     protected float height; //total height
     
@@ -33,18 +35,12 @@ public abstract class Entity {
         Vector3f old3D = new Vector3f(oldLoc.x, oldLoc.y, 0);
         Vector3f new3D = new Vector3f(newLoc.x, newLoc.y, 0);
         node.setLocalTranslation(old3D.interpolate(new3D, interp));
-        if(Sys.debug > 3){
-            Util.log("[Entity] <update> interpolation = "+old3D.interpolate(new3D, interp).toString()+" - interp = "+interp);
-        }
+        Util.log("[Entity] <update> interpolation = "+old3D.interpolate(new3D, interp).toString()+" - interp = "+interp, 3);
         if(interp < 1.0f){
-            if(Sys.debug > 4){
-                Util.log("[Entity] <update> tpf*MOVE_INVERSE = "+tpf*ClientNetwork.MOVE_INVERSE);
-            }
+            Util.log("[Entity] <update> tpf*MOVE_INVERSE = "+tpf*ClientNetwork.MOVE_INVERSE, 4);
             interp += tpf*ClientNetwork.MOVE_INVERSE;
         }else{
-            if(Sys.debug > 5){
-                Util.log("Late message for movement!");
-            }
+            Util.log("Late message for movement!", 5);
         }
     }
     
@@ -57,6 +53,9 @@ public abstract class Entity {
         Util.log("[Entity] <getLocation> location = "+newLoc.toString(), 3);
         return newLoc.clone();
     }
+    public Rectangle getBounds(){
+        return bounds;
+    }
     public Vector2f getBottomLeft(){
         return new Vector2f(newLoc.x-length, newLoc.y);
     }
@@ -65,11 +64,12 @@ public abstract class Entity {
     }
     
     public void updateLocation(Vector2f loc){
-        Util.log("[Entity] <setLocation> OLD locs = "+oldLoc.toString()+" - "+newLoc.toString(), 4);
+        Util.log("[Entity] <updateLocation> OLD locs = "+oldLoc.toString()+" - "+newLoc.toString(), 4);
         this.oldLoc = newLoc.clone();
         this.newLoc = loc;
-        Util.log("[Entity] <setLocation> NEW locs = "+oldLoc.toString()+" - "+newLoc.toString(), 4);
         this.interp = 0;
+        this.bounds = new Rectangle((int)(loc.x-radius),(int)(loc.y-radius), (int)(loc.x+radius), (int)(loc.y+radius));
+        Util.log("[Entity] <updateLocation> NEW locs = "+oldLoc.toString()+" - "+newLoc.toString(), 4);
     }
     
     public void updateRotation(Vector2f loc){
@@ -79,12 +79,8 @@ public abstract class Entity {
     }
     
     public void move(float x, float y){
-        Util.log("[Entity] <move> OLD newLoc = "+newLoc.toString(), 3);
-        Util.log("[Entity] <move> OLD Node = "+node.getLocalTranslation().toString(), 3);
         newLoc.addLocal(x, y);
         node.move(x, y, 0);
-        Util.log("[Entity] <move> NEW newLoc = "+newLoc.toString(), 3);
-        Util.log("[Entity] <move> NEW Node = "+node.getLocalTranslation().toString(), 3);
     }
     public void move(Vector2f vector){
         this.move(vector.x, vector.y);
