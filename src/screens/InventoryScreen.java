@@ -2,12 +2,14 @@ package screens;
 
 import com.jme3.app.Application;
 import com.jme3.input.event.KeyInputEvent;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.scene.Node;
 import input.ClientBinding;
 import input.InputHandler;
 import tools.Sys;
 import tools.Util;
+import ui.Button;
 import ui.advanced.InventoryFrame;
 import ui.UIElement;
 
@@ -29,6 +31,17 @@ public class InventoryScreen extends Screen {
         invFrame = new InventoryFrame(gui, new Vector2f(Sys.width*0.5f, Sys.height*0.5f), 600, 600, 1);
         invFrame.setTitle("Inventory");
         invFrame.addTab("all", "all");
+        Button test = new Button(invFrame.getPanel("all").getNode(), new Vector2f(10, 10), 50, 50, 1){
+            @Override
+            public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
+                if(bind.equals(ClientBinding.LClick.toString()) && down){
+                    Util.log("This is the item");
+                }
+            }
+        };
+        test.setColor(ColorRGBA.Orange);
+        invFrame.getPanel("all").addControl(test);
+        invFrame.getPanel("all").setColor(ColorRGBA.Black);
         invFrame.addTab("weapons", "weapons");
         invFrame.addTab("ammo", "ammo");
         invFrame.addTab("tools", "tools");

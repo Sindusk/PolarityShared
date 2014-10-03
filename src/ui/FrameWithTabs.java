@@ -7,6 +7,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import input.ClientBinding;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  *
@@ -26,7 +27,7 @@ public class FrameWithTabs extends Frame {
     private final float panelSizeY = 0.8f;
     
     // Object variables
-    protected ArrayList<Panel> panels = new ArrayList();
+    protected HashMap<String,Panel> panels = new HashMap();
     protected ArrayList<Button> buttons = new ArrayList();
     protected Panel currentPanel;
     protected Node panelNode = new Node("PanelNode");
@@ -43,8 +44,9 @@ public class FrameWithTabs extends Frame {
     
     // Adds a tab button to the frame
     public void addTab(String icon, final String key){
-        final FrameWithTabs thisFrame = this;
-        final int curTab = tabs;
+        final FrameWithTabs thisFrame = this; // Creates a local variable for use within inner method declarations
+        final int curTab = tabs;    // Current tab counter
+        // Create the button which will swap to the tab
         Button button = new Button(buttonsNode, icon, new Vector2f((buttonScalingUnit*buttonSpacingX)*curTab,
                 (buttonScalingUnit*buttonSpacingY)*curTab), buttonScalingUnit*buttonScale, buttonScalingUnit*buttonScale, 0){
             @Override
@@ -54,26 +56,35 @@ public class FrameWithTabs extends Frame {
                 }
             }
         };
-        buttons.add(button);
-        controls.add(button);
+        buttons.add(button);    // Registers the button
+        controls.add(button);   // Allows the button to be controlled
+        // Creates the panel registered to this tab, then puts it in the HashMap
         Panel panel = new Panel(panelNode, new Vector2f(0, 0), sizeX*panelSizeX, sizeY*panelSizeY, 0);
-        panel.setColor(new ColorRGBA(FastMath.nextRandomFloat(), FastMath.nextRandomFloat(), 1, 1));
+        panel.setColor(new ColorRGBA(FastMath.nextRandomFloat(), FastMath.nextRandomFloat(), 1, 1));    // Color is randomized for testing
         panel.getNode().removeFromParent();
-        panels.add(panel);
+        panels.put(key, panel);     // Puts the panel instance into the HashMap at poisition key
         tabs++;
     }
     
+    // Sets the current displayed tab
     public void setTab(int tab, String key){
+        // If there is a panel active, this is required for cleaning up before changing
         if(currentPanel != null){
-            if(currentPanel.equals(panels.get(tab))){
+            // Do nothing if we're already on this tab
+            if(currentPanel.equals(panels.get(key))){
                 return;
-            }else{
+            }else{  // Else, remove the panel from the screen, to make way for the new tab
                 currentPanel.getNode().removeFromParent();
-                controls.remove(currentPanel);
+                controls.remove(currentPanel);  // Unregisters the panel from input
             }
         }
-        currentPanel = panels.get(tab);
+        currentPanel = panels.get(key);     // Obtain the panel related to the key passed in
         panelNode.attachChild(currentPanel.getNode());
-        controls.add(currentPanel);
+        controls.add(currentPanel);     // Registers the new panel to input
+    }
+    
+    // Gets the panel related to the key
+    public Panel getPanel(String key){
+        return panels.get(key);
     }
 }
