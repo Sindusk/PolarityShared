@@ -11,7 +11,8 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import input.ClientBinding;
 import input.InputHandler;
-import player.PlayerManager;
+import character.CharacterManager;
+import hud.FPSCounter;
 import tools.Sys;
 import tools.Util;
 import world.World;
@@ -22,16 +23,17 @@ import world.World;
  */
 public class GameScreen extends Screen {
     protected World world;
-    protected PlayerManager playerManager;
+    protected CharacterManager characterManager;
+    protected FPSCounter fpsCounter;
     
     // Movement testing
     protected int playerID;
     
     public GameScreen(Application app, Node rootNode, Node guiNode){
         super(app, rootNode, guiNode);
-        playerManager = clientNetwork.getPlayerManager();
+        characterManager = clientNetwork.getPlayerManager();
         playerID = clientNetwork.getID();
-        playerManager.setMyID(playerID);
+        characterManager.setMyID(playerID);
         Util.log("[GameScreen] <Initialize> playerID = "+playerID, 3);
         name="Game Screen";
     }
@@ -41,18 +43,21 @@ public class GameScreen extends Screen {
         this.inputHandler = inputHandler;
         world = new World(50);
         world.generate();
+        fpsCounter = new FPSCounter(gui, new Vector2f(0, Sys.height-15), 15, 0);
         root.attachChild(world.getNode());
-        root.attachChild(playerManager.getNode());
+        root.attachChild(characterManager.getNode());
     }
     
     @Override
     public void update(float tpf){
         Util.log("[GameScreen] <update> playerID = "+playerID, 4);
-        playerManager.getPlayer(playerID).setMousePosition(inputHandler.getCursorLocation());
-        playerManager.getPlayer(playerID).updateMovement(tpf);
-        playerManager.update(tpf);
+        characterManager.getPlayer(playerID).setMousePosition(inputHandler.getCursorLocation());
+        characterManager.getPlayer(playerID).updateMovement(tpf);
+        characterManager.update(tpf);
+        world.update(tpf);
+        fpsCounter.update(tpf);
         
-        Vector2f tempVect = playerManager.getPlayer(playerID).getLocation();
+        Vector2f tempVect = characterManager.getPlayer(playerID).getLocation();
         Sys.getCamera().setLocation(new Vector3f(tempVect.x, tempVect.y, 50));
         clientNetwork.update(tpf);
     }
@@ -66,16 +71,16 @@ public class GameScreen extends Screen {
     public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf) {
         // Actions
         if(bind.equals(ClientBinding.LClick.toString())){
-            playerManager.getPlayer(playerID).attack(cursorLoc, down);
+            characterManager.getPlayer(playerID).attack(cursorLoc, down);
         // Movement
         }else if(bind.equals(ClientBinding.Up.toString())){
-            playerManager.getPlayer(playerID).setMovement(0, down);
+            characterManager.getPlayer(playerID).setMovement(0, down);
         }else if(bind.equals(ClientBinding.Right.toString())){
-            playerManager.getPlayer(playerID).setMovement(1, down);
+            characterManager.getPlayer(playerID).setMovement(1, down);
         }else if(bind.equals(ClientBinding.Down.toString())){
-            playerManager.getPlayer(playerID).setMovement(2, down);
+            characterManager.getPlayer(playerID).setMovement(2, down);
         }else if(bind.equals(ClientBinding.Left.toString())){
-            playerManager.getPlayer(playerID).setMovement(3, down);
+            characterManager.getPlayer(playerID).setMovement(3, down);
         }
     }
     

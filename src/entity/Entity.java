@@ -14,21 +14,19 @@ import world.World;
 
 /**
  * Entity - Represents any non-block object that is attached to the game world.
- * @author SinisteRing
+ * @author Sindusk
  */
 public abstract class Entity {
     protected Node node = new Node("Entity");
-    protected Vector2f velocity=new Vector2f(0, 0);
     protected Vector2f oldLoc = new Vector2f(0, 0);
     protected Vector2f newLoc = new Vector2f(0, 0);
     protected float length; //half length
     protected float height; //total height
-    protected float mass;
     
-    private float interp = 0;
+    private float interp = 0;   // Counter used for interpolation, so movement is smooth(er)
     
     public Entity(Node parent){
-        parent.attachChild(node);
+        parent.attachChild(node); // Attaches the entity node ("node") to the parent passed in
     }
     
     public void update(float tpf){
@@ -56,6 +54,7 @@ public abstract class Entity {
         return myChunks;
     }
     public Vector2f getLocation(){
+        Util.log("[Entity] <getLocation> location = "+newLoc.toString(), 3);
         return newLoc.clone();
     }
     public Vector2f getBottomLeft(){
@@ -66,14 +65,10 @@ public abstract class Entity {
     }
     
     public void updateLocation(Vector2f loc){
-        if(Sys.debug > 4){
-            Util.log("[Entity] <setLocation> OLD locs = "+oldLoc.toString()+" - "+newLoc.toString());
-        }
+        Util.log("[Entity] <setLocation> OLD locs = "+oldLoc.toString()+" - "+newLoc.toString(), 4);
         this.oldLoc = newLoc.clone();
         this.newLoc = loc;
-        if(Sys.debug > 4){
-            Util.log("[Entity] <setLocation> NEW locs = "+oldLoc.toString()+" - "+newLoc.toString());
-        }
+        Util.log("[Entity] <setLocation> NEW locs = "+oldLoc.toString()+" - "+newLoc.toString(), 4);
         this.interp = 0;
     }
     
@@ -84,8 +79,12 @@ public abstract class Entity {
     }
     
     public void move(float x, float y){
+        Util.log("[Entity] <move> OLD newLoc = "+newLoc.toString(), 3);
+        Util.log("[Entity] <move> OLD Node = "+node.getLocalTranslation().toString(), 3);
         newLoc.addLocal(x, y);
         node.move(x, y, 0);
+        Util.log("[Entity] <move> NEW newLoc = "+newLoc.toString(), 3);
+        Util.log("[Entity] <move> NEW Node = "+node.getLocalTranslation().toString(), 3);
     }
     public void move(Vector2f vector){
         this.move(vector.x, vector.y);

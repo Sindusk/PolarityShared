@@ -1,5 +1,6 @@
 package tools;
 
+import action.ActionManager;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
 import com.jme3.bullet.BulletAppState;
@@ -10,6 +11,7 @@ import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Node;
 import com.jme3.system.Timer;
 import input.ClientInputHandler;
+import world.World;
 
 /**
  *
@@ -76,6 +78,14 @@ public class Sys {
     }
     
     // Other:
+    private static ActionManager actionManager;
+    public static ActionManager getActionManager(){
+        return actionManager;
+    }
+    public static void setActionManager(ActionManager actionManager){
+        Sys.actionManager = actionManager;
+    }
+    
     private static BulletAppState bulletAppState;
     public static BulletAppState getBulletAppState(){
         return bulletAppState;
@@ -83,6 +93,7 @@ public class Sys {
     public static void setBulletAppState(BulletAppState bulletAppState){
         Sys.bulletAppState = bulletAppState;
     }
+    
     private static Camera camera;
     public static Camera getCamera(){
         return camera;
@@ -90,6 +101,7 @@ public class Sys {
     public static void setCamera(Camera camera){
         Sys.camera = camera;
     }
+    
     private static ClientInputHandler inputHandler;
     public static ClientInputHandler getInputHandler(){
         return inputHandler;
@@ -120,5 +132,13 @@ public class Sys {
     }
     public static void setTimer(Timer timer){
         Sys.timer = timer;
+    }
+    
+    private static World world;
+    public static World getWorld(){
+        return world;
+    }
+    public static void setWorld(World world){
+        Sys.world = world;
     }
 }

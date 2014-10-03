@@ -13,11 +13,12 @@ import com.jme3.network.serializing.Serializer;
 import com.jme3.scene.Node;
 import input.InputHandler;
 import items.Equipment;
+import items.Weapon;
 import java.io.IOException;
 import java.util.concurrent.Callable;
 import main.GameClient;
 import netdata.*;
-import player.PlayerManager;
+import character.CharacterManager;
 import screens.GameScreen;
 import screens.MultiplayerScreen;
 import screens.Screen;
@@ -36,7 +37,7 @@ public class ClientNetwork{
     
     // Game variables:
     protected InputHandler inputHandler;
-    protected PlayerManager playerManager;
+    protected CharacterManager playerManager;
     protected ServerStatus serverStatus;
     
     // Constants:
@@ -62,7 +63,7 @@ public class ClientNetwork{
             Util.log("[ClientNetwork] <Initialize> Initializing ClientNetwork...");
         }
         this.app = app;
-        playerManager = new PlayerManager();
+        playerManager = new CharacterManager();
     }
     
     // Attempted connection, will fail if the server is not available.
@@ -84,6 +85,9 @@ public class ClientNetwork{
     
     // Primary update loop
     public void update(float tpf){
+        if(!client.isConnected()){
+            return;
+        } 
         int i = 0;
         while(i < timers.length){
             timers[i] += tpf;
@@ -116,7 +120,7 @@ public class ClientNetwork{
         }
         return CLIENT_ID;
     }
-    public PlayerManager getPlayerManager(){
+    public CharacterManager getPlayerManager(){
         return playerManager;
     }
     public void setInputHandler(InputHandler inputHandler){
@@ -191,12 +195,12 @@ public class ClientNetwork{
         private void IDMessage(IDData d){
             Util.log("[ClientNetwork] <IDMessage> Recieving IDMessage...", 4);
             CLIENT_ID = d.getID();
-            final PlayerData pd = new PlayerData(CLIENT_ID, new Vector2f(0, 0), new Equipment());
+            final PlayerData pd = new PlayerData(CLIENT_ID, new Vector2f(0, 0), new Equipment(new Weapon()));
             client.send(pd);
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
-                    playerManager.add(pd);
                     inputHandler.switchScreens(new GameScreen(app, Screen.getTopRoot(), Screen.getTopGUI()));
+                    playerManager.add(pd);
                     return null;
                 }
             });

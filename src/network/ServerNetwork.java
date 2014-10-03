@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.concurrent.Callable;
 import main.GameServer;
 import netdata.*;
-import player.PlayerManager;
+import character.CharacterManager;
 import tools.Sys;
 import tools.Util;
 
@@ -29,7 +29,7 @@ public class ServerNetwork{
     protected ServerStatus status = new ServerStatus();
     
     // Game variables:
-    protected PlayerManager playerManager = new PlayerManager();
+    protected CharacterManager playerManager = new CharacterManager();
     
     public ServerNetwork(GameServer app){
         this.app = app;

@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 import network.ServerNetwork;
 import tools.Sys;
 import tools.Util;
+import world.World;
 
 /**
 Copyright (c) 2003-2011 jMonkeyEngine
@@ -112,6 +113,8 @@ public class GameServer extends Application{
         inputHandler = new ServerInputHandler(inputManager);
         Util.log("[GameServer] <initialize> Starting Network...", 1);
         serverNetwork = new ServerNetwork(this);
+        
+        Sys.setWorld(new World(50));
     }
 
     @Override

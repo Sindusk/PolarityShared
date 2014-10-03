@@ -1,4 +1,4 @@
-package player;
+package character;
 
 import com.jme3.network.HostedConnection;
 import com.jme3.scene.Node;
@@ -13,15 +13,15 @@ import tools.Util;
  * PlayerManager - Used for the creation and management of networked players.
  * @author SinisteRing
  */
-public class PlayerManager{
-    private Node node = new Node("PlayerNode");
+public class CharacterManager{
+    private Node node = new Node("CharacterNode");
     private HashMap<Integer,Integer> playerID = new HashMap();
     private Set<Integer> playerIDSet = playerID.keySet();
     private ArrayList<Player> players = new ArrayList();
     private int myID = -1;
     
-    public PlayerManager(){
-        Util.log("[PlayerManager] <Instance> Creating...", 1);
+    public CharacterManager(){
+        Util.log("[CharacterManager] <Instance> Creating...", 1);
     }
     
     public Node getNode(){

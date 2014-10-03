@@ -1,5 +1,6 @@
 package main;
 
+import action.ActionManager;
 import com.jme3.app.Application;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Node;
@@ -49,6 +50,7 @@ public class GameClient extends Application {
     private static final String CLIENT_VERSION = "0.01";
     protected Node rootNode = new Node("Root Node");
     protected Node guiNode = new Node("Gui Node");
+    protected ActionManager actionManager = new ActionManager();
     protected ClientInputHandler inputHandler;
     protected ClientNetwork clientNetwork;
     
@@ -88,6 +90,7 @@ public class GameClient extends Application {
         // Initialize system variables
         Sys.height = settings.getHeight();
         Sys.width = settings.getWidth();
+        Sys.setActionManager(actionManager);
         Sys.setAssetManager(assetManager);
         Sys.setCamera(cam);
         Sys.setInputManager(inputManager);

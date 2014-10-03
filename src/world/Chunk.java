@@ -10,7 +10,7 @@ import tools.Util.Vector2i;
  * @author SinisteRing
  */
 public class Chunk {
-    private static final int SIZE = 32;
+    public static final int SIZE = 8;   // Amount of blocks per chunk
     protected ArrayList<ArrayList<Block>> blocks = new ArrayList();
     protected Node node = new Node("Chunk");
     protected Vector2i key;

@@ -1,13 +1,14 @@
-package player;
+package character;
 
+import action.ProjectileAttack;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.network.HostedConnection;
 import com.jme3.scene.Node;
-import entity.PlayerEntity;
 import items.Equipment;
 import items.Weapon;
 import netdata.PlayerData;
+import tools.Sys;
 import tools.Util;
 import types.AttackType;
 
@@ -15,9 +16,8 @@ import types.AttackType;
  *
  * @author SinisteRing
  */
-public class Player {
+public class Player extends GameCharacter{
     protected Equipment equipment;
-    protected PlayerEntity entity;
     protected PlayerData data;
     protected HostedConnection conn;
     protected Vector2f mousePos;
@@ -31,7 +31,7 @@ public class Player {
             movement[i] = false;
             i++;
         }
-        entity = new PlayerEntity(node, ColorRGBA.Orange);
+        entity = Sys.getWorld().addPlayerEntity(ColorRGBA.Orange);
         equipment = d.getEquipment();
         this.data = d;
     }
@@ -41,9 +41,6 @@ public class Player {
     }
     public PlayerData getData(){
         return data;
-    }
-    public Vector2f getLocation(){
-        return entity.getLocation();
     }
     
     public void setConnection(HostedConnection conn){
@@ -72,12 +69,21 @@ public class Player {
         Weapon weapon = equipment.getWeapon();
         if(weapon == null){
             Util.log("Error: No weapon ["+data.getID()+"]");
+            return;
         }
-        /*if(weapon.getAttackType() == AttackType.Charged){
+        if(weapon.getAttackType() == AttackType.Charged){
             //chargeAttack(weapon, cursorLoc, down);
+            Util.log("Error: Charged not yet implemented.");
         }else if(down){
-            //fireAttack(weapon, cursorLoc, down);
-        }*/
+            ProjectileAttack a = new ProjectileAttack(this, getLocation(), cursorLoc, weapon, weapon.getSpeed(), down){
+                @Override
+                public void onCollide(){
+                    //implement
+                }
+            };
+            //Sys.getActionManager().addAttack(a);
+            Util.log("pew");
+        }
     }
     
     public void updateMovement(float tpf){
@@ -96,11 +102,7 @@ public class Player {
             move.x -= tpf;
         }
         entity.updateRotation(mousePos);
-        entity.move(move);
-    }
-    
-    public void update(float tpf){
-        entity.update(tpf);
+        entity.updateLocation(entity.getLocation().add(move));
     }
     
     public void destroy(){
