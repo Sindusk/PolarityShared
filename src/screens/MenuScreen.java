@@ -18,7 +18,6 @@ import ui.UIElement;
  * @author SinisteRing
  */
 public class MenuScreen extends Screen {
-    private Button gridButton;
     private Button multiButton;
     private Button invButton;
     
@@ -49,21 +48,8 @@ public class MenuScreen extends Screen {
         multiButton.setText("Multiplayer");
         ui.add(multiButton);
         
-        // Grid button
-        gridButton = new Button(gui, new Vector2f(width*0.5f, height*0.6f), width*0.4f, height*0.05f, 0){
-            @Override
-            public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
-                if(bind.equals(ClientBinding.LClick.toString()) && down){
-                    inputHandler.switchScreens(new GridScreen(app, root.getParent(), gui.getParent()));
-                }
-            }
-        };
-        gridButton.setColor(new ColorRGBA(0, 0.7f, 0, 1));
-        gridButton.setText("Sphere Grid");
-        ui.add(gridButton);
-        
         // Inventory button
-        invButton = new Button(gui, new Vector2f(width*0.5f, height*0.5f), width*0.4f, height*0.05f, 0){
+        invButton = new Button(gui, new Vector2f(width*0.5f, height*0.6f), width*0.4f, height*0.05f, 0){
             @Override
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
                 if(bind.equals(ClientBinding.LClick.toString()) && down){

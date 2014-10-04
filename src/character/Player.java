@@ -81,7 +81,7 @@ public class Player extends GameCharacter{
             Util.log("Error: Charged not yet implemented.");
         }else if(down){
             Util.log("[Player] <attack> Creating new ProjectileAttack...", 2);
-            Vector3f worldTarget = Util.getWorldLoc(cursorLoc, Sys.getCamera());
+            Vector3f worldTarget = Util.getWorldLoc(cursorLoc, Sys.getCamera());    // Analyzes where in world space the player clicked.
             ProjectileAttack a = new ProjectileAttack(this, getLocation(), new Vector2f(worldTarget.x, worldTarget.y), weapon, down){
                 @Override
                 public void onCollide(){

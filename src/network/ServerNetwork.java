@@ -137,7 +137,7 @@ public class ServerNetwork{
          * @param d The data of the message.
          */
         private void ProjectileMessage(ProjectileData d){
-            Util.log("[ServerNetwork] <ProjectileMessage> Projectile data recieved...");
+            Util.log("[ServerNetwork] <ProjectileMessage> Projectile data recieved...", 2);
             server.broadcast(Filters.notEqualTo(connection), d);
             final ProjectileData m = d;
             app.enqueue(new Callable<Void>(){
