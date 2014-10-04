@@ -31,10 +31,14 @@ public class World {
     public Node getNode(){
         return node;
     }
+    public ArrayList<Entity> getEntities(){
+        return entities;
+    }
     
     public Projectile addProjectile(ProjectileAttack attack){
-        Projectile p = new Projectile(node, attack);    // Creates the projectile class data
-        p.create(attack.getStart());                    // Creates the projectile entity
+        Projectile p = new Projectile(node, attack);        // Creates the projectile class data
+        p.create(0.5f, attack.getStart(), attack.getTarget());    // Creates the projectile entity
+        entities.add(p);
         // tbi
         return p;
     }
@@ -48,10 +52,20 @@ public class World {
         // Updates all entities currently in the world
         // Might need to be changed, sounds super inefficient...
         quadTree.clear();
-        for(Entity t:entities){
-            t.update(tpf);
-            quadTree.insert(t);
+        int i = 0;
+        Entity t;   // Temp entity
+        while(i < entities.size()){
+            t = entities.get(i);
+            if(entities.get(i).isDestroyed()){
+                entities.remove(entities.get(i));
+            }else{
+                t.update(tpf);
+                quadTree.insert(t);
+                i++;
+            }
         }
+        ArrayList collisions = new ArrayList();
+        quadTree.retrieve(collisions, entities.get(0));
     }
     
     // World generation algorithm

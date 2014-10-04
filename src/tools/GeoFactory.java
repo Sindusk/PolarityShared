@@ -40,7 +40,16 @@ public class GeoFactory {
     }
 
     // --- Boxes --- //
-    // Color:
+    /**
+     * Creates a Box geometry (solid color version)
+     * @param node Parent node - this is the node that the geometry will attach to.
+     * @param name Name of the geometry - Useful for organization, but otherwise not very useful.
+     * @param size Size of the geometry. Keep in mind that the resulting size is twice the input value.
+     * The Geometry is generated from the center and extends to (input value) in each direction along that axis.
+     * @param trans Position of the geometry in 3D space. Note that this is affected by the location of the parent node.
+     * @param color ColorRGBA for the color of the sphere. Use new ColorRGBA(Red,Green,Blue,Alpha) or a ColorRGBA static field.
+     * @return Returns the resulting geometry.
+     */
     public static Geometry createBox(Node node, String name, Vector3f size, Vector3f trans, ColorRGBA color){
         Box b = new Box(Vector3f.ZERO, size.getX(), size.getY(), size.getZ());
         Geometry g = new Geometry(name, b);
@@ -52,10 +61,24 @@ public class GeoFactory {
         }
         return g;
     }
+    /**
+     * @see GeoFactory.createBox(Node node, String name, Vector3f size, Vector3f trans, ColorRGBA color)
+     */
     public static Geometry createBox(Node node, Vector3f size, Vector3f trans, ColorRGBA color){
-        return createBox(node, "", size, trans, color);
+        return createBox(node, " ", size, trans, color);
     }
-    // Texture:
+    /**
+     * Creates a Box geometry (textured version)
+     * @param node Parent node - this is the node that the geometry will attach to.
+     * @param name Name of the geometry - Useful for organization, but otherwise not very useful.
+     * @param size Size of the geometry. Keep in mind that the resulting size is twice the input value.
+     * The Geometry is generated from the center and extends to (input value) in each direction along that axis.
+     * @param trans Position of the geometry in 3D space. Note that this is affected by the location of the parent node.
+     * @param tex Path to the texture used for the geometry.
+     * @param scale Texture scaling for each face of the geometry.
+     * For example, new Vector2f(3, 2) will apply the texture 6 times in a grid, with 3 columns and 2 rows.
+     * @return Returns the resulting geometry.
+     */
     public static Geometry createBox(Node node, String name, Vector3f size, Vector3f trans, String tex, Vector2f scale){
         Box b = new Box(Vector3f.ZERO, size.getX(), size.getY(), size.getZ());
         b.scaleTextureCoordinates(scale);
@@ -125,7 +148,17 @@ public class GeoFactory {
         return g;
     }
     
-    // Spheres:
+    /**
+     * Creates a Sphere geometry (solid color version).
+     * <p>
+     * 
+     * @param node Parent node - this is the node that the geometry will attach to.
+     * @param name Name of the geometry - Useful for organization, but otherwise not very useful.
+     * @param radius Radius of the sphere.
+     * @param trans Position of the geometry in 3D space. Note that this is affected by the location of the parent node.
+     * @param color ColorRGBA for the color of the sphere. Use new ColorRGBA(Red,Green,Blue,Alpha) or a ColorRGBA static field.
+     * @return Returns the resulting geometry.
+     */
     public static Geometry createSphere(Node node, String name, float radius, Vector3f trans, ColorRGBA color){
         Sphere b = new Sphere(16, 16, radius);
         Geometry g = new Geometry(name, b);
@@ -137,6 +170,18 @@ public class GeoFactory {
         }
         return g;
     }
+    /**
+     * Creates a Sphere geometry (textured version).
+     * <p>
+     * Used as a way to shorten the amount of time necessary for creating a textured Sphere.
+     * @param node Parent node - this is the node that the geometry will attach to.
+     * @param name Name of the geometry - Useful for organization, but otherwise not very useful.
+     * @param radius Radius of the sphere.
+     * @param trans Position of the geometry in 3D space. Note that this is affected by the location of the parent node.
+     * @param tex The path of the texture used for the material of the Sphere.
+     * @param mode TextureMode - Original, Polar, or Projected (i.e. Sphere.TextureMode.Original)
+     * @return Returns the resulting geometry.
+     */
     public static Geometry createSphere(Node node, String name, float radius, Vector3f trans, String tex, Sphere.TextureMode mode){
         Sphere b = new Sphere(16, 16, radius);
         b.setTextureMode(mode);

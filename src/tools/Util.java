@@ -197,10 +197,10 @@ public class Util {
         }
         return null;
     }
-    private static Vector3f getWorldDir(Vector3f loc, Vector2f mouseLoc, Camera cam){
+    public static Vector3f getWorldDir(Vector3f loc, Vector2f mouseLoc, Camera cam){
         return cam.getWorldCoordinates(mouseLoc, 1f).subtract(loc).normalize();
     }
-    private static Vector3f getWorldLoc(Vector2f mouseLoc, Camera cam){
+    public static Vector3f getWorldLoc(Vector2f mouseLoc, Camera cam){
         return cam.getWorldCoordinates(mouseLoc, 0f).clone();
     }
     public static CollisionResult getMouseTarget(Vector2f mouseLoc, Camera cam, Node node){

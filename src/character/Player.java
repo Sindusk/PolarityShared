@@ -75,14 +75,13 @@ public class Player extends GameCharacter{
             //chargeAttack(weapon, cursorLoc, down);
             Util.log("Error: Charged not yet implemented.");
         }else if(down){
-            ProjectileAttack a = new ProjectileAttack(this, getLocation(), cursorLoc, weapon, weapon.getSpeed(), down){
+            ProjectileAttack a = new ProjectileAttack(this, getLocation(), cursorLoc, weapon, down){
                 @Override
                 public void onCollide(){
                     //implement
                 }
             };
-            //Sys.getActionManager().addAttack(a);
-            Util.log("pew");
+            Sys.getWorld().addProjectile(a);
         }
     }
     

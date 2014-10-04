@@ -21,7 +21,8 @@ public abstract class Entity {
     protected Rectangle bounds;
     protected Vector2f oldLoc = new Vector2f(0, 0);
     protected Vector2f newLoc = new Vector2f(0, 0);
-    protected float radius = 2;
+    protected boolean destroyed = false;
+    protected float radius = 1;
     protected float length; //half length
     protected float height; //total height
     
@@ -29,6 +30,7 @@ public abstract class Entity {
     
     public Entity(Node parent){
         parent.attachChild(node); // Attaches the entity node ("node") to the parent passed in
+        this.bounds = new Rectangle((int)(newLoc.x-radius),(int)(newLoc.y-radius), (int)(radius*2), (int)(radius*2));
     }
     
     public void update(float tpf){
@@ -62,13 +64,24 @@ public abstract class Entity {
     public Vector2f getTopRight(){
         return new Vector2f(newLoc.x+length, newLoc.y+height);
     }
+    public boolean isDestroyed(){
+        return destroyed;
+    }
     
+    public void moveLocation(Vector2f offset){
+        Util.log("[Entity] <updateLocation> OLD locs = "+oldLoc.toString()+" - "+newLoc.toString(), 4);
+        this.oldLoc = newLoc.clone();
+        this.newLoc = newLoc.add(offset);
+        this.interp = 0;
+        this.bounds = new Rectangle((int)(newLoc.x-radius),(int)(newLoc.y-radius), (int)(radius*2), (int)(radius*2));
+        Util.log("[Entity] <updateLocation> NEW locs = "+oldLoc.toString()+" - "+newLoc.toString(), 4);
+    }
     public void updateLocation(Vector2f loc){
         Util.log("[Entity] <updateLocation> OLD locs = "+oldLoc.toString()+" - "+newLoc.toString(), 4);
         this.oldLoc = newLoc.clone();
         this.newLoc = loc;
         this.interp = 0;
-        this.bounds = new Rectangle((int)(loc.x-radius),(int)(loc.y-radius), (int)(loc.x+radius), (int)(loc.y+radius));
+        this.bounds = new Rectangle((int)(newLoc.x-radius),(int)(newLoc.y-radius), (int)(radius*2), (int)(radius*2));
         Util.log("[Entity] <updateLocation> NEW locs = "+oldLoc.toString()+" - "+newLoc.toString(), 4);
     }
     
@@ -84,6 +97,11 @@ public abstract class Entity {
     }
     public void move(Vector2f vector){
         this.move(vector.x, vector.y);
+    }
+    
+    public void destroy(){
+        node.removeFromParent();
+        destroyed = true;
     }
     
     //Returns the area of the intersection of two rectangles.  Does not tell us which parts intersected.
