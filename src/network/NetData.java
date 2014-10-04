@@ -24,6 +24,7 @@ public enum NetData {
     MoveData(MoveData.class),
     PingData(PingData.class),
     PlayerData(PlayerData.class),
+    ProjectileData(ProjectileData.class),
     ServerStatusData(ServerStatusData.class),
     SoundData(SoundData.class),
     

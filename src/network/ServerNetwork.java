@@ -1,5 +1,6 @@
 package network;
 
+import action.ProjectileAttack;
 import com.jme3.network.ConnectionListener;
 import com.jme3.network.Filters;
 import com.jme3.network.HostedConnection;
@@ -29,7 +30,7 @@ public class ServerNetwork{
     protected ServerStatus status = new ServerStatus();
     
     // Game variables:
-    protected CharacterManager playerManager = new CharacterManager();
+    protected CharacterManager characterManager = new CharacterManager();
     
     public ServerNetwork(GameServer app){
         this.app = app;
@@ -72,7 +73,7 @@ public class ServerNetwork{
             // Nothing needed here.
         }
         public void connectionRemoved(Server server, HostedConnection conn) {
-            int id = playerManager.remove(conn);
+            int id = characterManager.remove(conn);
             if(id == -1){
                 return;
             }
@@ -81,18 +82,19 @@ public class ServerNetwork{
             Util.log("[Connection Removed] Player "+id+" has disconnected.");
         }
         
-        // Recieved when a player first pings the server, checking if a slot is open.
-        // This method determines if the player has the correct version & if there's an open
-        // slot in the server before telling the client it's a successful connection.
-        // If the checks pass, this will send an ID back to the player for connection.
+        /** Recieved when a player first pings the server, checking if a slot is open.
+         * <p>
+         * This method determines if the player has the correct version & if there's an open
+         * slot in the server before telling the client it's a successful connection.
+         * If the checks pass, this will send an ID back to the player for connection.
+         * @param d Data from the message.
+         */
         private void ConnectMessage(ConnectData d){
-            if(Sys.debug > 4){
-                Util.log("[ServerNetwork] <ConnectMessage> Recieving new connection...");
-            }
+            Util.log("[ServerNetwork] <ConnectMessage> Recieving new connection...", 1);
             if(d.GetVersion().equals(app.getVersion())){
                 app.enqueue(new Callable<Void>(){
                     public Void call() throws Exception{
-                        int id = playerManager.findEmptyID();
+                        int id = characterManager.findEmptyID();
                         if(id != -1){
                             //connection.send(new ServerStatusData(status));
                             connection.send(new IDData(id, true));
@@ -106,33 +108,61 @@ public class ServerNetwork{
             }
         }
         
-        // Recieved when a player moves. This method is mainly used to broadcast the movement
-        // to all other players currently connected.
+        /** Recieved when a player moves.
+         * <p>
+         * This method is mainly used to broadcast the movement
+         * @param d Data from the message.
+         */
         private void MoveMessage(MoveData d){
             server.broadcast(Filters.notEqualTo(connection), d);
             final MoveData m = d;
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
-                    playerManager.updatePlayerLocation(m);
+                    characterManager.updatePlayerLocation(m);
                     return null;
                 }
             });
         }
+        /**
+         * Ping data is empty, simply used as a timing device.
+         * @param d Data from the message.
+         */
         private void PingMessage(PingData d){
             connection.send(d);
         }
+        /**
+         * Message recieved when a new Projectile is spawned.
+         * <p>
+         * Holds all data required to reproduce the projectile.
+         * @param d The data of the message.
+         */
+        private void ProjectileMessage(ProjectileData d){
+            Util.log("[ServerNetwork] <ProjectileMessage> Projectile data recieved...");
+            server.broadcast(Filters.notEqualTo(connection), d);
+            final ProjectileData m = d;
+            app.enqueue(new Callable<Void>(){
+                public Void call() throws Exception{
+                    Sys.getWorld().addProjectile(new ProjectileAttack(characterManager, m));
+                    return null;
+                }
+            });
+        }
         private void SoundMessage(SoundData d){
-            //System.out.println("Handling SoundData from client "+d.getID());
             server.broadcast(d);
         }
-        // Players:
+        /**
+         * Message is recieved when a player is authenticated for joining the server.
+         * <p>
+         * This contains all the data for the player themselves, such as character stats, location, etc.
+         * @param d The data of the message.
+         */
         private void PlayerMessage(PlayerData d){
             Util.log("[ServerNetwork] <PlayerMessage> Player "+d.getID()+" (v"+app.getVersion()+") connected successfully.");
             int id = d.getID();
-            playerManager.add(d);
+            characterManager.add(d);
             server.broadcast(Filters.notEqualTo(connection), d);
-            playerManager.getPlayer(id).setConnection(connection);
-            playerManager.sendData(connection);
+            characterManager.getPlayer(id).setConnection(connection);
+            characterManager.sendData(connection);
         }
         
         public void messageReceived(HostedConnection source, Message m) {
@@ -145,6 +175,8 @@ public class ServerNetwork{
                 MoveMessage((MoveData) m);
             }else if(m instanceof PingData){
                 PingMessage((PingData) m);
+            }else if (m instanceof ProjectileData){
+                ProjectileMessage((ProjectileData) m);
             }else if(m instanceof SoundData){
                 SoundMessage((SoundData) m);
             }else if(m instanceof PlayerData){

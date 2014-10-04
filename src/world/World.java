@@ -57,7 +57,7 @@ public class World {
         while(i < entities.size()){
             t = entities.get(i);
             if(entities.get(i).isDestroyed()){
-                entities.remove(entities.get(i));
+                entities.remove(entities.get(i));   // Remove any entities that are destroyed, before updating.
             }else{
                 t.update(tpf);
                 quadTree.insert(t);

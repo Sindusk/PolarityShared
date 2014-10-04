@@ -57,6 +57,9 @@ public abstract class Screen {
     public static void setApplication(Application app){
         Screen.app = app;
     }
+    public static ClientNetwork getClientNetwork(){
+        return Screen.clientNetwork;
+    }
     public static void setClientNetwork(ClientNetwork clientNetwork){
         Screen.clientNetwork = clientNetwork;
     }

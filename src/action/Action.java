@@ -6,11 +6,13 @@ package action;
 
 import character.GameCharacter;
 import com.jme3.math.Vector2f;
+import com.jme3.network.serializing.Serializable;
 
 /**
  *
  * @author SinisteRing
  */
+@Serializable
 public class Action {
     protected GameCharacter owner;
     protected Vector2f start;

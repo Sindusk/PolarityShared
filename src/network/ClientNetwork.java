@@ -1,5 +1,6 @@
 package network;
 
+import action.ProjectileAttack;
 import com.jme3.audio.AudioNode;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector2f;
@@ -20,6 +21,7 @@ import main.GameClient;
 import netdata.*;
 import character.CharacterManager;
 import screens.GameScreen;
+import screens.MenuScreen;
 import screens.MultiplayerScreen;
 import screens.Screen;
 import tools.Sys;
@@ -37,7 +39,7 @@ public class ClientNetwork{
     
     // Game variables:
     protected InputHandler inputHandler;
-    protected CharacterManager playerManager;
+    protected CharacterManager characterManager;
     protected ServerStatus serverStatus;
     
     // Constants:
@@ -63,7 +65,7 @@ public class ClientNetwork{
             Util.log("[ClientNetwork] <Initialize> Initializing ClientNetwork...");
         }
         this.app = app;
-        playerManager = new CharacterManager();
+        characterManager = new CharacterManager();
     }
     
     // Attempted connection, will fail if the server is not available.
@@ -106,7 +108,7 @@ public class ClientNetwork{
             if(Sys.debug > 4){
                 Util.log("[ClientNetwork] <update> Sending my ("+CLIENT_ID+") movement...");
             }
-            client.send(new MoveData(CLIENT_ID, playerManager.getPlayer(CLIENT_ID).getLocation(), inputHandler.getCursorLocation()));
+            client.send(new MoveData(CLIENT_ID, characterManager.getPlayer(CLIENT_ID).getLocation(), inputHandler.getCursorLocation()));
             timers[MOVE] = 0;
         }
     }
@@ -115,13 +117,11 @@ public class ClientNetwork{
         return CLIENT_CONNECTED;
     }
     public int getID(){
-        if(Sys.debug > 4){
-            Util.log("[ClientNetwork] <getID> CLIENT_ID = "+CLIENT_ID);
-        }
+        Util.log("[ClientNetwork] <getID> CLIENT_ID = "+CLIENT_ID, 4);
         return CLIENT_ID;
     }
     public CharacterManager getPlayerManager(){
-        return playerManager;
+        return characterManager;
     }
     public void setInputHandler(InputHandler inputHandler){
         this.inputHandler = inputHandler;
@@ -151,6 +151,7 @@ public class ClientNetwork{
     
     public void send(Message message){
         if(isConnected()){
+            Util.log("[ClientNetwork] <send> Sending message...", 2);
             client.send(message);
         }
     }
@@ -162,8 +163,10 @@ public class ClientNetwork{
             Util.log("Connection to server successful.");
         }
         public void clientDisconnected(Client c, DisconnectInfo info){
-            Util.log(info.reason);
-            // Go back to main screen
+            if(info != null){
+                Util.log(info.reason);
+            }
+            inputHandler.switchScreens(new MenuScreen(app, Screen.getTopRoot(), Screen.getTopGUI()));
         }
         
         private void CommandMessage(CommandData d){
@@ -176,22 +179,28 @@ public class ClientNetwork{
             });
         }
         
-        // Of course, this is the message sent when the player is disconnected.
-        // It holds certain data for the disconnect message, and potentially other misc data.
+        /** This is the message sent when the player is disconnected.
+         * <p>
+         * It holds certain data for the disconnect message, and potentially other misc data.
+         * @param d The data from the message.
+         */
         private void DisconnectMessage(DisconnectData d){
+            Util.log("[ClientNetwork] <DisconnectMessage> Recieving DisconnectMessage...", 1);
             final int id = d.getID();
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
-                    //app.getPlayer(id).destroy();
-                    playerManager.remove(id);
+                    characterManager.remove(id);
                     return null;
                 }
             });
         }
         
-        // When the server has determined the players ID, this message sends it to the player.
-        // This is also only recieved if the player connects successfully, so it is best used
-        // to actually begin entering the game and starting play.
+        /** When the server has determined the players ID, this message sends it to the player.
+         * <p>
+         * This is also only recieved if the player connects successfully, so it is best used
+         * to actually begin entering the game and starting play.
+         * @param d The data from the message.
+         */
         private void IDMessage(IDData d){
             Util.log("[ClientNetwork] <IDMessage> Recieving IDMessage...", 4);
             CLIENT_ID = d.getID();
@@ -200,21 +209,26 @@ public class ClientNetwork{
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
                     inputHandler.switchScreens(new GameScreen(app, Screen.getTopRoot(), Screen.getTopGUI()));
-                    playerManager.add(pd);
+                    characterManager.add(pd);
+                    CLIENT_CONNECTED = true;
                     return null;
                 }
             });
         }
         
-        // When a player moves to a new position, this message is recieved to update all clients
-        // of the player's new position. The client will interpet the interpolation over time to
-        // the new location, but this will give the final location of where they're at on the server.
+        /** When a player moves to a new position, this message is recieved to update all clients of the player's new position.
+         * <p>
+         * The client will interpet the interpolation over time to
+         * the new location, but this will give the final location
+         * of where they're at on the server.
+         * @param d The data from the message.
+         */
         private void MoveMessage(MoveData d){
             Util.log("[ClientNetwork] <MoveMessage> Recieving MoveMessage...", 4);
             final MoveData m = d;
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
-                    playerManager.updatePlayerLocation(m);
+                    characterManager.updatePlayerLocation(m);
                     return null;
                 }
             });
@@ -223,14 +237,19 @@ public class ClientNetwork{
             final float pingTime = app.getTimer().getTimeInSeconds() - time;
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
-                    Util.log("[ClientNetwork] <PingMessage> Current Ping: "+(int) FastMath.ceil(pingTime*1000)+" ms", 3); //Temporary
+                    Util.log("[ClientNetwork] <PingMessage> Current Ping: "+(int) FastMath.ceil(pingTime*1000)+" ms", 4);
                     return null;
                 }
             });
         }
         
-        // When a new player joins the server, this message is
-        // sent to update all clients with the new Player data.
+        /**
+         * Message responsible for updating all clients of a new player's information.
+         * <p>
+         * Contains an instance of Player to give to all clients, so they have client-side
+         * knowledge of what to do when that player makes an action.
+         * @param d The data from the message.
+         */
         private void PlayerMessage(PlayerData d){
             Util.log("[ClientNetwork] <PlayerMessage> Recieving new PlayerMessage...", 2);
             if(d.getID() == CLIENT_ID){
@@ -239,23 +258,41 @@ public class ClientNetwork{
             final PlayerData m = d;
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
-                    playerManager.add(m);
+                    characterManager.add(m);
                     return null;
                 }
             });
         }
         
-        // When the player first attempts connection with a server,
-        // the server sends this data to inform the client of crucial
-        // information before allowing entry.
+        /**
+         * Message broadcast when a projectile is spawned.
+         * <p>
+         * Holds all information necessary to spawn the projectile.
+         * @param d The data from the message.
+         */
+        private void ProjectileMessage(ProjectileData d){
+            Util.log("[ClientNetwork] <ProjectileMessage> Recieving new ProjectileMessage...", 2);
+            final ProjectileData m = d;
+            app.enqueue(new Callable(){
+                public Void call() throws Exception{
+                    Sys.getWorld().addProjectile(new ProjectileAttack(characterManager, m));
+                    return null;
+                }
+            });
+        }
+        
+        /** Server information & status message.
+         * <p>
+         * The server sends this data to inform the client of crucial
+         * information before allowing entry to the server.
+         * @param d The data from the message.
+         */
         private void ServerStatusMessage(ServerStatusData d){
-            Util.log("[ClientNetwork] <PlayerMessage> Recieving new ServerStatusMessage...", 2);
+            Util.log("[ClientNetwork] <ServerStatusMessage> Recieving new ServerStatusMessage...", 2);
             final ServerStatusData m = d;
             app.enqueue(new Callable(){
                 public Void call() throws Exception{
-                    if(inputHandler.getScreen() instanceof MultiplayerScreen){
-                        
-                    }else{
+                    if(!(inputHandler.getScreen() instanceof MultiplayerScreen)){
                         Util.log("Error 5: Server sent status when multiplayer screen was not open.", 0);
                     }
                     serverStatus = m.getStatus();
@@ -270,7 +307,7 @@ public class ClientNetwork{
                 return;
             }
             final String s = d.getSound();
-            final Vector2f loc = playerManager.getPlayer(d.getID()).getLocation();
+            final Vector2f loc = characterManager.getPlayer(d.getID()).getLocation();
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
                     AudioNode node = new AudioNode(app.getAssetManager(), s);
@@ -299,6 +336,8 @@ public class ClientNetwork{
                 PingMessage();
             }else if(m instanceof PlayerData){
                 PlayerMessage((PlayerData) m);
+            }else if(m instanceof ProjectileData){
+                ProjectileMessage((ProjectileData) m);
             }else if(m instanceof ServerStatusData){
                 ServerStatusMessage((ServerStatusData) m);
             }else if(m instanceof SoundData){
