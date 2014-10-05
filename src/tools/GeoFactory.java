@@ -78,6 +78,29 @@ public class GeoFactory {
     public static Geometry createBox(Node node, Vector3f size, Vector3f trans, ColorRGBA color){
         return createBox(node, " ", size, trans, color);
     }
+    
+    /**
+     * Creates a Box geometry (solid color version, transparent)
+     * @param node Parent node - this is the node that the geometry will attach to.
+     * @param name Name of the geometry - Useful for organization, but otherwise not very useful.
+     * @param size Size of the geometry. Keep in mind that the resulting size is twice the input value.
+     * The Geometry is generated from the center and extends to (input value) in each direction along that axis.
+     * @param trans Position of the geometry in 3D space. Note that this is affected by the location of the parent node.
+     * @param color ColorRGBA for the color of the sphere. Use new ColorRGBA(Red,Green,Blue,Alpha) or a ColorRGBA static field.
+     * @return Returns the resulting geometry.
+     */
+    public static Geometry createBoxAlpha(Node node, String name, Vector3f size, Vector3f trans, ColorRGBA color){
+        Geometry g = createBox(node, name, size, trans, color);
+        g.setQueueBucket(Bucket.Transparent);
+        return g;
+    }
+    /**
+     * @see GeoFactory.createBox(Node node, String name, Vector3f size, Vector3f trans, ColorRGBA color)
+     */
+    public static Geometry createBoxAlpha(Node node, Vector3f size, Vector3f trans, ColorRGBA color){
+        return createBoxAlpha(node, " ", size, trans, color);
+    }
+    
     /**
      * Creates a Box geometry (textured version)
      * @param node Parent node - this is the node that the geometry will attach to.

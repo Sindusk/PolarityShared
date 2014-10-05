@@ -15,6 +15,7 @@ import tools.SinText;
 public class PlayerEntity extends Entity {
     protected Node nameNode = new Node("Player Name");    // Node that holds the nametag
     protected SinText nameTag;
+    protected Geometry nameBackground;  // Transparent background to make the name stand out
     protected Geometry geo;
     protected Geometry point;
     
@@ -24,7 +25,11 @@ public class PlayerEntity extends Entity {
         geo = GeoFactory.createBox(node, new Vector3f(0.7f, 0.5f, 1), Vector3f.ZERO, color);
         point = GeoFactory.createBox(node, new Vector3f(0.5f, 0.3f, 0.7f), new Vector3f(1f, 0f, 0), ColorRGBA.Red);
         // Create the hovering text above the model for the player's nametag
-        nameTag = GeoFactory.createSinTextAlpha(nameNode, 1.5f, new Vector3f(0, 2.5f, 2), "TNR32", player.getName(), ColorRGBA.White, SinText.Alignment.Center);
+        nameTag = GeoFactory.createSinTextAlpha(nameNode, 1.3f, new Vector3f(0, 2.5f, 2), "TNR32", player.getName(), new ColorRGBA(1, 1, 1, 1), SinText.Alignment.Center);
+        // Transparent background for the name to stand out
+        Vector3f backLoc = new Vector3f(nameTag.getLineWidth()/2f, nameTag.getLineHeight()/2f, 0);
+        Vector3f backSize = new Vector3f(0, nameTag.getLocalTranslation().y+(nameTag.getLineHeight()), 1);
+        nameBackground = GeoFactory.createBoxAlpha(nameNode, backLoc, backSize, new ColorRGBA(0, 0, 0, 0.5f));
         parent.attachChild(nameNode);
     }
     

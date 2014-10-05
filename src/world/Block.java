@@ -15,8 +15,8 @@ public class Block {
     protected Vector2f loc;
     protected Geometry geo;
     
-    public Block(Node parent, float x, float y){
+    public Block(Node parent, ColorRGBA color, float x, float y){
         loc = new Vector2f(x, y);
-        GeoFactory.createBox(parent, "block", new Vector3f(0.45f, 0.45f, 0.01f), new Vector3f(x, y, 0), ColorRGBA.Blue);
+        GeoFactory.createBox(parent, "block", new Vector3f(0.45f, 0.45f, 0.01f), new Vector3f(x, y, 0), color);
     }
 }

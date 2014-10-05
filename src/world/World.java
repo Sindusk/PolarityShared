@@ -18,6 +18,9 @@ import tools.Util.Vector2i;
  * @author SinisteRing
  */
 public class World {
+    private static final int SIZE_X = 6;
+    private static final int SIZE_Y = 6;
+    
     protected HashMap<Vector2i, Chunk> data = new HashMap();
     protected Node node = new Node("World");
     protected ArrayList<Entity> entities=new ArrayList<Entity>();
@@ -79,13 +82,19 @@ public class World {
     // World generation algorithm
     public void generate(){
         Sys.setWorld(this);
-        Vector2i key = new Vector2i(0, -1);
-        Chunk chunk = new Chunk(node, key);
-        chunk.generateBlocks();
-        data.put(key, chunk);
-        key = new Vector2i(-1, -1);
-        chunk = new Chunk(node, key);
-        chunk.generateBlocks();
-        data.put(key, chunk);
+        Vector2i key;
+        int x = 0-(SIZE_X/2);
+        int y;
+        while(x < SIZE_X/2){
+            y = 0-(SIZE_Y/2);
+            while(y < SIZE_Y/2){
+                key = new Vector2i(x, y);
+                Chunk chunk = new Chunk(node, key);
+                chunk.generateBlocks();
+                data.put(key, chunk);
+                y++;
+            }
+            x++;
+        }
     }
 }
