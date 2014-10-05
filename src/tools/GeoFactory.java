@@ -1,10 +1,10 @@
 package tools;
 
-import com.jme3.font.BitmapText;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
+import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
@@ -19,15 +19,17 @@ import tools.SinText.Alignment;
  * @author SinisteRing
  */
 public class GeoFactory {
-    // BitmapText:
-    public static BitmapText createText(Node node, float size, Vector3f trans, String font, ColorRGBA color){
-        BitmapText text = new BitmapText(Util.getFont(Sys.getAssetManager(), font));
-        text.setColor(color);
-        text.setSize(size);
-        text.setLocalTranslation(trans);
-        node.attachChild(text);
-        return text;
-    }
+    /**
+     * Creates a text geometry.
+     * @param node Parent node - this is the node that the text will attach to.
+     * @param size Size of the text vertically.
+     * @param trans Translation (position) of the text in relation to parent node.
+     * @param font Font to use.
+     * @param text Initial text. Is able to be changed dynamically.
+     * @param color Initial color. Is able to be changed dynamically.
+     * @param align SinText.Alignment options: Left, Center, Right. Will function from the center point (trans)
+     * @return Returns the resulting text geometry.
+     */
     public static SinText createSinText(Node node, float size, Vector3f trans, String font, String text, ColorRGBA color, Alignment align){
         SinText txt = new SinText(Util.getFont(Sys.getAssetManager(), font));
         txt.setColor(color);
@@ -38,8 +40,17 @@ public class GeoFactory {
         node.attachChild(txt.getNode());
         return txt;
     }
+    /**
+     * Same as createSinText, but makes background transparent.
+     * <p>
+     * Mainly used for text placed in the world. GUI text does not need this.
+     */
+    public static SinText createSinTextAlpha(Node node, float size, Vector3f trans, String font, String text, ColorRGBA color, Alignment align){
+        SinText txt = createSinText(node, size, trans, font, text, color, align);
+        txt.setQueueBucket(Bucket.Transparent);
+        return txt;
+    }
 
-    // --- Boxes --- //
     /**
      * Creates a Box geometry (solid color version)
      * @param node Parent node - this is the node that the geometry will attach to.

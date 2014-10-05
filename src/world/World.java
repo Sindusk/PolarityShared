@@ -42,8 +42,8 @@ public class World {
         // tbi
         return p;
     }
-    public PlayerEntity addPlayerEntity(ColorRGBA color){
-        PlayerEntity e = new PlayerEntity(node, color);
+    public PlayerEntity addPlayerEntity(String name, ColorRGBA color){
+        PlayerEntity e = new PlayerEntity(node, name, color);
         entities.add(e);    // Adds to the list of entities in the world
         return e;
     }

@@ -11,17 +11,22 @@ import items.Equipment;
  */
 @Serializable
 public class PlayerData extends AbstractMessage {
-  private int id;           //Client ID
-  private Vector2f loc;     // Message Data
-  private Equipment equip;        // Stat
+  private int id;           // Server-side ID number for proper reference
+  private String name;      // Player name
+  private Vector2f loc;     // Location to spawn the player in
+  private Equipment equip;  // Equipment the player is currently wearing (may need to be removed/changed)
   public PlayerData() {}
-  public PlayerData(int ID, Vector2f location, Equipment equipment){
-      loc = location;
-      id = ID;
-      equip = equipment;
+  public PlayerData(int id, String name, Vector2f loc, Equipment equip){
+      this.id = id;
+      this.name = name;
+      this.loc = loc;
+      this.equip = equip;
   }
   public int getID(){
       return id;
+  }
+  public String getName(){
+      return name;
   }
   public Vector2f getLocation(){
       return loc;

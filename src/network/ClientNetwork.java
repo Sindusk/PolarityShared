@@ -204,7 +204,7 @@ public class ClientNetwork{
         private void IDMessage(IDData d){
             Util.log("[ClientNetwork] <IDMessage> Recieving IDMessage...", 4);
             CLIENT_ID = d.getID();
-            final PlayerData pd = new PlayerData(CLIENT_ID, new Vector2f(0, 0), new Equipment(new Weapon()));
+            final PlayerData pd = new PlayerData(CLIENT_ID, "Player "+CLIENT_ID, new Vector2f(0, 0), new Equipment(new Weapon()));
             client.send(pd);
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{

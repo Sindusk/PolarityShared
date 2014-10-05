@@ -36,7 +36,7 @@ public class Player extends GameCharacter{
             movement[i] = false;
             i++;
         }
-        entity = Sys.getWorld().addPlayerEntity(ColorRGBA.Orange);
+        entity = Sys.getWorld().addPlayerEntity(d.getName(), ColorRGBA.Orange);
         equipment = d.getEquipment();
         this.data = d;
     }

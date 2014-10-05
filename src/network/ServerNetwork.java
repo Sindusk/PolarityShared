@@ -18,8 +18,8 @@ import tools.Sys;
 import tools.Util;
 
 /**
- *
- * @author SinisteRing
+ * 
+ * @author Sindusk
  */
 public class ServerNetwork{
     // Important variables:
