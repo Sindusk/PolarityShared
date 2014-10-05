@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package world;
 
 import entity.Entity;
@@ -119,7 +115,7 @@ public class QuadTree {
         }
     }
     
-    public ArrayList retrieve(ArrayList returnObjects, Entity e){
+    public ArrayList<Entity> retrieve(ArrayList returnObjects, Entity e){
         int index = getIndex(e);
         if(index != -1 && nodes[0] != null){
             nodes[index].retrieve(returnObjects, e);

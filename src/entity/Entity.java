@@ -22,13 +22,14 @@ public abstract class Entity {
     protected Vector2f oldLoc = new Vector2f(0, 0);
     protected Vector2f newLoc = new Vector2f(0, 0);
     protected boolean destroyed = false;
-    protected float radius = 1;
+    protected float radius = 0.7f;
     protected float length; //half length
     protected float height; //total height
     
     private float interp = 0;   // Counter used for interpolation, so movement is smooth(er)
     
     public Entity(Node parent){
+        Util.log("[Entity] <Constructor> Creating entity: "+this.toString(), 2);
         parent.attachChild(node); // Attaches the entity node ("node") to the parent passed in
         this.bounds = new Rectangle((int)(newLoc.x-radius),(int)(newLoc.y-radius), (int)(radius*2), (int)(radius*2));
     }
@@ -64,6 +65,9 @@ public abstract class Entity {
     public Vector2f getTopRight(){
         return new Vector2f(newLoc.x+length, newLoc.y+height);
     }
+    public float getRadius(){
+        return radius;
+    }
     public boolean isDestroyed(){
         return destroyed;
     }
@@ -98,48 +102,28 @@ public abstract class Entity {
     public void move(Vector2f vector){
         this.move(vector.x, vector.y);
     }
+    /**
+     * Method used for checking and handling collisions.
+     * <p>
+     * The ArrayList that is passed in should have all *possible* collisions, and should not be filtered beforehand.
+     * @param collisions ArrayList of the entities that could possibly collide with this one.
+     * @return Returns the ArrayList of possible collisions *after* filtering.
+     */
+    public ArrayList<Entity> checkCollisions(ArrayList<Entity> collisions){
+        int i = 0;
+        while(i < collisions.size()){
+            // Filters: This entity (checking against itself), Distance/Radius
+            if(this == collisions.get(i) || this.getLocation().distance(collisions.get(i).getLocation()) > radius){
+                collisions.remove(i);
+            }else{
+                i++;
+            }
+        }
+        return collisions;
+    }
     
     public void destroy(){
         node.removeFromParent();
         destroyed = true;
-    }
-    
-    //Returns the area of the intersection of two rectangles.  Does not tell us which parts intersected.
-    public float intersects(Vector2f bottomLeftCorner, Vector2f topRightCorner) {
-        Vector2f tempVec=getBottomLeft();
-        float x0=tempVec.x;
-        float y0=tempVec.y;
-        tempVec=getTopRight();
-        float x1=tempVec.x;
-        float y1=tempVec.y;
-
-        if (!(x0 > topRightCorner.x || x1 < bottomLeftCorner.x || y0 > topRightCorner.y || y1 < bottomLeftCorner.y)) {
-            float a;
-            float b;
-            float c;
-            float d;
-            if (bottomLeftCorner.x < x0) {
-                a = x0;
-            } else {
-                a = bottomLeftCorner.x;
-            }
-            if (topRightCorner.x > x1) {
-                b = x1;
-            } else {
-                b = topRightCorner.x;
-            }
-            if (bottomLeftCorner.y < y0) {
-                c = y0;
-            } else {
-                c = bottomLeftCorner.y;
-            }
-            if (topRightCorner.y > y1) {
-                d = y1;
-            } else {
-                d = topRightCorner.y;
-            }
-            return (b - a) * (d - c);
-        }
-        return 0;
     }
 }

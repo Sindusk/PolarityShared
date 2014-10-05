@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package entity;
 
 import action.ProjectileAttack;
@@ -10,6 +6,7 @@ import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
+import java.util.ArrayList;
 import tools.GeoFactory;
 
 /**
@@ -45,9 +42,11 @@ public class Projectile extends Entity{
      */
     public void create(float radius, Vector2f start, Vector2f target){
         geo = GeoFactory.createSphere(node, "projectile", radius, Vector3f.ZERO, ColorRGBA.Pink);
-        oldLoc = start;
-        newLoc = start;
         direction = target.subtract(start).normalize();
+        // Apply a push forward so the projectile spawns infront of the player, instead of on top
+        Vector2f moddedStart = start.add(direction);
+        oldLoc = moddedStart;
+        newLoc = moddedStart;
     }
     
     @Override
@@ -58,5 +57,25 @@ public class Projectile extends Entity{
         if(lifetime <= 0){
             destroy();
         }
+    }
+    
+    @Override
+    public ArrayList<Entity> checkCollisions(ArrayList<Entity> collisions){
+        collisions = super.checkCollisions(collisions);
+        int i = 0;
+        while(i < collisions.size()){
+            // Filters: Owner of this projectile
+            if(attack.getOwner().getEntity() == collisions.get(i)){
+                collisions.remove(i);
+            }else{
+                i++;
+            }
+        }
+        if(collisions.size() > 0){
+            if(attack.onCollide(collisions)){
+                destroy();
+            }
+        }
+        return collisions;
     }
 }

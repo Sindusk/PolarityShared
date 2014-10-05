@@ -1,5 +1,6 @@
 package entity;
 
+import character.Player;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
@@ -17,13 +18,13 @@ public class PlayerEntity extends Entity {
     protected Geometry geo;
     protected Geometry point;
     
-    public PlayerEntity(Node parent, String name, ColorRGBA color){
+    public PlayerEntity(Node parent, Player player, ColorRGBA color){
         super(parent);
         // Create the (mock-up) player model
         geo = GeoFactory.createBox(node, new Vector3f(0.7f, 0.5f, 1), Vector3f.ZERO, color);
         point = GeoFactory.createBox(node, new Vector3f(0.5f, 0.3f, 0.7f), new Vector3f(1f, 0f, 0), ColorRGBA.Red);
         // Create the hovering text above the model for the player's nametag
-        nameTag = GeoFactory.createSinTextAlpha(nameNode, 1.5f, new Vector3f(0, 2.5f, 2), "TNR32", name, ColorRGBA.White, SinText.Alignment.Center);
+        nameTag = GeoFactory.createSinTextAlpha(nameNode, 1.5f, new Vector3f(0, 2.5f, 2), "TNR32", player.getName(), ColorRGBA.White, SinText.Alignment.Center);
         parent.attachChild(nameNode);
     }
     

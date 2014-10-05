@@ -1,14 +1,12 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package action;
 
 import character.CharacterManager;
 import character.GameCharacter;
 import com.jme3.math.Vector2f;
 import com.jme3.network.serializing.Serializable;
+import entity.Entity;
 import items.Weapon;
+import java.util.ArrayList;
 import netdata.ProjectileData;
 
 /**
@@ -43,5 +41,12 @@ public class ProjectileAttack extends Action {
         return speed;
     }
     
-    public void onCollide(){}
+    /**
+     * Method to override for collision when making a ProjectileAttack.
+     * @param collisions ArrayList containing the entities filtered for collision.
+     * @return Return true if you want the projectile to be destroyed, or false if you do not.
+     */
+    public boolean onCollide(ArrayList<Entity> collisions){
+        return false;
+    }
 }

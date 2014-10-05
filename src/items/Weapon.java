@@ -10,7 +10,7 @@ import types.AttackType;
 @Serializable
 public class Weapon extends Item {
     protected AttackType attackType;
-    protected float speed = 5f;
+    protected float speed = 8f;
     
     public Weapon(){
         this.attackType = AttackType.Normal;

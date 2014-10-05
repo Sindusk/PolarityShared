@@ -1,6 +1,7 @@
 package world;
 
 import action.ProjectileAttack;
+import character.Player;
 import com.jme3.math.ColorRGBA;
 import com.jme3.scene.Node;
 import entity.Entity;
@@ -37,13 +38,13 @@ public class World {
     
     public Projectile addProjectile(ProjectileAttack attack){
         Projectile p = new Projectile(node, attack);        // Creates the projectile class data
-        p.create(0.5f, attack.getStart(), attack.getTarget());    // Creates the projectile entity
+        p.create(0.4f, attack.getStart(), attack.getTarget());    // Creates the projectile entity
         entities.add(p);
         // tbi
         return p;
     }
-    public PlayerEntity addPlayerEntity(String name, ColorRGBA color){
-        PlayerEntity e = new PlayerEntity(node, name, color);
+    public PlayerEntity addPlayerEntity(Player player, ColorRGBA color){
+        PlayerEntity e = new PlayerEntity(node, player, color);
         entities.add(e);    // Adds to the list of entities in the world
         return e;
     }
@@ -64,7 +65,14 @@ public class World {
                 i++;
             }
         }
-        ArrayList collisions = new ArrayList();
+        ArrayList<Entity> collisions = new ArrayList();
+        // Do collision checking for all remaining entities
+        i = 0;
+        while(i < entities.size()){
+            t = entities.get(i);
+            t.checkCollisions(quadTree.retrieve(collisions, t));
+            i++;
+        }
         quadTree.retrieve(collisions, entities.get(0));
     }
     

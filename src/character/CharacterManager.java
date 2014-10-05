@@ -78,6 +78,7 @@ public class CharacterManager{
     public void add(PlayerData d){
         int id = d.getID();
         Player p = new Player(node, d);
+        p.create();
         players.add(p);
         playerID.put(id,players.indexOf(p));
     }

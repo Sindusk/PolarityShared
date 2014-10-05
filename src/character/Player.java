@@ -7,8 +7,11 @@ import com.jme3.math.Vector3f;
 import com.jme3.network.HostedConnection;
 import com.jme3.network.serializing.Serializable;
 import com.jme3.scene.Node;
+import entity.Entity;
+import entity.PlayerEntity;
 import items.Equipment;
 import items.Weapon;
+import java.util.ArrayList;
 import netdata.PlayerData;
 import netdata.ProjectileData;
 import screens.Screen;
@@ -26,6 +29,7 @@ public class Player extends GameCharacter{
     protected PlayerData data;
     protected HostedConnection conn;
     protected Vector2f mousePos;
+    protected String name;
     protected boolean[] movement = new boolean[4];  // Up, Right, Down, Left
     protected boolean connected = false;
     
@@ -36,9 +40,12 @@ public class Player extends GameCharacter{
             movement[i] = false;
             i++;
         }
-        entity = Sys.getWorld().addPlayerEntity(d.getName(), ColorRGBA.Orange);
+        name = "Player "+d.getID();
         equipment = d.getEquipment();
         this.data = d;
+    }
+    public void create(){
+        entity = Sys.getWorld().addPlayerEntity(this, ColorRGBA.Orange);
     }
     
     public HostedConnection getConnection(){
@@ -46,6 +53,9 @@ public class Player extends GameCharacter{
     }
     public PlayerData getData(){
         return data;
+    }
+    public String getName(){
+        return name;
     }
     
     public void setConnection(HostedConnection conn){
@@ -82,12 +92,25 @@ public class Player extends GameCharacter{
         }else if(down){
             Util.log("[Player] <attack> Creating new ProjectileAttack...", 2);
             Vector3f worldTarget = Util.getWorldLoc(cursorLoc, Sys.getCamera());    // Analyzes where in world space the player clicked.
+            // --- TEST PROJECTILE ---
             ProjectileAttack a = new ProjectileAttack(this, getLocation(), new Vector2f(worldTarget.x, worldTarget.y), weapon, down){
                 @Override
-                public void onCollide(){
-                    //implement
+                public boolean onCollide(ArrayList<Entity> collisions){
+                    int i = 0;
+                    Entity t;   // Temp entity
+                    while(i < collisions.size()){
+                        t = collisions.get(i);
+                        if(t instanceof PlayerEntity){
+                            PlayerEntity pe = (PlayerEntity) t; // Cast the Entity to a PlayerEntity to open up specific methods
+                            Util.log("Damaging "+t.toString()+" for 10");
+                            return true;
+                        }
+                        i++;
+                    }
+                    return false;
                 }
             };
+            // --- END TEST PROJECTILE ---
             Sys.getWorld().addProjectile(a);
             Screen.getClientNetwork().send(new ProjectileData(((Player)a.getOwner()).getData().getID(), a.getStart(), a.getTarget(), weapon));
             Util.log("[Player] <attack> Sent ProjectileAttack to server.", 2);
