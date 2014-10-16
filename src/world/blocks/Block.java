@@ -1,4 +1,4 @@
-package world;
+package world.blocks;
 
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
@@ -17,6 +17,6 @@ public class Block {
     
     public Block(Node parent, ColorRGBA color, float x, float y){
         loc = new Vector2f(x, y);
-        GeoFactory.createBox(parent, "block", new Vector3f(0.45f, 0.45f, 0.01f), new Vector3f(x, y, 0), color);
+        GeoFactory.createBox(parent, "block", new Vector3f(0.45f, 0.45f, 0f), new Vector3f(x, y, 0), color);
     }
 }

@@ -1,11 +1,13 @@
 package world;
 
+import world.blocks.Block;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector2f;
 import com.jme3.scene.Node;
 import java.util.ArrayList;
 import tools.Util.Vector2i;
+import world.blocks.Wall;
 
 /**
  *
@@ -26,6 +28,10 @@ public class Chunk {
         parent.attachChild(node);
     }
     
+    public Block getBlock(Vector2i coords){
+        return blocks.get(coords.x).get(coords.y);
+    }
+    
     public void generateBlocks(){
         int x = 0;
         int y;
@@ -33,7 +39,11 @@ public class Chunk {
             y = 0;
             blocks.add(new ArrayList());
             while(y < Chunk.SIZE){
-                blocks.get(x).add(new Block(node, color, loc.x+x, loc.y+y));
+                if(FastMath.nextRandomInt(1, 10) == 1){
+                    blocks.get(x).add(new Wall(node, ColorRGBA.Red, loc.x+x, loc.y+y));
+                }else{
+                    blocks.get(x).add(new Block(node, color, loc.x+x, loc.y+y));
+                }
                 y++;
             }
             x++;

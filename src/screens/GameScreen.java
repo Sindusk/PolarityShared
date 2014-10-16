@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package screens;
 
 import com.jme3.app.Application;
@@ -21,8 +17,8 @@ import tools.Util;
 import world.World;
 
 /**
- *
- * @author SinisteRing
+ * Screen encompassing Gameplay.
+ * @author Sindusk
  */
 public class GameScreen extends Screen {
     protected World world;
@@ -58,14 +54,16 @@ public class GameScreen extends Screen {
         Util.log("[GameScreen] <update> playerID = "+playerID, 4);
         characterManager.getPlayer(playerID).setMousePosition(inputHandler.getCursorLocation());
         characterManager.getPlayer(playerID).updateMovement(tpf);
-        characterManager.update(tpf);
+        characterManager.update(tpf);   // Update all other players
         world.update(tpf);
+        
+        // Update all HUD elements
         for(HUDElement h:hud){
             h.update(characterManager.getPlayer(playerID), tpf);
         }
         
         Vector2f tempVect = characterManager.getPlayer(playerID).getLocation();
-        Sys.getCamera().setLocation(new Vector3f(tempVect.x, tempVect.y, 50));
+        Sys.getCamera().setLocation(new Vector3f(tempVect.x, tempVect.y, 40));
         clientNetwork.update(tpf);
     }
     
@@ -79,6 +77,8 @@ public class GameScreen extends Screen {
         // Actions
         if(bind.equals(ClientBinding.LClick.toString())){
             characterManager.getPlayer(playerID).attack(cursorLoc, down);
+        }else if(bind.equals(ClientBinding.RClick.toString()) && down){
+            world.getBlock(Util.getWorldLoc(cursorLoc, Sys.getCamera()));
         // Movement
         }else if(bind.equals(ClientBinding.Up.toString())){
             characterManager.getPlayer(playerID).setMovement(0, down);

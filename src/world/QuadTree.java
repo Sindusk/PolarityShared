@@ -1,9 +1,9 @@
 package world;
 
+import com.jme3.math.Vector2f;
 import entity.Entity;
-import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
-import tools.Util.Vector2i;
 
 /**
  *
@@ -15,16 +15,16 @@ public class QuadTree {
     
     private int level;
     private ArrayList<Entity> objects;
-    private Rectangle bounds;
+    private Rectangle2D.Float bounds;
     private QuadTree[] nodes;
-    private Vector2i location;
+    private Vector2f location;
     
-    public QuadTree(int pLevel, Rectangle pBounds){
+    public QuadTree(int pLevel, Rectangle2D.Float pBounds){
         level = pLevel;
         objects = new ArrayList();
         bounds = pBounds;
         nodes = new QuadTree[4];
-        location = new Vector2i(0, 0);
+        location = new Vector2f(0, 0);
     }
     
     public void clear() {
@@ -40,21 +40,19 @@ public class QuadTree {
     }
     
     public void split(){
-        // x to z = horizontal (left to right)
-        // y to w = vertical (down to up)
-        int subWidth = (int)(bounds.getWidth()/2);
-        int subHeight = (int)(bounds.getHeight()/2);
-        int x = location.x;
-        int y = location.y;
+        float subWidth = (float) bounds.getWidth()/2f;
+        float subHeight = (float) bounds.getHeight()/2f;
+        float x = location.x;
+        float y = location.y;
         
-        nodes[0] = new QuadTree(level+1, new Rectangle(x+subWidth, y, subWidth, subHeight));
-        nodes[1] = new QuadTree(level+1, new Rectangle(x, y, subWidth, subHeight));
-        nodes[2] = new QuadTree(level+1, new Rectangle(x, y+subHeight, subWidth, subHeight));
-        nodes[3] = new QuadTree(level+1, new Rectangle(x+subWidth, y+subHeight, subWidth, subHeight));
+        nodes[0] = new QuadTree(level+1, new Rectangle2D.Float(x+subWidth, y, subWidth, subHeight));
+        nodes[1] = new QuadTree(level+1, new Rectangle2D.Float(x, y, subWidth, subHeight));
+        nodes[2] = new QuadTree(level+1, new Rectangle2D.Float(x, y+subHeight, subWidth, subHeight));
+        nodes[3] = new QuadTree(level+1, new Rectangle2D.Float(x+subWidth, y+subHeight, subWidth, subHeight));
     }
     
     private int getIndex(Entity e){
-        Rectangle pRect = e.getBounds();
+        Rectangle2D.Float pRect = e.getBounds();
         int index = -1;
         double verticalMidpoint = bounds.getX() + (bounds.getWidth()/2);
         double horizontalMidpoint = bounds.getY() + (bounds.getHeight()/2);

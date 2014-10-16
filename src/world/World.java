@@ -1,16 +1,20 @@
 package world;
 
+import world.blocks.Block;
 import action.ProjectileAttack;
 import character.Player;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Vector2f;
+import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import entity.Entity;
 import entity.PlayerEntity;
 import entity.Projectile;
-import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 import tools.Sys;
+import tools.Util;
 import tools.Util.Vector2i;
 
 /**
@@ -18,13 +22,13 @@ import tools.Util.Vector2i;
  * @author SinisteRing
  */
 public class World {
-    private static final int SIZE_X = 6;
-    private static final int SIZE_Y = 6;
+    private static final int SIZE_X = 10;
+    private static final int SIZE_Y = 10;
     
-    protected HashMap<Vector2i, Chunk> data = new HashMap();
+    protected HashMap<Vector2i, Chunk> chunkMap = new HashMap();
     protected Node node = new Node("World");
     protected ArrayList<Entity> entities=new ArrayList<Entity>();
-    protected QuadTree quadTree = new QuadTree(0, new Rectangle(-100, -100, 200, 200));
+    protected QuadTree quadTree = new QuadTree(0, new Rectangle2D.Float(-100, -100, 200, 200));
     protected int seed;
     
     public World(int seed){
@@ -37,6 +41,19 @@ public class World {
     }
     public ArrayList<Entity> getEntities(){
         return entities;
+    }
+    public Block getBlock(Vector2f loc){
+        Vector2i chunk = new Vector2i(Math.round(((loc.x+0.5f)/Chunk.SIZE)-0.5f), Math.round(((loc.y+0.5f)/Chunk.SIZE)-0.5f));
+        Vector2i coords = new Vector2i(Math.round(loc.x)-(chunk.x*Chunk.SIZE), Math.round(loc.y)-(chunk.y*Chunk.SIZE));
+        Util.log("chunk = "+chunk);
+        Chunk c = chunkMap.get(chunk);
+        if(c == null){
+            Util.log("Yup, it's null.");
+        }
+        return c.getBlock(coords);
+    }
+    public Block getBlock(Vector3f loc){
+        return getBlock(new Vector2f(loc.x, loc.y));
     }
     
     public Projectile addProjectile(ProjectileAttack attack){
@@ -91,7 +108,7 @@ public class World {
                 key = new Vector2i(x, y);
                 Chunk chunk = new Chunk(node, key);
                 chunk.generateBlocks();
-                data.put(key, chunk);
+                chunkMap.put(key, chunk);
                 y++;
             }
             x++;

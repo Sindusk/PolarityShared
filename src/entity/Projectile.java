@@ -6,8 +6,12 @@ import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import tools.GeoFactory;
+import tools.Sys;
+import tools.Util;
+import world.blocks.Wall;
 
 /**
  * Projectile Class
@@ -57,6 +61,20 @@ public class Projectile extends Entity{
         if(lifetime <= 0){
             destroy();
         }
+    }
+    
+    @Override
+    public void moveLocation(Vector2f offset){
+        Vector2f temp = newLoc.add(offset);
+        if(Sys.getWorld().getBlock(temp) instanceof Wall){
+            Util.log("Projectile Collided with wall, destroying...");
+            destroy();
+            return;
+        }
+        this.oldLoc = newLoc.clone();
+        this.newLoc = temp;
+        this.interp = 0;
+        this.bounds = new Rectangle2D.Float(newLoc.x-radius, newLoc.y-radius, radius*2, radius*2);
     }
     
     @Override

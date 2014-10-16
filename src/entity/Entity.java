@@ -5,12 +5,12 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
-import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import network.ClientNetwork;
+import tools.Sys;
 import tools.Util;
-import world.Chunk;
-import world.World;
+import world.blocks.Wall;
 
 /**
  * Entity - Represents any non-block object that is attached to the game world.
@@ -18,7 +18,7 @@ import world.World;
  */
 public abstract class Entity {
     protected Node node = new Node("Entity");
-    protected Rectangle bounds;
+    protected Rectangle2D.Float bounds;
     protected Vector2f oldLoc = new Vector2f(0, 0);
     protected Vector2f newLoc = new Vector2f(0, 0);
     protected boolean destroyed = false;
@@ -26,12 +26,12 @@ public abstract class Entity {
     protected float length; //half length
     protected float height; //total height
     
-    private float interp = 0;   // Counter used for interpolation, so movement is smooth(er)
+    protected float interp = 0; // Counter used for interpolation, so movement is smooth(er)
     
     public Entity(Node parent){
         Util.log("[Entity] <Constructor> Creating entity: "+this.toString(), 2);
         parent.attachChild(node); // Attaches the entity node ("node") to the parent passed in
-        this.bounds = new Rectangle((int)(newLoc.x-radius),(int)(newLoc.y-radius), (int)(radius*2), (int)(radius*2));
+        this.bounds = new Rectangle2D.Float(newLoc.x-radius, newLoc.y-radius, radius*2, radius*2);
     }
     
     public void update(float tpf){
@@ -47,16 +47,11 @@ public abstract class Entity {
         }
     }
     
-    public ArrayList<Chunk> intersectingChunks(World which){
-        ArrayList<Chunk> myChunks=new ArrayList<Chunk>();
-        // implement
-        return myChunks;
-    }
     public Vector2f getLocation(){
         Util.log("[Entity] <getLocation> location = "+newLoc.toString(), 3);
         return newLoc.clone();
     }
-    public Rectangle getBounds(){
+    public Rectangle2D.Float getBounds(){
         return bounds;
     }
     public Vector2f getBottomLeft(){
@@ -77,15 +72,19 @@ public abstract class Entity {
         this.oldLoc = newLoc.clone();
         this.newLoc = newLoc.add(offset);
         this.interp = 0;
-        this.bounds = new Rectangle((int)(newLoc.x-radius),(int)(newLoc.y-radius), (int)(radius*2), (int)(radius*2));
+        this.bounds = new Rectangle2D.Float(newLoc.x-radius, newLoc.y-radius, radius*2, radius*2);
         Util.log("[Entity] <updateLocation> NEW locs = "+oldLoc.toString()+" - "+newLoc.toString(), 4);
     }
     public void updateLocation(Vector2f loc){
         Util.log("[Entity] <updateLocation> OLD locs = "+oldLoc.toString()+" - "+newLoc.toString(), 4);
+        if(Sys.getWorld().getBlock(loc) instanceof Wall){
+            Util.log("Detected Wall");
+            return;
+        }
         this.oldLoc = newLoc.clone();
         this.newLoc = loc;
         this.interp = 0;
-        this.bounds = new Rectangle((int)(newLoc.x-radius),(int)(newLoc.y-radius), (int)(radius*2), (int)(radius*2));
+        this.bounds = new Rectangle2D.Float(newLoc.x-radius, newLoc.y-radius, radius*2, radius*2);
         Util.log("[Entity] <updateLocation> NEW locs = "+oldLoc.toString()+" - "+newLoc.toString(), 4);
     }
     
