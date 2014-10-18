@@ -78,8 +78,13 @@ public abstract class Entity {
     public void updateLocation(Vector2f loc){
         Util.log("[Entity] <updateLocation> OLD locs = "+oldLoc.toString()+" - "+newLoc.toString(), 4);
         if(Sys.getWorld().getBlock(loc) instanceof Wall){
-            Util.log("Detected Wall");
-            return;
+            if(!(Sys.getWorld().getBlock(new Vector2f(loc.x, newLoc.y)) instanceof Wall)){
+                loc = new Vector2f(loc.x, newLoc.y);
+            }else if(!(Sys.getWorld().getBlock(new Vector2f(newLoc.x, loc.y)) instanceof Wall)){
+                loc = new Vector2f(newLoc.x, loc.y);
+            }else{
+                return;
+            }
         }
         this.oldLoc = newLoc.clone();
         this.newLoc = loc;

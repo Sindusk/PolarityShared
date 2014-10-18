@@ -23,7 +23,6 @@ import world.World;
 public class GameScreen extends Screen {
     protected World world;
     protected CharacterManager characterManager;
-    protected FPSCounter fpsCounter;
     protected ArrayList<HUDElement> hud = new ArrayList();
     
     // Movement testing

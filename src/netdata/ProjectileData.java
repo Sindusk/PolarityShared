@@ -4,7 +4,6 @@
  */
 package netdata;
 
-import action.ProjectileAttack;
 import com.jme3.math.Vector2f;
 import com.jme3.network.AbstractMessage;
 import com.jme3.network.serializing.Serializable;

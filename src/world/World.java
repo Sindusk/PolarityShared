@@ -14,7 +14,6 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 import tools.Sys;
-import tools.Util;
 import tools.Util.Vector2i;
 
 /**
@@ -45,10 +44,9 @@ public class World {
     public Block getBlock(Vector2f loc){
         Vector2i chunk = new Vector2i(Math.round(((loc.x+0.5f)/Chunk.SIZE)-0.5f), Math.round(((loc.y+0.5f)/Chunk.SIZE)-0.5f));
         Vector2i coords = new Vector2i(Math.round(loc.x)-(chunk.x*Chunk.SIZE), Math.round(loc.y)-(chunk.y*Chunk.SIZE));
-        Util.log("chunk = "+chunk);
         Chunk c = chunkMap.get(chunk);
         if(c == null){
-            Util.log("Yup, it's null.");
+            return null;
         }
         return c.getBlock(coords);
     }
