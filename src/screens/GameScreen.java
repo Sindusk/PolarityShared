@@ -11,6 +11,7 @@ import character.CharacterManager;
 import hud.advanced.FPSCounter;
 import hud.HUDElement;
 import hud.advanced.Locator;
+import hud.advanced.VitalDisplay;
 import java.util.ArrayList;
 import tools.Sys;
 import tools.Util;
@@ -44,6 +45,7 @@ public class GameScreen extends Screen {
         world.generate();
         hud.add(new FPSCounter(gui, new Vector2f(10, Sys.height-15), 15));   // Creates the FPS Counter
         hud.add(new Locator(gui, new Vector2f(10, Sys.height-35), 15));      // Creates the Locator
+        hud.add(new VitalDisplay(gui, new Vector2f(150, 50)));
         root.attachChild(world.getNode());
         root.attachChild(characterManager.getNode());
     }
