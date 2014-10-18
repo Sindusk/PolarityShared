@@ -58,7 +58,6 @@ public class World {
         Projectile p = new Projectile(node, attack);        // Creates the projectile class data
         p.create(0.4f, attack.getStart(), attack.getTarget());    // Creates the projectile entity
         entities.add(p);
-        // tbi
         return p;
     }
     public PlayerEntity addPlayerEntity(Player player, ColorRGBA color){

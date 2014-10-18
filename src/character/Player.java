@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import netdata.PlayerData;
 import netdata.ProjectileData;
 import screens.Screen;
+import stats.advanced.Vitals;
 import tools.Sys;
 import tools.Util;
 import types.AttackType;
@@ -25,6 +26,8 @@ import types.AttackType;
  */
 @Serializable
 public class Player extends GameCharacter{
+    protected int id;
+    protected Vitals vitals;
     protected Equipment equipment;
     protected PlayerData data;
     protected HostedConnection conn;
@@ -35,19 +38,24 @@ public class Player extends GameCharacter{
     
     public Player(Node node, PlayerData d){
         connected = true;
+        id = d.getID();
         int i = 0;
         while(i < movement.length){
             movement[i] = false;
             i++;
         }
-        name = "Player "+d.getID();
+        name = "Player "+id;
         equipment = d.getEquipment();
+        vitals = new Vitals(id);
         this.data = d;
     }
     public void create(){
         entity = Sys.getWorld().addPlayerEntity(this, ColorRGBA.Orange);
     }
     
+    public int getID(){
+        return id;
+    }
     public HostedConnection getConnection(){
         return conn;
     }
@@ -56,6 +64,9 @@ public class Player extends GameCharacter{
     }
     public String getName(){
         return name;
+    }
+    public Vitals getVitals(){
+        return vitals;
     }
     
     public void setConnection(HostedConnection conn){
@@ -83,7 +94,7 @@ public class Player extends GameCharacter{
     public void attack(Vector2f cursorLoc, boolean down){
         Weapon weapon = equipment.getWeapon();
         if(weapon == null){
-            Util.log("Error: No weapon ["+data.getID()+"]");
+            Util.log("Error: No weapon ["+id+"]");
             return;
         }
         if(weapon.getAttackType() == AttackType.Charged){
@@ -102,6 +113,7 @@ public class Player extends GameCharacter{
                         t = collisions.get(i);
                         if(t instanceof PlayerEntity){
                             PlayerEntity pe = (PlayerEntity) t; // Cast the Entity to a PlayerEntity to open up specific methods
+                            pe.damage(10);
                             Util.log("Damaging "+t.toString()+" for 10");
                             return true;
                         }
@@ -134,6 +146,10 @@ public class Player extends GameCharacter{
         }
         entity.updateRotation(mousePos);
         entity.updateLocation(entity.getLocation().add(move));
+    }
+    
+    public void damage(float value){
+        vitals.damage(value);
     }
     
     public void destroy(){

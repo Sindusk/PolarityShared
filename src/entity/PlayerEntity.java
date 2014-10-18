@@ -5,6 +5,8 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
+import netdata.DamageData;
+import screens.Screen;
 import tools.GeoFactory;
 import tools.SinText;
 
@@ -14,6 +16,7 @@ import tools.SinText;
  */
 public class PlayerEntity extends Entity {
     protected Node nameNode = new Node("Player Name");    // Node that holds the nametag
+    protected Player owner;
     protected SinText nameTag;
     protected Geometry nameBackground;  // Transparent background to make the name stand out
     protected Geometry geo;
@@ -21,6 +24,7 @@ public class PlayerEntity extends Entity {
     
     public PlayerEntity(Node parent, Player player, ColorRGBA color){
         super(parent);
+        owner = player;
         // Create the (mock-up) player model
         geo = GeoFactory.createBox(node, new Vector3f(0.6f, 0.4f, 1), Vector3f.ZERO, color);
         point = GeoFactory.createBox(node, new Vector3f(0.4f, 0.25f, 0.7f), new Vector3f(0.8f, 0f, 0), ColorRGBA.Red);
@@ -37,5 +41,10 @@ public class PlayerEntity extends Entity {
     public void update(float tpf){
         super.update(tpf);
         nameNode.setLocalTranslation(node.getLocalTranslation());
+    }
+    
+    public void damage(float value){
+        owner.damage(value);
+        Screen.getClientNetwork().send(new DamageData(owner.getID(), value));
     }
 }

@@ -1,11 +1,12 @@
 package hud.advanced;
 
+import character.Player;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.scene.Node;
 import hud.DynamicBar;
 import hud.HUDElement;
-import tools.Sys;
+import stats.advanced.Vitals;
 import ui.Label;
 
 /**
@@ -34,5 +35,12 @@ public class VitalDisplay extends HUDElement {
         energyText = new Label(node, new Vector2f(0, 15), 20, 1);
         energyText.setColor(ColorRGBA.Black);
         energyText.setText("Energy: 100/100");
+    }
+    
+    @Override
+    public void update(Player player, float tpf){
+        Vitals vitals = player.getVitals();
+        healthText.setText("Health: "+Math.round(vitals.getHealth().value())+"/"+Math.round(vitals.getHealth().getMax()));
+        shieldText.setText("Shield: "+Math.round(vitals.getShield().value())+"/"+Math.round(vitals.getShield().getMax()));
     }
 }

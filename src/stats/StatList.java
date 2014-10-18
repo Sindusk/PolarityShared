@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package stats;
 
 import java.util.ArrayList;
@@ -31,7 +27,7 @@ public class StatList {
     public void add(Stat stat){
         for(Stat s : stats){
             if(s.getClass().equals(stat.getClass())){
-                s.add(stat.getCurrent());
+                s.add(stat.value());
             }
         }
         stats.add(stat);

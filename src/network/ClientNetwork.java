@@ -179,6 +179,16 @@ public class ClientNetwork{
             });
         }
         
+        private void DamageMessage(DamageData d){
+            final DamageData m = d;
+            app.enqueue(new Callable<Void>(){
+                public Void call() throws Exception{
+                    characterManager.damagePlayer(m);
+                    return null;
+                }
+            });
+        }
+        
         /** This is the message sent when the player is disconnected.
          * <p>
          * It holds certain data for the disconnect message, and potentially other misc data.
@@ -326,6 +336,8 @@ public class ClientNetwork{
             
             if(m instanceof CommandData){
                 CommandMessage((CommandData) m);
+            }else if(m instanceof DamageData){
+                DamageMessage((DamageData) m);
             }else if(m instanceof DisconnectData){
                 DisconnectMessage((DisconnectData) m);
             }else if(m instanceof IDData){

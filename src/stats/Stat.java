@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package stats;
 
 import com.jme3.network.serializing.Serializable;
@@ -18,16 +14,14 @@ public abstract class Stat {
     protected float value;
     
     // Common initializer for a new stat
-    public Stat(){
-        //
-    }
+    public Stat(){}
     public Stat(float base){
         this.base = base;
         this.value = base;
     }
     
     // Getters:
-    public float getCurrent(){
+    public float value(){
         return value;
     }
     public float getBase(){
@@ -43,8 +37,9 @@ public abstract class Stat {
     }
     
     // Subtract function subtracts from the current value.
-    public void subtract(float amount){
+    public float subtract(float amount){
         value -= amount;
+        return value;
     }
     public void subtractBase(float amount){
         base -= amount;

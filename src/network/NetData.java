@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package network;
 
 import items.Equipment;
@@ -19,6 +15,7 @@ public enum NetData {
     // Netdata
     CommandData(CommandData.class),
     ConnectData(ConnectData.class),
+    DamageData(DamageData.class),
     DisconnectData(DisconnectData.class),
     IDData(IDData.class),
     MoveData(MoveData.class),

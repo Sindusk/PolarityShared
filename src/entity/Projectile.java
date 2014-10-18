@@ -66,15 +66,12 @@ public class Projectile extends Entity{
     @Override
     public void moveLocation(Vector2f offset){
         Vector2f temp = newLoc.add(offset);
+        // Destroy the projectile if it collides with a wall.
         if(Sys.getWorld().getBlock(temp) instanceof Wall){
-            Util.log("Projectile Collided with wall, destroying...");
             destroy();
             return;
         }
-        this.oldLoc = newLoc.clone();
-        this.newLoc = temp;
-        this.interp = 0;
-        this.bounds = new Rectangle2D.Float(newLoc.x-radius, newLoc.y-radius, radius*2, radius*2);
+        super.moveLocation(offset);
     }
     
     @Override

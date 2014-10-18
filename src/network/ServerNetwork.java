@@ -108,6 +108,17 @@ public class ServerNetwork{
             }
         }
         
+        private void DamageMessage(DamageData d){
+            server.broadcast(Filters.notEqualTo(connection), d);
+            final DamageData m = d;
+            app.enqueue(new Callable<Void>(){
+                public Void call() throws Exception{
+                    //characterManager.damagePlayer(m);
+                    return null;
+                }
+            });
+        }
+        
         /** Recieved when a player moves.
          * <p>
          * This method is mainly used to broadcast the movement
@@ -171,6 +182,8 @@ public class ServerNetwork{
             
             if(m instanceof ConnectData){
                 ConnectMessage((ConnectData) m);
+            }else if(m instanceof DamageData){
+                DamageMessage((DamageData) m);
             }else if(m instanceof MoveData){
                 MoveMessage((MoveData) m);
             }else if(m instanceof PingData){

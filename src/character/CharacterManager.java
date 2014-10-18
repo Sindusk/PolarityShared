@@ -5,6 +5,7 @@ import com.jme3.scene.Node;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
+import netdata.DamageData;
 import netdata.MoveData;
 import netdata.PlayerData;
 import tools.Util;
@@ -48,6 +49,14 @@ public class CharacterManager{
             i++;
         }
     }
+    
+    public void damagePlayer(DamageData d){
+        Util.log("[CharacterManager] <damagePlayer> Damaging player "+d.getID()+" for "+d.getValue(), 1);
+        if(playerID.containsKey(d.getID())){
+            players.get(playerID.get(d.getID())).damage(d.getValue());
+        }
+    }
+    
     public void updatePlayerLocation(MoveData d){
         Util.log("[PlayerManager] <updatePlayerLocation> Updating player "+d.getID()+" location to "+d.getLocation().toString(), 4);
         Util.log("playerID = "+playerID.toString(), 4);
