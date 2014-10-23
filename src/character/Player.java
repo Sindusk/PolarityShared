@@ -1,5 +1,6 @@
 package character;
 
+import action.Event;
 import action.ProjectileAttack;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
@@ -104,7 +105,8 @@ public class Player extends GameCharacter{
             Util.log("[Player] <attack> Creating new ProjectileAttack...", 2);
             Vector3f worldTarget = Util.getWorldLoc(cursorLoc, Sys.getCamera());    // Analyzes where in world space the player clicked.
             // --- TEST PROJECTILE ---
-            ProjectileAttack a = new ProjectileAttack(this, getLocation(), new Vector2f(worldTarget.x, worldTarget.y), weapon, down){
+            ProjectileAttack attack = new ProjectileAttack(this, getLocation(), new Vector2f(worldTarget.x, worldTarget.y), weapon.getSpeed(), down);
+            Event event = new Event(){
                 @Override
                 public boolean onCollide(ArrayList<Entity> collisions){
                     int i = 0;
@@ -122,9 +124,10 @@ public class Player extends GameCharacter{
                     return false;
                 }
             };
+            attack.setEvent(event);
             // --- END TEST PROJECTILE ---
-            Sys.getWorld().addProjectile(a);
-            Screen.getClientNetwork().send(new ProjectileData(((Player)a.getOwner()).getData().getID(), a.getStart(), a.getTarget(), weapon));
+            //Sys.getWorld().addProjectile(a);
+            Screen.getClientNetwork().send(new ProjectileData(getID(), attack.getStart(), attack.getTarget(), new Event(), attack.getSpeed()));
             Util.log("[Player] <attack> Sent ProjectileAttack to server.", 2);
         }
     }

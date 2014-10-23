@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import netdata.ChunkData;
 import tools.Sys;
-import tools.Util;
 import tools.Util.Vector2i;
 
 /**
@@ -98,15 +97,18 @@ public class World {
                 i++;
             }
         }
+    }
+    public void serverUpdate(float tpf){
+        update(tpf);
         ArrayList<Entity> collisions = new ArrayList();
         // Do collision checking for all remaining entities
-        i = 0;
+        int i = 0;
+        Entity t;   // Temp entity
         while(i < entities.size()){
             t = entities.get(i);
             t.checkCollisions(quadTree.retrieve(collisions, t));
             i++;
         }
-        quadTree.retrieve(collisions, entities.get(0));
     }
     
     public void updateChunk(ChunkData d){

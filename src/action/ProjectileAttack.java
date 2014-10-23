@@ -4,9 +4,6 @@ import character.CharacterManager;
 import character.GameCharacter;
 import com.jme3.math.Vector2f;
 import com.jme3.network.serializing.Serializable;
-import entity.Entity;
-import items.Weapon;
-import java.util.ArrayList;
 import netdata.ProjectileData;
 
 /**
@@ -16,21 +13,23 @@ import netdata.ProjectileData;
  */
 @Serializable
 public class ProjectileAttack extends Action {
-    protected Weapon weapon;
+    protected Event event;
     protected float speed;
     
-    public ProjectileAttack(GameCharacter owner, Vector2f start, Vector2f target, Weapon weapon, boolean down){
+    public ProjectileAttack(GameCharacter owner, Vector2f start, Vector2f target, float speed, boolean down){
         super(owner, start, target);
-        this.weapon = weapon;
-        this.speed = weapon.getSpeed();
+        this.speed = speed;
         this.target = target;
     }
     public ProjectileAttack(CharacterManager characterManager, ProjectileData data){
         super(characterManager.getPlayer(data.getOwner()), data.getStart(), data.getTarget());
-        this.weapon = data.getWeapon();
-        this.speed = weapon.getSpeed();
+        this.event = data.getEvent();
+        this.speed = data.getSpeed();
     }
     
+    public Event getEvent(){
+        return event;
+    }
     public Vector2f getStart(){
         return owner.getLocation();
     }
@@ -41,12 +40,7 @@ public class ProjectileAttack extends Action {
         return speed;
     }
     
-    /**
-     * Method to override for collision when making a ProjectileAttack.
-     * @param collisions ArrayList containing the entities filtered for collision.
-     * @return Return true if you want the projectile to be destroyed, or false if you do not.
-     */
-    public boolean onCollide(ArrayList<Entity> collisions){
-        return false;
+    public void setEvent(Event e){
+        this.event = e;
     }
 }

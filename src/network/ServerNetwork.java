@@ -149,7 +149,7 @@ public class ServerNetwork{
          */
         private void ProjectileMessage(ProjectileData d){
             Util.log("[ServerNetwork] <ProjectileMessage> Projectile data recieved...", 2);
-            server.broadcast(Filters.notEqualTo(connection), d);
+            server.broadcast(d);
             final ProjectileData m = d;
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{

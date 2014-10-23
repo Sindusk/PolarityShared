@@ -52,7 +52,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 public class GameServer extends Application{
     protected ServerInputHandler inputHandler;
     protected ServerNetwork serverNetwork;
-    protected World world;
+    protected World world = new World(50);
     
     // Global Constant Variables:
     private static final String SERVER_VERSION = "0.01";
@@ -118,7 +118,6 @@ public class GameServer extends Application{
         Util.log("[GameServer] <initialize> Starting Network...", 1);
         serverNetwork = new ServerNetwork(this);
         
-        world = new World(50);
         world.generate();
         
         Sys.setWorld(world);
@@ -140,6 +139,9 @@ public class GameServer extends Application{
         gui.updateLogicalState(tpf);
         root.updateGeometricState();
         gui.updateGeometricState();
+        
+        // Update the world
+        world.serverUpdate(tpf);
 
         // Render display:
         stateManager.render(renderManager);

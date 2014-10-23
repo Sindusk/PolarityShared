@@ -23,8 +23,6 @@ public abstract class Entity {
     protected Vector2f newLoc = new Vector2f(0, 0);
     protected boolean destroyed = false;
     protected float radius = 0.7f;
-    protected float length; //half length
-    protected float height; //total height
     
     protected float interp = 0; // Counter used for interpolation, so movement is smooth(er)
     
@@ -53,12 +51,6 @@ public abstract class Entity {
     }
     public Rectangle2D.Float getBounds(){
         return bounds;
-    }
-    public Vector2f getBottomLeft(){
-        return new Vector2f(newLoc.x-length, newLoc.y);
-    }
-    public Vector2f getTopRight(){
-        return new Vector2f(newLoc.x+length, newLoc.y+height);
     }
     public float getRadius(){
         return radius;

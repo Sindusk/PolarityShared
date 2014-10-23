@@ -1,7 +1,7 @@
 package network;
 
+import action.Event;
 import world.blocks.BlockData;
-import com.jme3.scene.Geometry;
 import items.Equipment;
 import items.Item;
 import items.Weapon;
@@ -9,7 +9,6 @@ import netdata.*;
 import stats.Stat;
 import stats.StatWithMax;
 import world.Chunk;
-import world.blocks.Block;
 import world.blocks.WallData;
 
 /**
@@ -33,6 +32,7 @@ public enum NetData {
     
     // Data properties
     Equipment(Equipment.class),
+    Event(Event.class),
     Item(Item.class),
     ServerSettings(ServerSettings.class),
     ServerStatus(ServerStatus.class),

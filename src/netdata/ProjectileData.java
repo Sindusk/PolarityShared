@@ -1,13 +1,9 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package netdata;
 
+import action.Event;
 import com.jme3.math.Vector2f;
 import com.jme3.network.AbstractMessage;
 import com.jme3.network.serializing.Serializable;
-import items.Weapon;
 
 /**
  *
@@ -18,13 +14,15 @@ public class ProjectileData extends AbstractMessage {
     protected int owner;
     protected Vector2f start;
     protected Vector2f target;
-    protected Weapon weapon;
+    protected Event event;
+    protected float speed;
     public ProjectileData() {}
-    public ProjectileData(int owner, Vector2f start, Vector2f target, Weapon weapon){
+    public ProjectileData(int owner, Vector2f start, Vector2f target, Event event, float speed){
         this.owner = owner;
         this.start = start;
         this.target = target;
-        this.weapon = weapon;
+        this.event = event;
+        this.speed = speed;
     }
     public int getOwner(){
         return owner;
@@ -35,7 +33,10 @@ public class ProjectileData extends AbstractMessage {
     public Vector2f getTarget(){
         return target;
     }
-    public Weapon getWeapon(){
-        return weapon;
+    public Event getEvent(){
+        return event;
+    }
+    public float getSpeed(){
+        return speed;
     }
 }
