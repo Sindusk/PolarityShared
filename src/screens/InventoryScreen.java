@@ -1,12 +1,12 @@
 package screens;
 
-import com.jme3.app.Application;
 import com.jme3.input.event.KeyInputEvent;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.scene.Node;
 import input.ClientBinding;
 import input.InputHandler;
+import main.GameApplication;
 import tools.Sys;
 import tools.Util;
 import ui.Button;
@@ -20,7 +20,7 @@ import ui.UIElement;
 public class InventoryScreen extends Screen {
     private InventoryFrame invFrame;
     
-    public InventoryScreen(Application app, Node rootNode, Node guiNode){
+    public InventoryScreen(GameApplication app, Node rootNode, Node guiNode){
         super(app, rootNode, guiNode);
         name="Inventory Screen";
     }

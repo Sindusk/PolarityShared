@@ -1,21 +1,17 @@
 package main;
 
 import action.ActionManager;
-import com.jme3.app.Application;
 import com.jme3.renderer.queue.RenderQueue;
-import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.system.AppSettings;
 import input.ClientInputHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import netdata.ChunkData;
 import network.ClientNetwork;
 import screens.MenuScreen;
 import screens.Screen;
 import tools.Sys;
 import tools.Util;
-import world.World;
 
 /**
 Copyright (c) 2003-2012 jMonkeyEngine
@@ -108,7 +104,7 @@ public class GameClient extends GameApplication {
         cam.update();
         
         // Initialize input handler
-        inputHandler = new ClientInputHandler(inputManager);
+        inputHandler = new ClientInputHandler(this);
         inputHandler.setupInputs();
         
         // Initialize networking
@@ -116,7 +112,6 @@ public class GameClient extends GameApplication {
         clientNetwork.setInputHandler(inputHandler);
         
         // Initialize Screen static vars
-        Screen.setApplication(this);
         Screen.setClientNetwork(clientNetwork);
         Screen.setNodes(root, gui);
         

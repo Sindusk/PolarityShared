@@ -1,6 +1,5 @@
 package screens;
 
-import com.jme3.app.Application;
 import com.jme3.input.event.KeyInputEvent;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
@@ -8,6 +7,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import input.ClientBinding;
 import input.InputHandler;
+import main.GameApplication;
 import tools.Sys;
 import tools.Util;
 import ui.Button;
@@ -21,7 +21,7 @@ public class MenuScreen extends Screen {
     private Button multiButton;
     private Button invButton;
     
-    public MenuScreen(Application app, Node rootNode, Node guiNode){
+    public MenuScreen(GameApplication app, Node rootNode, Node guiNode){
         super(app, rootNode, guiNode);
         Util.log("[MenuScreen] Initializing New MenuScreen...", 3);
         name = "Menu Screen";

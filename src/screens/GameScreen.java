@@ -1,6 +1,5 @@
 package screens;
 
-import com.jme3.app.Application;
 import com.jme3.input.event.KeyInputEvent;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
@@ -17,7 +16,6 @@ import main.GameApplication;
 import main.GameClient;
 import tools.Sys;
 import tools.Util;
-import world.World;
 
 /**
  * Screen encompassing Gameplay.
@@ -30,7 +28,7 @@ public class GameScreen extends Screen {
     // Movement testing
     protected int playerID;
     
-    public GameScreen(Application app, Node rootNode, Node guiNode){
+    public GameScreen(GameApplication app, Node rootNode, Node guiNode){
         super(app, rootNode, guiNode);
         characterManager = clientNetwork.getPlayerManager();
         playerID = clientNetwork.getID();

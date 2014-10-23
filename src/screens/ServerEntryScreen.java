@@ -1,17 +1,12 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package screens;
 
-import com.jme3.app.Application;
 import com.jme3.input.event.KeyInputEvent;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.scene.Node;
 import input.ClientBinding;
 import input.InputHandler;
-import static screens.Screen.app;
+import main.GameApplication;
 import tools.Sys;
 import tools.Util;
 import ui.Button;
@@ -25,7 +20,7 @@ public class ServerEntryScreen extends Screen {
     protected Button addButton;
     protected Button backButton;
     
-    public ServerEntryScreen(Application app, Node rootNode, Node guiNode){
+    public ServerEntryScreen(GameApplication app, Node rootNode, Node guiNode){
         super(app, rootNode, guiNode);
         name = "ServerEntryScreen";
     }

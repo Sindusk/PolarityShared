@@ -1,19 +1,16 @@
 package main;
 
-import com.jme3.app.Application;
 import com.jme3.math.ColorRGBA;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial.CullHint;
 import com.jme3.system.AppSettings;
 import input.ServerInputHandler;
-import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import network.ServerNetwork;
 import tools.Sys;
 import tools.Util;
-import world.World;
 
 /**
 Copyright (c) 2003-2011 jMonkeyEngine
@@ -100,7 +97,7 @@ public class GameServer extends GameApplication{
         Sys.setInputManager(inputManager);
         
         Util.log("[GameServer] <initialize> Creating InputHandler...", 1);
-        inputHandler = new ServerInputHandler(inputManager);
+        inputHandler = new ServerInputHandler(this);
         Util.log("[GameServer] <initialize> Starting Network...", 1);
         serverNetwork = new ServerNetwork(this);
         

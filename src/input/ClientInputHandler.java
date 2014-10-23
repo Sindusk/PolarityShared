@@ -1,6 +1,5 @@
 package input;
 
-import com.jme3.input.InputManager;
 import com.jme3.input.RawInputListener;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
@@ -10,6 +9,7 @@ import com.jme3.input.event.KeyInputEvent;
 import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.input.event.MouseMotionEvent;
 import com.jme3.input.event.TouchEvent;
+import main.GameApplication;
 import tools.Util;
 
 /**
@@ -18,15 +18,15 @@ import tools.Util;
  */
 public class ClientInputHandler extends InputHandler implements ActionListener, AnalogListener, RawInputListener{
     // Initialization
-    public ClientInputHandler(InputManager inputManager){
-        super(inputManager);
+    public ClientInputHandler(GameApplication app){
+        super(app);
     }
     public void setupInputs(){
         for(ClientBinding bind : ClientBinding.values()){
-            inputManager.addMapping(bind.mapping, bind.trigger);
-            inputManager.addListener(this, bind.mapping);
+            app.getInputManager().addMapping(bind.mapping, bind.trigger);
+            app.getInputManager().addListener(this, bind.mapping);
         }
-        inputManager.addRawInputListener(this);
+        app.getInputManager().addRawInputListener(this);
     }
     
     // Action handlers
@@ -37,8 +37,14 @@ public class ClientInputHandler extends InputHandler implements ActionListener, 
         if(bind.equals(ClientBinding.LClick.toString()) && !down){
             moving = null;
         }
-        screen.onAction(inputManager.getCursorPosition(), bind, down, tpf);
+        screen.onAction(app.getInputManager().getCursorPosition(), bind, down, tpf);
     }
+    /**
+     * Called when the cursor moves.
+     * @param name Name of the movement that occured
+     * @param value How much movement there is
+     * @param tpf Time Per Frame
+     */
     public void onAnalog(String name, float value, float tpf){
         if(screen == null){
             return;
@@ -55,7 +61,7 @@ public class ClientInputHandler extends InputHandler implements ActionListener, 
                 moving.move(-value, 0);
             }
         }
-        screen.onCursorMove(inputManager.getCursorPosition());
+        screen.onCursorMove(app.getInputManager().getCursorPosition());
     }
     public void onKeyEvent(KeyInputEvent evt){
         if(evt.isPressed()){

@@ -1,8 +1,8 @@
 package input;
 
-import com.jme3.input.InputManager;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
+import main.GameApplication;
 import screens.Screen;
 import tools.Sys;
 import ui.Frame;
@@ -13,12 +13,12 @@ import ui.Frame;
  */
 public abstract class InputHandler {
     public static final float MOUSE_SENSITIVITY = 1;
-    protected final InputManager inputManager;
+    protected GameApplication app;
     protected Screen screen;
     public Frame moving = null;
     
-    public InputHandler(InputManager inputManager){
-        this.inputManager = inputManager;
+    public InputHandler(GameApplication app){
+        this.app = app;
     }
     
     // Getters
@@ -44,10 +44,13 @@ public abstract class InputHandler {
         }
     }
     
+    /**
+     * Obtains the cursor location in world space.
+     * @return Location (in world space) of the cursor
+     */
     public Vector2f getCursorLocation(){
-        Vector3f worldPos = Sys.getCamera().getWorldCoordinates(inputManager.getCursorPosition(), 0f).clone();
+        Vector3f worldPos = Sys.getCamera().getWorldCoordinates(app.getInputManager().getCursorPosition(), 0f).clone();
         Vector2f worldPos2D = new Vector2f(worldPos.x, worldPos.y);
-        //inputManager.getCursorPosition();
         return worldPos2D;
     }
 }

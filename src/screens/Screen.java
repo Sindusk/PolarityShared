@@ -1,11 +1,11 @@
 package screens;
 
-import com.jme3.app.Application;
 import com.jme3.input.event.KeyInputEvent;
 import com.jme3.math.Vector2f;
 import com.jme3.scene.Node;
 import input.InputHandler;
 import java.util.ArrayList;
+import main.GameApplication;
 import network.ClientNetwork;
 import network.ServerNetwork;
 import tools.Util;
@@ -17,13 +17,13 @@ import ui.UIElement;
  */
 public abstract class Screen {
     // Top-level variables
-    protected static Application app;
     protected static Node topRoot;
     protected static Node topGUI;
     protected static ClientNetwork clientNetwork;
     protected static ServerNetwork serverNetwork;
     
     // Class-level variables
+    protected GameApplication app;
     protected InputHandler inputHandler;
     protected Node gui = new Node("Screen GUI");
     protected Node root = new Node("Screen Root");
@@ -31,7 +31,7 @@ public abstract class Screen {
     protected String name;
     
     // Default constructor
-    public Screen(Application app, Node rootNode, Node guiNode){
+    public Screen(GameApplication app, Node rootNode, Node guiNode){
         rootNode.attachChild(root);
         guiNode.attachChild(gui);
         name = "Default Screen";
@@ -54,8 +54,8 @@ public abstract class Screen {
         return topGUI;
     }
     
-    public static void setApplication(Application app){
-        Screen.app = app;
+    public void setApplication(GameApplication app){
+        this.app = app;
     }
     public static ClientNetwork getClientNetwork(){
         return Screen.clientNetwork;

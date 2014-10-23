@@ -1,8 +1,8 @@
 package input;
 
-import com.jme3.input.InputManager;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
+import main.GameApplication;
 
 /**
  * ClientInputHandler - Handles all input from users and organizes them based on conditions.
@@ -10,13 +10,13 @@ import com.jme3.input.controls.AnalogListener;
  */
 public class ServerInputHandler extends InputHandler implements ActionListener, AnalogListener{
     // Initialization
-    public ServerInputHandler(InputManager inputManager){
-        super(inputManager);
+    public ServerInputHandler(GameApplication app){
+        super(app);
     }
     public void setupInputs(){
         for(ClientBinding bind : ClientBinding.values()){
-            inputManager.addMapping(bind.mapping, bind.trigger);
-            inputManager.addListener(this, bind.mapping);
+            app.getInputManager().addMapping(bind.mapping, bind.trigger);
+            app.getInputManager().addListener(this, bind.mapping);
         }
     }
     
@@ -28,7 +28,7 @@ public class ServerInputHandler extends InputHandler implements ActionListener, 
         if(bind.equals(ClientBinding.LClick.toString()) && !down){
             moving = null;
         }
-        screen.onAction(inputManager.getCursorPosition(), bind, down, tpf);
+        screen.onAction(app.getInputManager().getCursorPosition(), bind, down, tpf);
     }
     public void onAnalog(String name, float value, float tpf){
         if(screen == null){
@@ -46,6 +46,6 @@ public class ServerInputHandler extends InputHandler implements ActionListener, 
                 moving.move(-value, 0);
             }
         }
-        screen.onCursorMove(inputManager.getCursorPosition());
+        screen.onCursorMove(app.getInputManager().getCursorPosition());
     }
 }
