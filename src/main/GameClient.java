@@ -48,14 +48,10 @@ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-public class GameClient extends Application {
-    private static final String CLIENT_VERSION = "0.01";
-    protected Node rootNode = new Node("Root Node");
-    protected Node guiNode = new Node("Gui Node");
+public class GameClient extends GameApplication {
     protected ActionManager actionManager = new ActionManager();
     protected ClientInputHandler inputHandler;
     protected ClientNetwork clientNetwork;
-    protected World world = new World(50);
     
     public static void main(String[] args){
         GameClient app = new GameClient();
@@ -64,13 +60,6 @@ public class GameClient extends Application {
     
     public ClientNetwork getNetwork(){
         return clientNetwork;
-    }
-    public World getWorld(){
-        return world;
-    }
-    
-    public void updateChunk(ChunkData d){
-        world.updateChunk(d);
     }
     
     @Override
@@ -90,10 +79,10 @@ public class GameClient extends Application {
     public void initialize() {
         super.initialize();
         Util.log("[GameClient] <initialize> Starting Initialization...", 1);
-        guiNode.setQueueBucket(RenderQueue.Bucket.Gui);
-        guiNode.setCullHint(Spatial.CullHint.Never);
-        viewPort.attachScene(rootNode);
-        guiViewPort.attachScene(guiNode);
+        gui.setQueueBucket(RenderQueue.Bucket.Gui);
+        gui.setCullHint(Spatial.CullHint.Never);
+        viewPort.attachScene(root);
+        guiViewPort.attachScene(gui);
         
         setPauseOnLostFocus(false);
         
@@ -107,7 +96,7 @@ public class GameClient extends Application {
         Sys.setRenderManager(renderManager);
         Sys.setStateManager(stateManager);
         Sys.setTimer(timer);
-        Sys.setVersion(CLIENT_VERSION);
+        Sys.setVersion(VERSION);
         Sys.setViewPort(viewPort);
         Sys.setWorld(world);
         
@@ -123,22 +112,22 @@ public class GameClient extends Application {
         inputHandler.setupInputs();
         
         // Initialize networking
-        clientNetwork = new ClientNetwork(this, rootNode, guiNode);
+        clientNetwork = new ClientNetwork(this, root, gui);
         clientNetwork.setInputHandler(inputHandler);
         
         // Initialize Screen static vars
         Screen.setApplication(this);
         Screen.setClientNetwork(clientNetwork);
-        Screen.setNodes(rootNode, guiNode);
+        Screen.setNodes(root, gui);
         
-        inputHandler.switchScreens(new MenuScreen(this, rootNode, guiNode));
+        inputHandler.switchScreens(new MenuScreen(this, root, gui));
         Sys.setInputHandler(inputHandler);
     }
 
     @Override
     public void update() {
         super.update();
-        if (speed == 0 || paused){
+        if(speed == 0 || paused){   // If the client is paused, do not update.
             return;
         }
         float tpf = timer.getTimePerFrame() * speed;    // Calculated time from last frame for keeping time consistency through FPS fluctuations.
@@ -147,15 +136,10 @@ public class GameClient extends Application {
         inputHandler.update(tpf);
         
         // Update node states
-        rootNode.updateLogicalState(tpf);
-        guiNode.updateLogicalState(tpf);
-        rootNode.updateGeometricState();
-        guiNode.updateGeometricState();
+        updateNodeStates(tpf);
         
         // Update renderer
-        stateManager.render(renderManager);
-        renderManager.render(tpf, context.isRenderable());
-        stateManager.postRender();
+        renderDisplay(tpf);
     }
     
     @Override

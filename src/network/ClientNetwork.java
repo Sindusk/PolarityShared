@@ -173,9 +173,7 @@ public class ClientNetwork{
             final ChunkData m = d;
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
-                    if(app instanceof GameClient){
-                        ((GameClient)app).updateChunk(m);
-                    }
+                    app.updateChunk(m);
                     return null;
                 }
             });

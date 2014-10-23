@@ -49,17 +49,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * Game Server
  * @author SinisteRing
  */
-public class GameServer extends Application{
+public class GameServer extends GameApplication{
     protected ServerInputHandler inputHandler;
     protected ServerNetwork serverNetwork;
-    protected World world = new World(50);
-    
-    // Global Constant Variables:
-    private static final String SERVER_VERSION = "0.01";
-    
-    // Nodes:
-    private Node root = new Node("Root");
-    private Node gui = new Node("GUI");
     
     // Getters for Nodes:
     public Node getGUI(){
@@ -68,14 +60,8 @@ public class GameServer extends Application{
     public Node getRoot(){
         return root;
     }
-    public String getVersion(){
-        return SERVER_VERSION;
-    }
-    public World getWorld(){
-        return world;
-    }
     
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args){
         GameServer app = new GameServer();
         app.start();
     }
@@ -126,7 +112,7 @@ public class GameServer extends Application{
     @Override
     public void update() {
         super.update(); // makes sure to execute AppTasks
-        if (speed == 0 || paused) {
+        if(speed == 0 || paused){   // If the client is paused, do not update.
             return;
         }
         float tpf = timer.getTimePerFrame() * speed;
@@ -134,19 +120,14 @@ public class GameServer extends Application{
         // Update States:
         stateManager.update(tpf);
         
-        // Update logical and geometric states:
-        root.updateLogicalState(tpf);
-        gui.updateLogicalState(tpf);
-        root.updateGeometricState();
-        gui.updateGeometricState();
-        
-        // Update the world
+        // Custom updates:
         world.serverUpdate(tpf);
 
+        // Update logical and geometric states:
+        updateNodeStates(tpf);
+        
         // Render display:
-        stateManager.render(renderManager);
-        renderManager.render(tpf, context.isRenderable());
-        stateManager.postRender();
+        renderDisplay(tpf);
     }
     
     @Override
