@@ -52,6 +52,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 public class GameServer extends Application{
     protected ServerInputHandler inputHandler;
     protected ServerNetwork serverNetwork;
+    protected World world;
     
     // Global Constant Variables:
     private static final String SERVER_VERSION = "0.01";
@@ -69,6 +70,9 @@ public class GameServer extends Application{
     }
     public String getVersion(){
         return SERVER_VERSION;
+    }
+    public World getWorld(){
+        return world;
     }
     
     public static void main(String[] args) throws IOException {
@@ -114,7 +118,10 @@ public class GameServer extends Application{
         Util.log("[GameServer] <initialize> Starting Network...", 1);
         serverNetwork = new ServerNetwork(this);
         
-        Sys.setWorld(new World(50));
+        world = new World(50);
+        world.generate();
+        
+        Sys.setWorld(world);
     }
 
     @Override

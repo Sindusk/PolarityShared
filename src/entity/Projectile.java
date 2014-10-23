@@ -6,12 +6,11 @@ import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import tools.GeoFactory;
 import tools.Sys;
 import tools.Util;
-import world.blocks.Wall;
+import world.blocks.WallData;
 
 /**
  * Projectile Class
@@ -67,7 +66,10 @@ public class Projectile extends Entity{
     public void moveLocation(Vector2f offset){
         Vector2f temp = newLoc.add(offset);
         // Destroy the projectile if it collides with a wall.
-        if(Sys.getWorld().getBlock(temp) instanceof Wall){
+        if(Sys.getWorld().getBlock(temp) == null){
+            return; // This ensures no errors occur if the client has not recieved the data for this area yet.
+        }
+        if(Sys.getWorld().getBlock(temp).getData() instanceof WallData){
             destroy();
             return;
         }

@@ -6,6 +6,7 @@ import character.Player;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
+import com.jme3.network.HostedConnection;
 import com.jme3.scene.Node;
 import entity.Entity;
 import entity.PlayerEntity;
@@ -13,7 +14,9 @@ import entity.Projectile;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.HashMap;
+import netdata.ChunkData;
 import tools.Sys;
+import tools.Util;
 import tools.Util.Vector2i;
 
 /**
@@ -54,6 +57,19 @@ public class World {
         return getBlock(new Vector2f(loc.x, loc.y));
     }
     
+    public void sendData(HostedConnection conn){
+        int x = 0-(SIZE_X/2);
+        int y;
+        while(x < SIZE_X/2){
+            y = 0-(SIZE_Y/2);
+            while(y < SIZE_Y/2){
+                conn.send(chunkMap.get(new Vector2i(x, y)).toData());
+                y++;
+            }
+            x++;
+        }
+    }
+    
     public Projectile addProjectile(ProjectileAttack attack){
         Projectile p = new Projectile(node, attack);        // Creates the projectile class data
         p.create(0.4f, attack.getStart(), attack.getTarget());    // Creates the projectile entity
@@ -91,6 +107,13 @@ public class World {
             i++;
         }
         quadTree.retrieve(collisions, entities.get(0));
+    }
+    
+    public void updateChunk(ChunkData d){
+        Vector2i key = d.getKey();
+        Chunk chunk = new Chunk(node, key);
+        chunk.generateBlocks(d.getBlocks());
+        chunkMap.put(key, chunk);
     }
     
     // World generation algorithm

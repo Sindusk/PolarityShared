@@ -5,6 +5,7 @@ import com.jme3.scene.Node;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
+import main.GameServer;
 import netdata.DamageData;
 import netdata.MoveData;
 import netdata.PlayerData;
@@ -40,6 +41,10 @@ public class CharacterManager{
         this.myID = id;
     }
     
+    /**
+     * Sends all player data to the passed in connection.
+     * @param conn The connection of the player that will recieve the data.
+     */
     public void sendData(HostedConnection conn){
         int i = 0;
         while(i < players.size()){

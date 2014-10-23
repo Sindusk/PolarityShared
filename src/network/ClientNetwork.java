@@ -169,6 +169,18 @@ public class ClientNetwork{
             inputHandler.switchScreens(new MenuScreen(app, Screen.getTopRoot(), Screen.getTopGUI()));
         }
         
+        private void ChunkMessage(ChunkData d){
+            final ChunkData m = d;
+            app.enqueue(new Callable<Void>(){
+                public Void call() throws Exception{
+                    if(app instanceof GameClient){
+                        ((GameClient)app).updateChunk(m);
+                    }
+                    return null;
+                }
+            });
+        }
+        
         private void CommandMessage(CommandData d){
             final CommandData m = d;
             app.enqueue(new Callable<Void>(){
@@ -334,7 +346,9 @@ public class ClientNetwork{
         public void messageReceived(Client source, Message m) {
             client = source;
             
-            if(m instanceof CommandData){
+            if(m instanceof ChunkData){
+                ChunkMessage((ChunkData) m);
+            }else if(m instanceof CommandData){
                 CommandMessage((CommandData) m);
             }else if(m instanceof DamageData){
                 DamageMessage((DamageData) m);

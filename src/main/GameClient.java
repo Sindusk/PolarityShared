@@ -9,11 +9,13 @@ import com.jme3.system.AppSettings;
 import input.ClientInputHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import netdata.ChunkData;
 import network.ClientNetwork;
 import screens.MenuScreen;
 import screens.Screen;
 import tools.Sys;
 import tools.Util;
+import world.World;
 
 /**
 Copyright (c) 2003-2012 jMonkeyEngine
@@ -53,6 +55,7 @@ public class GameClient extends Application {
     protected ActionManager actionManager = new ActionManager();
     protected ClientInputHandler inputHandler;
     protected ClientNetwork clientNetwork;
+    protected World world = new World(50);
     
     public static void main(String[] args){
         GameClient app = new GameClient();
@@ -61,6 +64,13 @@ public class GameClient extends Application {
     
     public ClientNetwork getNetwork(){
         return clientNetwork;
+    }
+    public World getWorld(){
+        return world;
+    }
+    
+    public void updateChunk(ChunkData d){
+        world.updateChunk(d);
     }
     
     @Override
@@ -99,6 +109,7 @@ public class GameClient extends Application {
         Sys.setTimer(timer);
         Sys.setVersion(CLIENT_VERSION);
         Sys.setViewPort(viewPort);
+        Sys.setWorld(world);
         
         // Initialize camera
         cam.setParallelProjection(true);

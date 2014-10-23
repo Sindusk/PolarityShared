@@ -12,11 +12,19 @@ import tools.GeoFactory;
  * @author SinisteRing
  */
 public class Block {
-    protected Vector2f loc;
+    protected BlockData data;
     protected Geometry geo;
     
     public Block(Node parent, ColorRGBA color, float x, float y){
-        loc = new Vector2f(x, y);
-        GeoFactory.createBox(parent, "block", new Vector3f(0.45f, 0.45f, 0f), new Vector3f(x, y, 0), color);
+        data = new BlockData(new Vector2f(x, y), color);
+        geo = GeoFactory.createBox(parent, "block", new Vector3f(0.45f, 0.45f, 0f), new Vector3f(x, y, 0), color);
+    }
+    public Block(Node parent, BlockData data){
+        this.data = data;
+        geo = GeoFactory.createBox(parent, "block", new Vector3f(0.45f, 0.45f, 0f), data.get3DLocation(), data.getColor());
+    }
+    
+    public BlockData getData(){
+        return data;
     }
 }

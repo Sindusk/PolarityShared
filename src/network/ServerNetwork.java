@@ -173,6 +173,7 @@ public class ServerNetwork{
             characterManager.add(d);
             server.broadcast(Filters.notEqualTo(connection), d);
             characterManager.getPlayer(id).setConnection(connection);
+            app.getWorld().sendData(connection);
             characterManager.sendData(connection);
         }
         

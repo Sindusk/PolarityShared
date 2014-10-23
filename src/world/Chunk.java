@@ -4,15 +4,19 @@ import world.blocks.Block;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector2f;
+import com.jme3.network.serializing.Serializable;
 import com.jme3.scene.Node;
 import java.util.ArrayList;
+import world.blocks.BlockData;
+import netdata.ChunkData;
 import tools.Util.Vector2i;
-import world.blocks.Wall;
+import world.blocks.WallData;
 
 /**
  *
  * @author SinisteRing
  */
+@Serializable
 public class Chunk {
     public static final int SIZE = 8;   // Amount of blocks per chunk
     protected ArrayList<ArrayList<Block>> blocks = new ArrayList();
@@ -21,6 +25,7 @@ public class Chunk {
     protected Vector2f loc;
     protected ColorRGBA color;  // Temporary, for testing/visualization.
     
+    public Chunk(){}    // For serialization.
     public Chunk(Node parent, Vector2i key){
         this.key = key;
         this.loc = new Vector2f(key.x*SIZE, key.y*SIZE);
@@ -31,7 +36,38 @@ public class Chunk {
     public Block getBlock(Vector2i coords){
         return blocks.get(coords.x).get(coords.y);
     }
+    public ChunkData toData(){
+        ArrayList<ArrayList<BlockData>> blockDatas = new ArrayList();
+        int x = 0;
+        int y;
+        while(x < blocks.size()){
+            y = 0;
+            blockDatas.add(new ArrayList());
+            while(y < blocks.get(x).size()){
+                blockDatas.get(x).add(blocks.get(x).get(y).getData());
+                y++;
+            }
+            x++;
+        }
+        return new ChunkData(key.x, key.y, blockDatas);
+    }
     
+    public void generateBlocks(ArrayList<ArrayList<BlockData>> blockDatas){
+        int x = 0;
+        int y;
+        BlockData data;
+        while(x < blockDatas.size()){
+            y = 0;
+            blocks.add(new ArrayList());
+            while(y < blockDatas.size()){
+                data = blockDatas.get(x).get(y);
+                Block b = new Block(node, data);
+                blocks.get(x).add(b);
+                y++;
+            }
+            x++;
+        }
+    }
     public void generateBlocks(){
         int x = 0;
         int y;
@@ -40,7 +76,7 @@ public class Chunk {
             blocks.add(new ArrayList());
             while(y < Chunk.SIZE){
                 if(FastMath.nextRandomInt(1, 10) == 1){
-                    blocks.get(x).add(new Wall(node, ColorRGBA.Red, loc.x+x, loc.y+y));
+                    blocks.get(x).add(new Block(node, new WallData(new Vector2f(loc.x+x, loc.y+y), ColorRGBA.Red)));
                 }else{
                     blocks.get(x).add(new Block(node, color, loc.x+x, loc.y+y));
                 }

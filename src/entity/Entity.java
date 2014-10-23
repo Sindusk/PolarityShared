@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import network.ClientNetwork;
 import tools.Sys;
 import tools.Util;
-import world.blocks.Wall;
+import world.blocks.WallData;
 
 /**
  * Entity - Represents any non-block object that is attached to the game world.
@@ -77,10 +77,13 @@ public abstract class Entity {
     }
     public void updateLocation(Vector2f loc){
         Util.log("[Entity] <updateLocation> OLD locs = "+oldLoc.toString()+" - "+newLoc.toString(), 4);
-        if(Sys.getWorld().getBlock(loc) instanceof Wall){
-            if(!(Sys.getWorld().getBlock(new Vector2f(loc.x, newLoc.y)) instanceof Wall)){
+        if(Sys.getWorld().getBlock(loc) == null){
+            return; // This ensures no errors occur if the client has not recieved the data for this area yet.
+        }
+        if(Sys.getWorld().getBlock(loc).getData() instanceof WallData){
+            if(!(Sys.getWorld().getBlock(new Vector2f(loc.x, newLoc.y)).getData() instanceof WallData)){
                 loc = new Vector2f(loc.x, newLoc.y);
-            }else if(!(Sys.getWorld().getBlock(new Vector2f(newLoc.x, loc.y)) instanceof Wall)){
+            }else if(!(Sys.getWorld().getBlock(new Vector2f(newLoc.x, loc.y)).getData() instanceof WallData)){
                 loc = new Vector2f(newLoc.x, loc.y);
             }else{
                 return;

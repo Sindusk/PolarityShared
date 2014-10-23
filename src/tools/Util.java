@@ -17,6 +17,7 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
+import com.jme3.network.serializing.Serializable;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Node;
 import com.jme3.texture.Texture;
@@ -29,9 +30,11 @@ import java.util.logging.Logger;
  * T (Tools) - Provides miscellaneous tools for various functions.
  * @author SinisteRing
  */
+@Serializable
 public class Util {
     public static final float ROOT_HALF = 1.0f/FastMath.sqrt(2);
     
+    @Serializable
     public static class Vector2i{
         public int x;
         public int y;
