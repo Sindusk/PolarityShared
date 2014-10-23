@@ -8,6 +8,7 @@ import input.ClientInputHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import network.ClientNetwork;
+import network.GameNetwork;
 import screens.MenuScreen;
 import screens.Screen;
 import tools.Sys;
@@ -55,7 +56,7 @@ public class GameClient extends GameApplication {
     }
     
     public ClientNetwork getNetwork(){
-        return clientNetwork;
+        return (ClientNetwork) clientNetwork;
     }
     
     @Override
@@ -110,6 +111,7 @@ public class GameClient extends GameApplication {
         // Initialize networking
         clientNetwork = new ClientNetwork(this, root, gui);
         clientNetwork.setInputHandler(inputHandler);
+        Sys.setNetwork(clientNetwork);
         
         // Initialize Screen static vars
         Screen.setClientNetwork(clientNetwork);

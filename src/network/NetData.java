@@ -17,6 +17,7 @@ import world.blocks.WallData;
  */
 public enum NetData {
     // Netdata
+    ActionData(ActionData.class),
     ChunkData(ChunkData.class),
     CommandData(CommandData.class),
     ConnectData(ConnectData.class),

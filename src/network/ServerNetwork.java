@@ -1,5 +1,6 @@
 package network;
 
+import action.Event;
 import action.ProjectileAttack;
 import com.jme3.network.ConnectionListener;
 import com.jme3.network.Filters;
@@ -14,14 +15,17 @@ import java.util.concurrent.Callable;
 import main.GameServer;
 import netdata.*;
 import character.CharacterManager;
-import tools.Sys;
+import character.Player;
+import entity.Entity;
+import entity.PlayerEntity;
+import java.util.ArrayList;
 import tools.Util;
 
 /**
  * 
  * @author Sindusk
  */
-public class ServerNetwork{
+public class ServerNetwork extends GameNetwork{
     // Important variables:
     private ServerListener listener = new ServerListener();
     protected final GameServer app;
@@ -60,7 +64,7 @@ public class ServerNetwork{
         server.close();
     }
     
-    public void broadcast(Message m){
+    public void send(Message m){
         if(server != null){
             server.broadcast(m);
         }
@@ -82,6 +86,36 @@ public class ServerNetwork{
             Util.log("[Connection Removed] Player "+id+" has disconnected.");
         }
         
+        private void ActionMessage(ActionData d){
+            final ActionData m = d;
+            app.enqueue(new Callable<Void>(){
+                public Void call() throws Exception{
+                    Player owner = characterManager.getPlayer(m.getID());
+                    Event event = new Event(){
+                        @Override
+                        public boolean onCollide(ArrayList<Entity> collisions){
+                            int i = 0;
+                            Entity t;   // Temp entity
+                            while(i < collisions.size()){
+                                t = collisions.get(i);
+                                if(t instanceof PlayerEntity){
+                                    PlayerEntity pe = (PlayerEntity) t; // Cast the Entity to a PlayerEntity to open up specific methods
+                                    pe.damage(10);
+                                    Util.log("Damaging "+t.toString()+" for 10");
+                                    return true;
+                                }
+                                i++;
+                            }
+                            return false;
+                        }
+                    };
+                    float speed = 10;
+                    app.getWorld().addProjectile(new ProjectileAttack(owner, m.getStart(), m.getTarget(), event, speed, true));
+                    server.broadcast(new ProjectileData(owner.getID(), m.getStart(), m.getTarget(), new Event(), speed));
+                    return null;
+                }
+            });
+        }
         /** Recieved when a player first pings the server, checking if a slot is open.
          * <p>
          * This method determines if the player has the correct version & if there's an open
@@ -149,11 +183,13 @@ public class ServerNetwork{
          */
         private void ProjectileMessage(ProjectileData d){
             Util.log("[ServerNetwork] <ProjectileMessage> Projectile data recieved...", 2);
-            server.broadcast(d);
+            //server.broadcast(d);
             final ProjectileData m = d;
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
-                    Sys.getWorld().addProjectile(new ProjectileAttack(characterManager, m));
+                    ProjectileAttack attack = new ProjectileAttack(characterManager, m);
+                    app.getWorld().addProjectile(attack);
+                    server.broadcast(m);
                     return null;
                 }
             });
@@ -181,7 +217,9 @@ public class ServerNetwork{
             connection = source;
             server = connection.getServer();
             
-            if(m instanceof ConnectData){
+            if(m instanceof ActionData){
+                ActionMessage((ActionData) m);
+            }else if(m instanceof ConnectData){
                 ConnectMessage((ConnectData) m);
             }else if(m instanceof DamageData){
                 DamageMessage((DamageData) m);

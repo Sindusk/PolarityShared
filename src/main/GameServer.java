@@ -100,6 +100,7 @@ public class GameServer extends GameApplication{
         inputHandler = new ServerInputHandler(this);
         Util.log("[GameServer] <initialize> Starting Network...", 1);
         serverNetwork = new ServerNetwork(this);
+        Sys.setNetwork(serverNetwork);
         
         world.generate();
         

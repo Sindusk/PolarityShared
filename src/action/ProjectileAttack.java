@@ -16,8 +16,9 @@ public class ProjectileAttack extends Action {
     protected Event event;
     protected float speed;
     
-    public ProjectileAttack(GameCharacter owner, Vector2f start, Vector2f target, float speed, boolean down){
+    public ProjectileAttack(GameCharacter owner, Vector2f start, Vector2f target, Event event, float speed, boolean down){
         super(owner, start, target);
+        this.event = event;
         this.speed = speed;
         this.target = target;
     }

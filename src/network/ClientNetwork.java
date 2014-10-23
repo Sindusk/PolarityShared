@@ -31,7 +31,7 @@ import tools.Util;
  * ClientNetwork - Used for the connection and maintainence of client-side networking.
  * @author SinisteRing
  */
-public class ClientNetwork{
+public class ClientNetwork extends GameNetwork{
     // Important variables:
     private ClientListener listener = new ClientListener();
     protected final GameClient app;
@@ -145,15 +145,15 @@ public class ClientNetwork{
         CLIENT_CONNECTED = false;
         client.close();
     }
-    public void close(){
-        client.close();
-    }
     
     public void send(Message message){
         if(isConnected()){
             Util.log("[ClientNetwork] <send> Sending message...", 2);
             client.send(message);
         }
+    }
+    public void stop(){
+        client.close();
     }
     
     private class ClientListener implements MessageListener<Client>, ClientStateListener{

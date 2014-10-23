@@ -89,7 +89,6 @@ public class Projectile extends Entity{
             }
         }
         if(collisions.size() > 0){
-            Util.log("Found collision");
             if(attack.getEvent().onCollide(collisions)){
                 Util.log("Hit a player");
                 destroy();

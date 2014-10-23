@@ -56,9 +56,7 @@ public class GameScreen extends Screen {
         characterManager.getPlayer(playerID).setMousePosition(inputHandler.getCursorLocation());
         characterManager.getPlayer(playerID).updateMovement(tpf);
         characterManager.update(tpf);   // Update all other players
-        if(app instanceof GameClient){
-            ((GameClient)app).getWorld().update(tpf);
-        }
+        app.getWorld().update(tpf);
         
         // Update all HUD elements
         for(HUDElement h:hud){

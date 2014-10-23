@@ -6,9 +6,9 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import netdata.DamageData;
-import screens.Screen;
 import tools.GeoFactory;
 import tools.SinText;
+import tools.Sys;
 
 /**
  *
@@ -45,6 +45,6 @@ public class PlayerEntity extends Entity {
     
     public void damage(float value){
         owner.damage(value);
-        Screen.getClientNetwork().send(new DamageData(owner.getID(), value));
+        Sys.getNetwork().send(new DamageData(owner.getID(), value));
     }
 }

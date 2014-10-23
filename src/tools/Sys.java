@@ -11,6 +11,7 @@ import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Node;
 import com.jme3.system.Timer;
 import input.ClientInputHandler;
+import network.GameNetwork;
 import world.World;
 
 /**
@@ -132,6 +133,14 @@ public class Sys {
     }
     public static void setTimer(Timer timer){
         Sys.timer = timer;
+    }
+    
+    private static GameNetwork network;
+    public static GameNetwork getNetwork(){
+        return network;
+    }
+    public static void setNetwork(GameNetwork network){
+        Sys.network = network;
     }
     
     private static World world;

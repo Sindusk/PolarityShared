@@ -32,6 +32,7 @@ public abstract class Screen {
     
     // Default constructor
     public Screen(GameApplication app, Node rootNode, Node guiNode){
+        this.app = app;
         rootNode.attachChild(root);
         guiNode.attachChild(gui);
         name = "Default Screen";

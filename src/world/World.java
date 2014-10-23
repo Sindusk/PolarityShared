@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import netdata.ChunkData;
 import tools.Sys;
+import tools.Util;
 import tools.Util.Vector2i;
 
 /**
@@ -72,7 +73,7 @@ public class World {
     public Projectile addProjectile(ProjectileAttack attack){
         Projectile p = new Projectile(node, attack);        // Creates the projectile class data
         p.create(0.4f, attack.getStart(), attack.getTarget());    // Creates the projectile entity
-        entities.add(p);
+        entities.add(p);    // Adds to the list of entities in the world
         return p;
     }
     public PlayerEntity addPlayerEntity(Player player, ColorRGBA color){

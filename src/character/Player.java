@@ -13,6 +13,7 @@ import entity.PlayerEntity;
 import items.Equipment;
 import items.Weapon;
 import java.util.ArrayList;
+import netdata.ActionData;
 import netdata.PlayerData;
 import netdata.ProjectileData;
 import screens.Screen;
@@ -104,6 +105,8 @@ public class Player extends GameCharacter{
         }else if(down){
             Util.log("[Player] <attack> Creating new ProjectileAttack...", 2);
             Vector3f worldTarget = Util.getWorldLoc(cursorLoc, Sys.getCamera());    // Analyzes where in world space the player clicked.
+            Vector2f target = new Vector2f(worldTarget.x, worldTarget.y);
+            /*
             // --- TEST PROJECTILE ---
             ProjectileAttack attack = new ProjectileAttack(this, getLocation(), new Vector2f(worldTarget.x, worldTarget.y), weapon.getSpeed(), down);
             Event event = new Event(){
@@ -125,9 +128,10 @@ public class Player extends GameCharacter{
                 }
             };
             attack.setEvent(event);
-            // --- END TEST PROJECTILE ---
+            // --- END TEST PROJECTILE --- */
+            Screen.getClientNetwork().send(new ActionData(getID(), getLocation(), target));
             //Sys.getWorld().addProjectile(a);
-            Screen.getClientNetwork().send(new ProjectileData(getID(), attack.getStart(), attack.getTarget(), new Event(), attack.getSpeed()));
+            //Screen.getClientNetwork().send(new ProjectileData(getID(), attack.getStart(), attack.getTarget(), new Event(), attack.getSpeed()));
             Util.log("[Player] <attack> Sent ProjectileAttack to server.", 2);
         }
     }
