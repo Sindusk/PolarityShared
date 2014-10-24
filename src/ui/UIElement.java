@@ -31,14 +31,7 @@ public class UIElement {
         // By checking the translation of every node above it, we can figure out where on the screen of the player
         // any given element is. This allows us to create a bounds which detects player input for that area.
         // This process will also assist in figuring out proper priority of overlapping elements.
-        Node recursiveNode = parent;
-        Vector3f offset = new Vector3f(0, 0, 0);
-        Vector3f helper;
-        do{
-            helper = recursiveNode.getLocalTranslation();
-            offset = new Vector3f(offset.x+helper.x, offset.y+helper.y, offset.z+helper.z);
-            recursiveNode = recursiveNode.getParent();
-        }while(recursiveNode != null);
+        Vector3f offset = Util.getOffset(parent);
         node.setLocalTranslation(new Vector3f(center.x, center.y, z));
         // Using the offsets determined by the recursive loop, we now have proper bounds for the screen
         bounds = new Vector4f(offset.x+center.x-x, offset.x+center.x+x, offset.y+center.y-y, offset.y+center.y+y);

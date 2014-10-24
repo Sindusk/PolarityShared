@@ -40,13 +40,10 @@ public class GameScreen extends Screen {
     @Override
     public void initialize(final InputHandler inputHandler) {
         this.inputHandler = inputHandler;
-        //world.generate();
         hud.add(new FPSCounter(gui, new Vector2f(10, Sys.height-15), 15));   // Creates the FPS Counter
         hud.add(new Locator(gui, new Vector2f(10, Sys.height-35), 15));      // Creates the Locator
         hud.add(new VitalDisplay(gui, new Vector2f(150, 50)));
-        if(app instanceof GameClient){
-            root.attachChild(((GameClient)app).getWorld().getNode());
-        }
+        root.attachChild(app.getWorld().getNode());
         root.attachChild(characterManager.getNode());
     }
     

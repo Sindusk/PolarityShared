@@ -10,7 +10,7 @@ import world.World;
  * @author SinisteRing
  */
 public class GameApplication extends Application {
-    protected static final String VERSION = "0.01";
+    protected static final String VERSION = "0.02";
     protected World world = new World(50);
     protected Node root = new Node("Root");
     protected Node gui = new Node("GUI");

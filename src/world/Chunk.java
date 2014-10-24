@@ -29,7 +29,7 @@ public class Chunk {
     public Chunk(Node parent, Vector2i key){
         this.key = key;
         this.loc = new Vector2f(key.x*SIZE, key.y*SIZE);
-        this.color = new ColorRGBA(FastMath.nextRandomFloat(), FastMath.nextRandomFloat(), FastMath.nextRandomFloat(), 1);
+        this.color = new ColorRGBA(0, FastMath.nextRandomFloat(), FastMath.nextRandomFloat(), 1);
         parent.attachChild(node);
     }
     
@@ -75,10 +75,10 @@ public class Chunk {
             y = 0;
             blocks.add(new ArrayList());
             while(y < Chunk.SIZE){
-                if(FastMath.nextRandomInt(1, 10) == 1){
+                if(FastMath.nextRandomInt(1, 20) == 1){
                     blocks.get(x).add(new Block(node, new WallData(new Vector2f(loc.x+x, loc.y+y), ColorRGBA.Red)));
                 }else{
-                    blocks.get(x).add(new Block(node, color, loc.x+x, loc.y+y));
+                    blocks.get(x).add(new Block(node, new BlockData(new Vector2f(loc.x+x, loc.y+y), color)));
                 }
                 y++;
             }

@@ -29,7 +29,7 @@ public class PlayerEntity extends Entity {
         geo = GeoFactory.createBox(node, new Vector3f(0.6f, 0.4f, 1), Vector3f.ZERO, color);
         point = GeoFactory.createBox(node, new Vector3f(0.4f, 0.25f, 0.7f), new Vector3f(0.8f, 0f, 0), ColorRGBA.Red);
         // Create the hovering text above the model for the player's nametag
-        nameTag = GeoFactory.createSinTextAlpha(nameNode, 1.3f, new Vector3f(0, 2.5f, 2), "TNR32", player.getName(), new ColorRGBA(1, 1, 1, 1), SinText.Alignment.Center);
+        nameTag = GeoFactory.createSinTextAlpha(nameNode, 1.3f, new Vector3f(0, 2.5f, 2), "AW32", player.getName(), new ColorRGBA(1, 1, 1, 1), SinText.Alignment.Center);
         // Transparent background for the name to stand out
         Vector3f backLoc = new Vector3f(nameTag.getLineWidth()/2f, nameTag.getLineHeight()/2f, 0);
         Vector3f backSize = new Vector3f(0, nameTag.getLocalTranslation().y+(nameTag.getLineHeight()), 1);

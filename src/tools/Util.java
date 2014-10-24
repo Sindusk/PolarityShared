@@ -213,19 +213,16 @@ public class Util {
     }
     
     // Vectors and gamespace:
-    public static Vector3f v3f(float x, float y, float z){
-        return new Vector3f(x, y, z);
-    }
-    public static Vector3f v3f(float x, float y){
-        return new Vector3f(x, y, 0);
-    }
-    public static void addv3f(Vector3f source, Vector3f additive){
-        source.setX(source.getX() + additive.getX());
-        source.setY(source.getY() + additive.getY());
-        source.setZ(source.getZ() + additive.getZ());
-    }
-    public static Vector2f v2f(float x, float y){
-        return new Vector2f(x, y);
+    public static Vector3f getOffset(Node node){
+        Node recursiveNode = node;
+        Vector3f offset = new Vector3f(0, 0, 0);
+        Vector3f helper;
+        do{
+            helper = recursiveNode.getLocalTranslation();
+            offset = new Vector3f(offset.x+helper.x, offset.y+helper.y, offset.z+helper.z);
+            recursiveNode = recursiveNode.getParent();
+        }while(recursiveNode != null);
+        return offset;
     }
     
     // Logging

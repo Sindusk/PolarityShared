@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package ui;
 
 import com.jme3.math.ColorRGBA;
@@ -20,9 +16,12 @@ public class Label extends UIElement {
     
     public Label(Node parent, Vector2f center, float height, float z){
         super(parent, center, 0, height, z);
-        label = GeoFactory.createSinText(node, height, new Vector3f(0, 0, 0.01f), "TNR32", "Testing", ColorRGBA.Blue, SinText.Alignment.Center);
+        label = GeoFactory.createSinText(node, height, new Vector3f(0, 0, 0.01f), "ES32", "Testing", ColorRGBA.Blue, SinText.Alignment.Center);
     }
     
+    public float getLineWidth(){
+        return label.getLineWidth();
+    }
     public void setText(String text){
         label.setText(text);
     }

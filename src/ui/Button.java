@@ -19,14 +19,14 @@ public class Button extends UIElement {
         super(parent, loc, x, y, z);
         x /= 2.0f;
         y /= 2.0f;
-        text = GeoFactory.createSinText(node, y*1.5f, new Vector3f(0, 0, 0.01f), "TNR32", " ", ColorRGBA.Blue, SinText.Alignment.Center);
+        text = GeoFactory.createSinText(node, y*1.5f, new Vector3f(0, 0, 0.01f), "AW32", " ", ColorRGBA.Blue, SinText.Alignment.Center);
         geo = GeoFactory.createBox(node, "test", new Vector3f(x, y, 0.1f), Vector3f.ZERO, ColorRGBA.Blue);
     }
     public Button(Node parent, String icon, Vector2f loc, float x, float y, float z){
         super(parent, loc, x, y, z);
         x /= 2.0f;
         y /= 2.0f;
-        text = GeoFactory.createSinText(node, y*1.5f, new Vector3f(0, 0, 0.01f), "TNR32", " ", ColorRGBA.Blue, SinText.Alignment.Center);
+        text = GeoFactory.createSinText(node, y*1.5f, new Vector3f(0, 0, 0.01f), "AW32", " ", ColorRGBA.Blue, SinText.Alignment.Center);
         geo = GeoFactory.createBox(node, "test", new Vector3f(x, y, 0), Vector3f.ZERO, Util.getIconPath(icon), new Vector2f(1, 1));
     }
     

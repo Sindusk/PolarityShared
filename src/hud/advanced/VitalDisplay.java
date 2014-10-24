@@ -23,18 +23,18 @@ public class VitalDisplay extends HUDElement {
     
     public VitalDisplay(Node parent, Vector2f location){
         super(parent, location);
-        healthBar = new DynamicBar(node, new Vector2f(0, 75), new Vector2f(150, 25), new ColorRGBA(1, 0.3f, 0.3f, 1));
         healthText = new Label(node, new Vector2f(0, 75), 20, 1);
-        healthText.setColor(ColorRGBA.Black);
+        healthText.setColor(new ColorRGBA(0.1f, 0.1f, 0.1f, 1));
         healthText.setText("Health: 100/100");
-        shieldBar = new DynamicBar(node, new Vector2f(0, 45), new Vector2f(150, 25), new ColorRGBA(0.3f, 0.3f, 1, 1));
+        healthBar = new DynamicBar(node, new Vector2f(0, 75), new Vector2f(healthText.getLineWidth()+10, 25), new ColorRGBA(1, 0.3f, 0.3f, 1));
         shieldText = new Label(node, new Vector2f(0, 45), 20, 1);
-        shieldText.setColor(ColorRGBA.Black);
+        shieldText.setColor(new ColorRGBA(0.1f, 0.1f, 0.1f, 1));
         shieldText.setText("Shield: 100/100");
-        energyBar = new DynamicBar(node, new Vector2f(0, 15), new Vector2f(150, 25), new ColorRGBA(0.3f, 1, 0.3f, 1));
+        shieldBar = new DynamicBar(node, new Vector2f(0, 45), new Vector2f(shieldText.getLineWidth()+10, 25), new ColorRGBA(0.3f, 0.3f, 1, 1));
         energyText = new Label(node, new Vector2f(0, 15), 20, 1);
-        energyText.setColor(ColorRGBA.Black);
+        energyText.setColor(new ColorRGBA(0.1f, 0.1f, 0.1f, 1));
         energyText.setText("Energy: 100/100");
+        energyBar = new DynamicBar(node, new Vector2f(0, 15), new Vector2f(energyText.getLineWidth()+10, 25), new ColorRGBA(0.3f, 1, 0.3f, 1));
     }
     
     @Override

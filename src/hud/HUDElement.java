@@ -11,16 +11,16 @@ import tools.Util;
  */
 public class HUDElement {
     protected Node node = new Node("HUDElement Node");
-    protected Vector2f location;
+    protected Vector2f loc;
     
-    public HUDElement(Node parent, Vector2f location){
-        this.location = location;
-        node.setLocalTranslation(location.x, location.y, 0);
+    public HUDElement(Node parent, Vector2f loc){
+        this.loc = loc;
+        node.setLocalTranslation(loc.x, loc.y, 0);
         parent.attachChild(node);
     }
     
     public void setPriority(float priority){
-        node.setLocalTranslation(location.x, location.y, priority);
+        node.setLocalTranslation(loc.x, loc.y, priority);
     }
     
     public void update(Player player, float tpf){
