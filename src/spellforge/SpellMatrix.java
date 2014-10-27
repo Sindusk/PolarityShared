@@ -13,12 +13,12 @@ import tools.Util;
  *
  * @author SinisteRing
  */
-public class SpellGrid {
+public class SpellMatrix {
     protected static final int SIZE = 5;
     protected Node node = new Node("SpellGrid");
     protected ArrayList<ArrayList<SpellNode>> spellNodes = new ArrayList();
     
-    public SpellGrid(Node parent, int width, int height){
+    public SpellMatrix(Node parent, int width, int height){
         int x = 0;
         int y;
         node.setLocalTranslation(-width, -height, 0);

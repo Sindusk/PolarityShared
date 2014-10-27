@@ -74,4 +74,8 @@ public class UIElement {
         }
         return false;
     }
+    
+    public boolean destroy(){
+        return node.removeFromParent();
+    }
 }

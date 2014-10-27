@@ -148,6 +148,7 @@ public class Util {
         Material m = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         m.setTexture("ColorMap", assetManager.loadTexture(tex));
         m.getTextureParam("ColorMap").getTextureValue().setWrap(Texture.WrapMode.Repeat);
+        m.getTextureParam("ColorMap").getTextureValue().setMagFilter(Texture.MagFilter.Nearest);
         return m;
     }
     public static String getGraphicPath(String tex){
@@ -156,8 +157,8 @@ public class Util {
     public static String getIconPath(String tex){
         return "Interface/Icons/"+tex+".png";
     }
-    public static String getItemPath(String tex){
-        return "Textures/Items/"+tex+".png";
+    public static String getSpellNodePath(String tex){
+        return "Textures/SpellNode/"+tex+".png";
     }
     public static String getMaterialPath(String tex){
         return "Textures/Material/"+tex+".png";

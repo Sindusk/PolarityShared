@@ -10,6 +10,8 @@ import main.GameApplication;
 import tools.Sys;
 import tools.Util;
 import ui.Button;
+import ui.Frame;
+import ui.Panel;
 import ui.advanced.InventoryFrame;
 import ui.UIElement;
 

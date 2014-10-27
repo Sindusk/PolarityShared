@@ -76,10 +76,6 @@ public class MenuScreen extends Screen {
         ui.add(invButton);
     }
     
-    private void actionUI(UIElement e, Vector2f cursorLoc, String bind, boolean down, float tpf){
-        e.onAction(cursorLoc, bind, down, tpf);
-    }
-    
     @Override
     public void update(float tpf){
         //
@@ -96,7 +92,7 @@ public class MenuScreen extends Screen {
     public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
         UIElement e = checkUI(cursorLoc);
         if(e != null){
-            actionUI(e, cursorLoc, bind, down, tpf);
+            e.onAction(cursorLoc, bind, down, tpf);
         }
     }
     
