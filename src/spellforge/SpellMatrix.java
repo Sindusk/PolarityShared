@@ -14,19 +14,19 @@ import tools.Util;
  * @author SinisteRing
  */
 public class SpellMatrix {
-    protected static final int SIZE = 5;
+    protected static final float SIZE = 5;
     protected Node node = new Node("SpellGrid");
     protected ArrayList<ArrayList<SpellNode>> spellNodes = new ArrayList();
     
     public SpellMatrix(Node parent, int width, int height){
         int x = 0;
         int y;
-        node.setLocalTranslation(-width, -height, 0);
+        node.setLocalTranslation(-(width*SIZE)*0.3f, -(height*SIZE)*0.3f, 0);
         while(x < width){
             spellNodes.add(new ArrayList());
             y = 0;
             while(y < height){
-                spellNodes.get(x).add(new SpellNode(node, new SpellNodeData(x, y, new Vector2f(x*SpellNode.SIZE, y*SpellNode.SIZE))));
+                spellNodes.get(x).add(new SpellNode(node, this, new SpellNodeData(x, y, new Vector2f(x*SpellNode.SIZE, y*SpellNode.SIZE))));
                 y++;
             }
             x++;
@@ -34,7 +34,11 @@ public class SpellMatrix {
         parent.attachChild(node);
     }
     
-    public SpellNode checkGrid(Vector2f cursorLoc){
+    public SpellNode getSpellNode(int x, int y){
+        return spellNodes.get(x).get(y);
+    }
+    
+    public SpellNode findNode(Vector2f cursorLoc){
         Vector3f worldLoc = Util.getWorldLoc(cursorLoc, Sys.getCamera());
         Vector2f worldCursorLoc = new Vector2f(worldLoc.x, worldLoc.y);
         for(ArrayList<SpellNode> nodes : spellNodes){

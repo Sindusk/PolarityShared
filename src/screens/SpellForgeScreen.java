@@ -18,9 +18,10 @@ import ui.UIElement;
  * @author SinisteRing
  */
 public class SpellForgeScreen extends Screen {
-    protected SpellMatrix spellGrid;
+    protected SpellMatrix spellMatrix;
     protected Menu menu;
     protected Tooltip tooltip;
+    protected Tooltip testTip;
     
     public SpellForgeScreen(GameApplication app, Node root, Node gui){
         super(app, root, gui);
@@ -29,8 +30,9 @@ public class SpellForgeScreen extends Screen {
     @Override
     public void initialize(InputHandler inputHandler) {
         this.inputHandler = inputHandler;
-        spellGrid = new SpellMatrix(root, 7, 7);
+        spellMatrix = new SpellMatrix(root, 9, 9);
         tooltip = new Tooltip(gui, new Vector2f(50, Sys.height-100));
+        testTip = new Tooltip(gui, new Vector2f(50, 400));
     }
 
     @Override
@@ -40,7 +42,7 @@ public class SpellForgeScreen extends Screen {
 
     @Override
     public void onCursorMove(Vector2f cursorLoc) {
-        SpellNode spellNode = spellGrid.checkGrid(cursorLoc);
+        SpellNode spellNode = spellMatrix.findNode(cursorLoc);
         if(spellNode != null){
             if(!tooltip.isVisible()){
                 tooltip.toggleVisible();
@@ -58,8 +60,10 @@ public class SpellForgeScreen extends Screen {
         menu = new Menu(gui, cursorLoc.add(new Vector2f(100, -30)), 1);
         if(spellNode.isEmpty()){
             menu.addOption(ui, spellNode.addGeneratorOption(menu));
-            menu.addOption(ui, spellNode.addPowerConduitOption(menu));
             menu.addOption(ui, spellNode.addProjectileOption(menu));
+            menu.addOption(ui, spellNode.addDamageModifierOption(menu));
+            menu.addOption(ui, spellNode.addPowerConduitOption(menu));
+            menu.addOption(ui, spellNode.addModifierConduitOption(menu));
         }
     }
 
@@ -74,7 +78,7 @@ public class SpellForgeScreen extends Screen {
             menu.destroy(ui);
             return;
         }
-        SpellNode spellNode = spellGrid.checkGrid(cursorLoc);
+        SpellNode spellNode = spellMatrix.findNode(cursorLoc);
         if(spellNode != null){
             if(bind.equals(ClientBinding.RClick.toString()) && down){
                 createMenu(spellNode, cursorLoc);

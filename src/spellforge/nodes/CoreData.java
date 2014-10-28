@@ -7,18 +7,15 @@ import com.jme3.network.serializing.Serializable;
  * @author SinisteRing
  */
 @Serializable
-public class GeneratorData extends SpellNodeData {
-    protected float rate;
-    protected float efficiency;
-    
-    public GeneratorData(){}    // For serialization
-    public GeneratorData(SpellNodeData data){
+public class CoreData extends SpellNodeData {
+    public CoreData(){} // For serialization
+    public CoreData(SpellNodeData data){
         super(data.getX(), data.getY(), data.getLocation());
     }
     
     @Override
     public boolean canConnect(SpellNodeData data){
-        if(data instanceof PowerConduitData){
+        if(data instanceof ConduitData){
             return true;
         }
         return false;

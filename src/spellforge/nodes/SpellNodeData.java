@@ -37,4 +37,8 @@ public class SpellNodeData {
     public Vector3f get3DLocation(){
         return new Vector3f(loc.x, loc.y, 0);
     }
+    
+    public boolean canConnect(SpellNodeData data){
+        return false;
+    }
 }
