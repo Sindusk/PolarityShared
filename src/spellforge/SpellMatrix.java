@@ -19,7 +19,7 @@ import tools.Util;
 public class SpellMatrix {
     protected static final float SIZE = 5;
     
-    protected Node node = new Node("SpellGrid");
+    protected Node node = new Node("SpellMatrix");
     protected ArrayList<ArrayList<SpellNode>> spellNodes = new ArrayList();
     protected ArrayList<SpellNode> generators = new ArrayList();
     protected ArrayList<SpellNode> modifiers = new ArrayList();

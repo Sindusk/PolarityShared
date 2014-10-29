@@ -22,8 +22,8 @@ import tools.Util;
  * @author Sindusk
  */
 public class GameScreen extends Screen {
-    protected CharacterManager characterManager;
     protected ArrayList<HUDElement> hud = new ArrayList();
+    protected CharacterManager characterManager;
     
     // Movement testing
     protected int playerID;

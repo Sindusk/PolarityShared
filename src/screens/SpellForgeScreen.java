@@ -3,9 +3,12 @@ package screens;
 import com.jme3.input.event.KeyInputEvent;
 import com.jme3.math.Vector2f;
 import com.jme3.scene.Node;
+import hud.HUDElement;
 import hud.Tooltip;
+import hud.advanced.FPSCounter;
 import input.ClientBinding;
 import input.InputHandler;
+import java.util.ArrayList;
 import main.GameApplication;
 import spellforge.SpellMatrix;
 import spellforge.nodes.SpellNode;
@@ -18,6 +21,7 @@ import ui.UIElement;
  * @author SinisteRing
  */
 public class SpellForgeScreen extends Screen {
+    protected ArrayList<HUDElement> hud = new ArrayList();
     protected SpellMatrix matrix;
     protected Menu menu;
     protected Tooltip tooltip;
@@ -31,13 +35,17 @@ public class SpellForgeScreen extends Screen {
     public void initialize(InputHandler inputHandler) {
         this.inputHandler = inputHandler;
         matrix = new SpellMatrix(root, 9, 9);
+        hud.add(new FPSCounter(gui, new Vector2f(10, Sys.height-15), 15));   // Creates the FPS Counter
         tooltip = new Tooltip(gui, new Vector2f(50, Sys.height-50));
         testTip = new Tooltip(gui, new Vector2f(50, 400));
     }
 
     @Override
     public void update(float tpf) {
-        //
+        matrix.update(tpf);
+        for(HUDElement e : hud){
+            e.update(null, tpf);
+        }
     }
 
     @Override
@@ -77,9 +85,6 @@ public class SpellForgeScreen extends Screen {
             e.onAction(cursorLoc, bind, down, tpf);
             menu.destroy(ui);
             return;
-        }
-        if(bind.equals(ClientBinding.Up.toString())){
-            matrix.update(1);
         }
         SpellNode spellNode = matrix.findNode(cursorLoc);
         if(spellNode != null){
