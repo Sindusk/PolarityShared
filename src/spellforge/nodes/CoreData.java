@@ -7,10 +7,10 @@ import com.jme3.network.serializing.Serializable;
  * @author SinisteRing
  */
 @Serializable
-public class CoreData extends SpellNodeData {
+public class CoreData extends PoweredNodeData {
     public CoreData(){} // For serialization
     public CoreData(SpellNodeData data){
-        super(data.getX(), data.getY(), data.getLocation());
+        super(data);
     }
     
     @Override

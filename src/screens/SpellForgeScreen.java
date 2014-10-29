@@ -18,7 +18,7 @@ import ui.UIElement;
  * @author SinisteRing
  */
 public class SpellForgeScreen extends Screen {
-    protected SpellMatrix spellMatrix;
+    protected SpellMatrix matrix;
     protected Menu menu;
     protected Tooltip tooltip;
     protected Tooltip testTip;
@@ -30,8 +30,8 @@ public class SpellForgeScreen extends Screen {
     @Override
     public void initialize(InputHandler inputHandler) {
         this.inputHandler = inputHandler;
-        spellMatrix = new SpellMatrix(root, 9, 9);
-        tooltip = new Tooltip(gui, new Vector2f(50, Sys.height-100));
+        matrix = new SpellMatrix(root, 9, 9);
+        tooltip = new Tooltip(gui, new Vector2f(50, Sys.height-50));
         testTip = new Tooltip(gui, new Vector2f(50, 400));
     }
 
@@ -42,7 +42,7 @@ public class SpellForgeScreen extends Screen {
 
     @Override
     public void onCursorMove(Vector2f cursorLoc) {
-        SpellNode spellNode = spellMatrix.findNode(cursorLoc);
+        SpellNode spellNode = matrix.findNode(cursorLoc);
         if(spellNode != null){
             if(!tooltip.isVisible()){
                 tooltip.toggleVisible();
@@ -78,7 +78,10 @@ public class SpellForgeScreen extends Screen {
             menu.destroy(ui);
             return;
         }
-        SpellNode spellNode = spellMatrix.findNode(cursorLoc);
+        if(bind.equals(ClientBinding.Up.toString())){
+            matrix.update(1);
+        }
+        SpellNode spellNode = matrix.findNode(cursorLoc);
         if(spellNode != null){
             if(bind.equals(ClientBinding.RClick.toString()) && down){
                 createMenu(spellNode, cursorLoc);

@@ -16,7 +16,7 @@ public class PowerConduitData extends ConduitData {
     
     @Override
     public boolean canConnect(SpellNodeData data){
-        if(data instanceof GeneratorData || data instanceof PowerConduitData || data instanceof ModifierData){
+        if(data instanceof GeneratorData || data instanceof CoreData || data instanceof ModifierData || data instanceof PowerConduitData){
             return true;
         }
         return false;

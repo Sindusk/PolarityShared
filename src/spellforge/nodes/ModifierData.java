@@ -7,10 +7,10 @@ import com.jme3.network.serializing.Serializable;
  * @author SinisteRing
  */
 @Serializable
-public class ModifierData extends SpellNodeData {
+public class ModifierData extends PoweredNodeData {
     public ModifierData(){} // For serialization
     public ModifierData(SpellNodeData data){
-        super(data.getX(), data.getY(), data.getLocation());
+        super(data);
     }
     
     @Override

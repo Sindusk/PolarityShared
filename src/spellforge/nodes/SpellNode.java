@@ -58,7 +58,7 @@ public class SpellNode {
         return true;
     }
     public String getTooltip(){
-        return data.getType()+"\nPosition: "+data.getX()+", "+data.getY();
+        return data.getTooltip();
     }
     
     public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
@@ -82,12 +82,14 @@ public class SpellNode {
             connections[index] = GeoFactory.createBox(parent, new Vector3f(size*CONNECTOR_LENGTH, size*CONNECTOR_WIDTH, 0), Vector3f.ZERO, ColorRGBA.Red);
             connections[index].setLocalTranslation(new Vector3f(center.x-(size*CONNECTOR_OFFSET_L), center.y, 0.5f));
         }
+        data.setConnection(index, true);
     }
     public void removeConnection(int index){
         if(connections[index] != null){
             connections[index].removeFromParent();
             connections[index] = null;
         }
+        data.setConnection(index, false);
     }
     
     public void calculateConnections(){
@@ -98,24 +100,39 @@ public class SpellNode {
         spellNodes[3] = matrix.getSpellNode(data.getX()-1, data.getY());
         int i = 0;
         while(i < spellNodes.length){
-            if(data.canConnect(spellNodes[i].getData())){
-                createConnection(i);
-                spellNodes[i].createConnection((i+2)%4);
-            }else{
-                removeConnection(i);
-                spellNodes[i].removeConnection((i+2)%4);
+            if(spellNodes[i] != null){
+                if(data.canConnect(spellNodes[i].getData())){
+                    createConnection(i);
+                    spellNodes[i].createConnection((i+2)%4);
+                }else{
+                    removeConnection(i);
+                    spellNodes[i].removeConnection((i+2)%4);
+                }
             }
             i++;
         }
+    }
+    
+    private void changeData(SpellNodeData data, String icon){
+        this.data = data;
+        createGeometry(icon);
+        calculateConnections();
+        matrix.recalculate();
+    }
+    
+    public void recalculate(){
+        data.recalculate(matrix);
+    }
+    
+    public void update(float tpf){
+        data.update(tpf);
     }
     
     public Button addGeneratorOption(Menu menu){
         Button b = new Button(menu.getNode(), new Vector2f(0, -menu.size()*20), 200, 20, 1){
             @Override
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
-                data = new EnergyGenData(data);
-                createGeometry("generator");
-                calculateConnections();
+                changeData(new EnergyGenData(data), "generator");
             }
         };
         b.setColor(new ColorRGBA(0, 0.5f, 0, 1));
@@ -128,9 +145,7 @@ public class SpellNode {
         Button b = new Button(menu.getNode(), new Vector2f(0, -menu.size()*20), 200, 20, 1){
             @Override
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
-                data = new PowerConduitData(data);
-                createGeometry("powerConduit");
-                calculateConnections();
+                changeData(new PowerConduitData(data), "powerConduit");
             }
         };
         b.setColor(new ColorRGBA(0.5f, 0, 0, 1));
@@ -143,9 +158,7 @@ public class SpellNode {
         Button b = new Button(menu.getNode(), new Vector2f(0, -menu.size()*20), 200, 20, 1){
             @Override
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
-                data = new ProjectileCoreData(data);
-                createGeometry("projectile");
-                calculateConnections();
+                changeData(new ProjectileCoreData(data), "projectile");
             }
         };
         b.setColor(new ColorRGBA(0, 0.6f, 0.6f, 1));
@@ -157,9 +170,7 @@ public class SpellNode {
         Button b = new Button(menu.getNode(), new Vector2f(0, -menu.size()*20), 200, 20, 1){
             @Override
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
-                data = new ModifierConduitData(data);
-                createGeometry("modifierConduit");
-                calculateConnections();
+                changeData(new ModifierConduitData(data), "modifierConduit");
             }
         };
         b.setColor(new ColorRGBA(0, 0, 0.5f, 1));
@@ -171,9 +182,7 @@ public class SpellNode {
         Button b = new Button(menu.getNode(), new Vector2f(0, -menu.size()*20), 200, 20, 1){
             @Override
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
-                data = new DamageModifierData(data);
-                createGeometry("modifier");
-                calculateConnections();
+                changeData(new DamageModifierData(data), "modifier");
             }
         };
         b.setColor(new ColorRGBA(0, 0, 1f, 1));
