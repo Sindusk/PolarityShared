@@ -8,6 +8,7 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import spellforge.SpellMatrix;
 import tools.GeoFactory;
+import tools.SinText;
 import tools.Util;
 import ui.Button;
 import ui.Menu;
@@ -31,12 +32,18 @@ public class SpellNode {
     protected Vector4f bounds;
     protected Geometry geo;
     protected Geometry[] connections = new Geometry[4];
+    protected SinText text;
     
     private void createGeometry(String icon){
         if(geo != null){
             geo.removeFromParent();
         }
         geo = GeoFactory.createBox(parent, new Vector3f(size, size, 0f), center, Util.getSpellNodePath(icon));
+        if(text != null){
+            text.removeFromParent();
+        }
+        text = GeoFactory.createSinTextAlpha(parent, size*0.3f, center.add(new Vector3f(0, -size*0.7f, 0.5f)), "AW32", ColorRGBA.White, SinText.Alignment.Center);
+        text.setText(" ");
     }
     public SpellNode(Node parent, SpellMatrix matrix, SpellNodeData data){
         this.parent = parent;
@@ -126,6 +133,7 @@ public class SpellNode {
     
     public void update(float tpf){
         data.update(tpf);
+        text.setText(data.getText());
     }
     
     public Button addGeneratorOption(Menu menu){

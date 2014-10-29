@@ -50,6 +50,11 @@ public class GeoFactory {
         txt.setQueueBucket(Bucket.Transparent);
         return txt;
     }
+    public static SinText createSinTextAlpha(Node node, float size, Vector3f trans, String font, ColorRGBA color, Alignment align){
+        SinText txt = createSinText(node, size, trans, font, "Testing", color, align);
+        txt.setQueueBucket(Bucket.Transparent);
+        return txt;
+    }
 
     /**
      * Creates a Box geometry (solid color version)

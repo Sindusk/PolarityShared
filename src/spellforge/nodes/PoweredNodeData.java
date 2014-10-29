@@ -13,7 +13,7 @@ import spellforge.SpellMatrix;
 public class PoweredNodeData extends SpellNodeData {
     protected ArrayList<SpellNodeData> granted;
     protected float storedPower = 0;
-    protected float maxPower = 10;
+    protected float maxPower = 100;
     
     public PoweredNodeData(){}  // For serialization
     public PoweredNodeData(SpellNodeData data){
@@ -23,6 +23,10 @@ public class PoweredNodeData extends SpellNodeData {
     @Override
     public String getTooltip(){
         return super.getTooltip()+"\n\nStored Power: "+storedPower;
+    }
+    @Override
+    public String getText(){
+        return ""+Math.round(storedPower*100)/100f;
     }
     
     @Override

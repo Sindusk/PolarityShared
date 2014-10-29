@@ -59,6 +59,9 @@ public class SpellNodeData {
     public String getTooltip(){
         return type+"\nPosition: "+index.x+", "+index.y;
     }
+    public String getText(){
+        return " ";
+    }
     
     public void recalculate(SpellMatrix matrix){
         Util.log("Error: Recalculating Empty Node! ["+index.x+", "+index.y+"]");

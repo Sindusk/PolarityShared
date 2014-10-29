@@ -81,6 +81,12 @@ public class SpellMatrix {
         for(SpellNode spellNode : generators){
             spellNode.update(tpf);
         }
+        for(SpellNode spellNode : modifiers){
+            spellNode.update(tpf);
+        }
+        for(SpellNode spellNode : cores){
+            spellNode.update(tpf);
+        }
     }
     
     public SpellNode findNode(Vector2f cursorLoc){

@@ -13,8 +13,7 @@ import tools.Util;
 @Serializable
 public class GeneratorData extends SpellNodeData {
     protected ArrayList<SpellNodeData> granted;
-    protected float rate;
-    protected float efficiency;
+    protected float rate = 2.5f;
     
     public GeneratorData(){}    // For serialization
     public GeneratorData(SpellNodeData data){
@@ -22,8 +21,13 @@ public class GeneratorData extends SpellNodeData {
     }
     
     @Override
+    public String getText(){
+        return Math.round(rate*100f)/100f+"/sec";
+    }
+    
+    @Override
     public boolean canProvide(SpellNodeData data){
-        if(data instanceof CoreData || data instanceof ModifierData){
+        if(data instanceof PoweredNodeData){
             return true;
         }
         return false;
@@ -50,7 +54,7 @@ public class GeneratorData extends SpellNodeData {
         for(SpellNodeData data : granted){
             if(data instanceof PoweredNodeData){
                 poweredData = (PoweredNodeData) data;
-                poweredData.grantPower(tpf);
+                poweredData.grantPower(rate*tpf);
             }else{
                 Util.log("Error: Somehow powered node data is not within Generator's granted list!");
             }
