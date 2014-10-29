@@ -8,7 +8,6 @@ import input.ClientInputHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import network.ClientNetwork;
-import network.GameNetwork;
 import screens.MenuScreen;
 import screens.Screen;
 import tools.Sys;

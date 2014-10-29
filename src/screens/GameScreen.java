@@ -13,7 +13,6 @@ import hud.advanced.Locator;
 import hud.advanced.VitalDisplay;
 import java.util.ArrayList;
 import main.GameApplication;
-import main.GameClient;
 import tools.Sys;
 import tools.Util;
 
