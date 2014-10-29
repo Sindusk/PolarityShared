@@ -10,9 +10,7 @@ import main.GameApplication;
 import tools.Sys;
 import tools.Util;
 import ui.Button;
-import ui.Frame;
-import ui.Panel;
-import ui.advanced.InventoryFrame;
+import ui.FrameWithTabs;
 import ui.UIElement;
 
 /**
@@ -20,7 +18,7 @@ import ui.UIElement;
  * @author SinisteRing
  */
 public class InventoryScreen extends Screen {
-    private InventoryFrame invFrame;
+    private FrameWithTabs invFrame;
     
     public InventoryScreen(GameApplication app, Node rootNode, Node guiNode){
         super(app, rootNode, guiNode);
@@ -30,7 +28,7 @@ public class InventoryScreen extends Screen {
     @Override
     public void initialize(InputHandler inputHandler) {
         Util.log("Initialize: "+this.getName());
-        invFrame = new InventoryFrame(gui, new Vector2f(Sys.width*0.5f, Sys.height*0.5f), 600, 600, 1);
+        invFrame = new FrameWithTabs(gui, new Vector2f(Sys.width*0.5f, Sys.height*0.5f), 600, 600, 1);
         invFrame.setTitle("Inventory");
         invFrame.addTab("all", "all");
         Button test = new Button(invFrame.getPanel("all").getNode(), new Vector2f(10, 10), 50, 50, 1){
@@ -71,7 +69,7 @@ public class InventoryScreen extends Screen {
         }
         
         // Default bind back to menu screen
-        if(bind.equals(ClientBinding.Exit.toString())){
+        if(bind.equals(ClientBinding.Escape.toString())){
             Sys.getInputHandler().switchScreens(new MenuScreen(app, root.getParent(), gui.getParent()));
         }
     }

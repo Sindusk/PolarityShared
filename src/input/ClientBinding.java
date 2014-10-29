@@ -21,15 +21,15 @@ public enum ClientBinding {
     LClick(MouseInput.BUTTON_LEFT, MouseInput.class),
     RClick(MouseInput.BUTTON_RIGHT, MouseInput.class),
     // Directions (WASD)
-    Right(KeyInput.KEY_D, KeyInput.class),
-    Left(KeyInput.KEY_A, KeyInput.class),
-    Up(KeyInput.KEY_W, KeyInput.class),
-    Down(KeyInput.KEY_S, KeyInput.class),
+    D(KeyInput.KEY_D, KeyInput.class),
+    A(KeyInput.KEY_A, KeyInput.class),
+    W(KeyInput.KEY_W, KeyInput.class),
+    S(KeyInput.KEY_S, KeyInput.class),
     ArrowUp(KeyInput.KEY_UP, KeyInput.class),
     ArrowDown(KeyInput.KEY_DOWN, KeyInput.class),
     ArrowRight(KeyInput.KEY_RIGHT, KeyInput.class),
     ArrowLeft(KeyInput.KEY_LEFT, KeyInput.class),
-    Exit(KeyInput.KEY_ESCAPE, KeyInput.class);
+    Escape(KeyInput.KEY_ESCAPE, KeyInput.class);
     
     public final String mapping;
     public final int key;

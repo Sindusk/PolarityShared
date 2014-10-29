@@ -7,6 +7,7 @@ import com.jme3.scene.Node;
 import input.ClientBinding;
 import input.InputHandler;
 import character.CharacterManager;
+import com.jme3.math.ColorRGBA;
 import hud.advanced.FPSCounter;
 import hud.HUDElement;
 import hud.advanced.Locator;
@@ -15,6 +16,9 @@ import java.util.ArrayList;
 import main.GameApplication;
 import tools.Sys;
 import tools.Util;
+import ui.Button;
+import ui.UIElement;
+import ui.advanced.GameMenu;
 
 /**
  * Screen encompassing Gameplay.
@@ -22,6 +26,7 @@ import tools.Util;
  */
 public class GameScreen extends Screen {
     protected ArrayList<HUDElement> hud = new ArrayList();
+    protected GameMenu gameMenu;
     protected CharacterManager characterManager;
     
     // Movement testing
@@ -29,6 +34,7 @@ public class GameScreen extends Screen {
     
     public GameScreen(GameApplication app, Node rootNode, Node guiNode){
         super(app, rootNode, guiNode);
+        gameMenu = new GameMenu(gui, new Vector2f(Sys.width*0.5f, Sys.height*0.5f), 2);
         characterManager = clientNetwork.getPlayerManager();
         playerID = clientNetwork.getID();
         characterManager.setMyID(playerID);
@@ -39,9 +45,11 @@ public class GameScreen extends Screen {
     @Override
     public void initialize(final InputHandler inputHandler) {
         this.inputHandler = inputHandler;
-        hud.add(new FPSCounter(gui, new Vector2f(10, Sys.height-15), 15));   // Creates the FPS Counter
-        hud.add(new Locator(gui, new Vector2f(10, Sys.height-35), 15));      // Creates the Locator
-        hud.add(new VitalDisplay(gui, new Vector2f(150, 50)));
+        hud.add(new FPSCounter(gui, new Vector2f(10, Sys.height-15), 15));  // Creates the FPS Counter
+        hud.add(new Locator(gui, new Vector2f(10, Sys.height-35), 15));     // Creates the Locator
+        hud.add(new VitalDisplay(gui, new Vector2f(150, 50)));              // Creates resource displays
+        gameMenu.createReturnButton(ui);
+        gameMenu.createSpellMatrixButton(ui);
         root.attachChild(app.getWorld().getNode());
         root.attachChild(characterManager.getNode());
     }
@@ -69,22 +77,32 @@ public class GameScreen extends Screen {
         //
     }
     
+    protected void displayGameMenu(boolean show){
+        gameMenu.setVisible(ui, show);
+    }
+    
     @Override
     public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf) {
+        UIElement e = checkUI(cursorLoc);
+        if(e != null){
+            e.onAction(cursorLoc, bind, down, tpf);
+        }
         // Actions
         if(bind.equals(ClientBinding.LClick.toString())){
             characterManager.getPlayer(playerID).attack(cursorLoc, down);
         }else if(bind.equals(ClientBinding.RClick.toString()) && down){
             //app.getWorld().getBlock(Util.getWorldLoc(cursorLoc, Sys.getCamera()));
         // Movement
-        }else if(bind.equals(ClientBinding.Up.toString())){
+        }else if(bind.equals(ClientBinding.W.toString())){
             characterManager.getPlayer(playerID).setMovement(0, down);
-        }else if(bind.equals(ClientBinding.Right.toString())){
+        }else if(bind.equals(ClientBinding.D.toString())){
             characterManager.getPlayer(playerID).setMovement(1, down);
-        }else if(bind.equals(ClientBinding.Down.toString())){
+        }else if(bind.equals(ClientBinding.S.toString())){
             characterManager.getPlayer(playerID).setMovement(2, down);
-        }else if(bind.equals(ClientBinding.Left.toString())){
+        }else if(bind.equals(ClientBinding.A.toString())){
             characterManager.getPlayer(playerID).setMovement(3, down);
+        }else if(bind.equals(ClientBinding.Escape.toString()) && down && !gameMenu.isActive()){
+            displayGameMenu(true);
         }
     }
     

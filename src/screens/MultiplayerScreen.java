@@ -94,7 +94,7 @@ public class MultiplayerScreen extends Screen {
         }
         
         // Default bind back to menu screen
-        if(bind.equals(ClientBinding.Exit.toString())){
+        if(bind.equals(ClientBinding.Escape.toString())){
             Sys.getInputHandler().switchScreens(new MenuScreen(app, root.getParent(), gui.getParent()));
         }
     }
