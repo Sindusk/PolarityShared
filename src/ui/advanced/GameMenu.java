@@ -6,7 +6,14 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import input.ClientBinding;
+import input.ClientInputHandler;
+import input.InputHandler;
 import java.util.ArrayList;
+import netdata.requests.SpellMatrixRequest;
+import network.ClientNetwork;
+import screens.GameScreen;
+import screens.Screen;
+import screens.SpellForgeScreen;
 import tools.GeoFactory;
 import tools.Sys;
 import tools.Util;
@@ -46,25 +53,8 @@ public class GameMenu extends Menu {
         return b;
     }
     
-    public Button createSpellMatrixButton(final ArrayList<UIElement> ui){
-        Button b = new Button(node, new Vector2f(0, 0), Sys.width*0.4f, Sys.height*0.05f, 0){
-            @Override
-            public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
-                if(bind.equals(ClientBinding.LClick.toString()) && down){
-                    setVisible(ui, false);
-                }
-            }
-        };
-        b.setText("Spell Matrix");
-        b.setColor(ColorRGBA.Red);
-        addOption(ui, b);
-        ui.remove(b);
-        return b;
-    }
-    
     public void setVisible(ArrayList<UIElement> ui, boolean show){
         if(show){
-            Util.log("Adding...");
             parent.attachChild(node);
             for(Button b : options){
                 if(!ui.contains(b)){
@@ -72,7 +62,6 @@ public class GameMenu extends Menu {
                 }
             }
         }else{
-            Util.log("Removing...");
             node.removeFromParent();
             for(Button b : options){
                 while(ui.contains(b)){

@@ -2,6 +2,7 @@ package screens;
 
 import com.jme3.input.event.KeyInputEvent;
 import com.jme3.math.Vector2f;
+import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import hud.HUDElement;
 import hud.Tooltip;
@@ -22,13 +23,19 @@ import ui.UIElement;
  */
 public class SpellForgeScreen extends Screen {
     protected ArrayList<HUDElement> hud = new ArrayList();
+    protected Screen altScreen;
     protected SpellMatrix matrix;
     protected Menu menu;
     protected Tooltip tooltip;
     protected Tooltip testTip;
     
-    public SpellForgeScreen(GameApplication app, Node root, Node gui){
+    public SpellForgeScreen(GameApplication app, Screen gameScreen, Node root, Node gui){
         super(app, root, gui);
+        this.altScreen = gameScreen;
+    }
+    
+    public SpellMatrix getMatrix(){
+        return matrix;
     }
     
     @Override
@@ -45,6 +52,15 @@ public class SpellForgeScreen extends Screen {
         matrix.update(tpf);
         for(HUDElement e : hud){
             e.update(null, tpf);
+        }
+    }
+    
+    @Override
+    public void setVisible(boolean show){
+        super.setVisible(show);
+        if(show){
+            Sys.getCamera().setLocation(new Vector3f(0, 0, 50));
+            Sys.getCamera().lookAt(Vector3f.ZERO, Vector3f.UNIT_Y);
         }
     }
 
@@ -79,6 +95,9 @@ public class SpellForgeScreen extends Screen {
     public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf) {
         if(!down){
             return;
+        }
+        if(bind.equals(ClientBinding.Escape.toString())){
+            inputHandler.changeScreens(altScreen);
         }
         UIElement e = checkUI(cursorLoc);
         if(e != null){

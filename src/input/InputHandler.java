@@ -28,6 +28,12 @@ public abstract class InputHandler {
     
     public abstract void setupInputs();
     
+    public void changeScreens(Screen newScreen){
+        screen.setVisible(false);
+        newScreen.setVisible(true);
+        screen = newScreen;
+    }
+    
     // Screen switching
     public void switchScreens(Screen newScreen){
         if(screen != null){

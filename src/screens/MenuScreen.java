@@ -49,12 +49,13 @@ public class MenuScreen extends Screen {
         multiButton.setText("Multiplayer");
         ui.add(multiButton);
         
-        // Inventory button
+        // Spell Forge Button
+        final MenuScreen thisScreen = this;
         spellForgeButton = new Button(gui, new Vector2f(width*0.5f, height*0.6f), width*0.4f, height*0.05f, 0){
             @Override
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
                 if(bind.equals(ClientBinding.LClick.toString()) && down){
-                    inputHandler.switchScreens(new SpellForgeScreen(app, root.getParent(), gui.getParent()));
+                    inputHandler.switchScreens(new SpellForgeScreen(app, thisScreen, root.getParent(), gui.getParent()));
                 }
             }
         };

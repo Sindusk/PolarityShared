@@ -14,6 +14,7 @@ import hud.advanced.Locator;
 import hud.advanced.VitalDisplay;
 import java.util.ArrayList;
 import main.GameApplication;
+import netdata.requests.SpellMatrixRequest;
 import tools.Sys;
 import tools.Util;
 import ui.Button;
@@ -26,6 +27,7 @@ import ui.advanced.GameMenu;
  */
 public class GameScreen extends Screen {
     protected ArrayList<HUDElement> hud = new ArrayList();
+    protected SpellForgeScreen[] spellForges = new SpellForgeScreen[6];
     protected GameMenu gameMenu;
     protected CharacterManager characterManager;
     
@@ -34,11 +36,11 @@ public class GameScreen extends Screen {
     
     public GameScreen(GameApplication app, Node rootNode, Node guiNode){
         super(app, rootNode, guiNode);
+        Util.log("[GameScreen] <Initialize> playerID = "+playerID, 3);
         gameMenu = new GameMenu(gui, new Vector2f(Sys.width*0.5f, Sys.height*0.5f), 2);
         characterManager = clientNetwork.getPlayerManager();
         playerID = clientNetwork.getID();
         characterManager.setMyID(playerID);
-        Util.log("[GameScreen] <Initialize> playerID = "+playerID, 3);
         name="Game Screen";
     }
     
@@ -48,8 +50,45 @@ public class GameScreen extends Screen {
         hud.add(new FPSCounter(gui, new Vector2f(10, Sys.height-15), 15));  // Creates the FPS Counter
         hud.add(new Locator(gui, new Vector2f(10, Sys.height-35), 15));     // Creates the Locator
         hud.add(new VitalDisplay(gui, new Vector2f(150, 50)));              // Creates resource displays
-        gameMenu.createReturnButton(ui);
-        gameMenu.createSpellMatrixButton(ui);
+        
+        // Buttons for Game Menu
+        // Return to Game button:
+        Button returnButton = new Button(gameMenu.getNode(), new Vector2f(0, Sys.height*0.08f), Sys.width*0.4f, Sys.height*0.05f, 0){
+            @Override
+            public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
+                if(bind.equals(ClientBinding.LClick.toString()) && down){
+                    gameMenu.setVisible(ui, false);
+                }
+            }
+        };
+        returnButton.setText("Return to Game");
+        returnButton.setColor(ColorRGBA.Red);
+        gameMenu.addOption(ui, returnButton);
+        ui.remove(returnButton);
+        
+        // Spell Matrix button:
+        Button spellMatrixButton = new Button(gameMenu.getNode(), new Vector2f(0, 0), Sys.width*0.4f, Sys.height*0.05f, 0){
+            @Override
+            public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
+                if(bind.equals(ClientBinding.LClick.toString()) && down){
+                    clientNetwork.send(new SpellMatrixRequest(playerID));
+                    inputHandler.changeScreens(spellForges[0]);
+                }
+            }
+        };
+        spellMatrixButton.setText("Spell Matrix");
+        spellMatrixButton.setColor(ColorRGBA.Red);
+        gameMenu.addOption(ui, spellMatrixButton);
+        ui.remove(spellMatrixButton);
+        
+        int i = 0;
+        while(i < spellForges.length){
+            spellForges[i] = new SpellForgeScreen(app, this, Screen.getTopRoot(), Screen.getTopGUI());
+            spellForges[i].initialize(inputHandler);
+            spellForges[i].setVisible(false);
+            i++;
+        }
+        
         root.attachChild(app.getWorld().getNode());
         root.attachChild(characterManager.getNode());
     }
@@ -63,8 +102,12 @@ public class GameScreen extends Screen {
         app.getWorld().update(tpf);
         
         // Update all HUD elements
-        for(HUDElement h:hud){
+        for(HUDElement h : hud){
             h.update(characterManager.getPlayer(playerID), tpf);
+        }
+        
+        for(SpellForgeScreen spellForge : spellForges){
+            spellForge.getMatrix().update(tpf);
         }
         
         Vector2f tempVect = characterManager.getPlayer(playerID).getLocation();
@@ -75,10 +118,6 @@ public class GameScreen extends Screen {
     @Override
     public void onCursorMove(Vector2f cursorLoc) {
         //
-    }
-    
-    protected void displayGameMenu(boolean show){
-        gameMenu.setVisible(ui, show);
     }
     
     @Override
@@ -102,7 +141,7 @@ public class GameScreen extends Screen {
         }else if(bind.equals(ClientBinding.A.toString())){
             characterManager.getPlayer(playerID).setMovement(3, down);
         }else if(bind.equals(ClientBinding.Escape.toString()) && down && !gameMenu.isActive()){
-            displayGameMenu(true);
+            gameMenu.setVisible(ui, true);
         }
     }
     

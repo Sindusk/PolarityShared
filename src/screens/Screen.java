@@ -39,11 +39,23 @@ public abstract class Screen {
     }
     
     // Getters
-    public Node getNode(){
-        return gui;
+    public GameApplication getApp(){
+        return app;
+    }
+    public InputHandler getInputHandler(){
+        return inputHandler;
     }
     public String getName(){
         return name;
+    }
+    public void setVisible(boolean show){
+        if(show){
+            topRoot.attachChild(root);
+            topGUI.attachChild(gui);
+        }else{
+            root.removeFromParent();
+            gui.removeFromParent();
+        }
     }
     
     // Returns the top-level root node. Parent of Screen-level root.
@@ -109,10 +121,10 @@ public abstract class Screen {
     // Basic destroy method
     public void destroy(){
         if(!root.removeFromParent()){
-            Util.log("Error 1: Could not detach screen root "+name);
+            Util.log("Error: Could not detach screen root "+name);
         }
         if(!gui.removeFromParent()){
-            Util.log("Error 2: Could not detach screen gui "+name);
+            Util.log("Error: Could not detach screen gui "+name);
         }
     }
 }

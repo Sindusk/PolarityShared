@@ -6,6 +6,7 @@ import items.Equipment;
 import items.Item;
 import items.Weapon;
 import netdata.*;
+import netdata.requests.SpellMatrixRequest;
 import stats.Stat;
 import stats.StatWithMax;
 import world.Chunk;
@@ -30,6 +31,9 @@ public enum NetData {
     ProjectileData(ProjectileData.class),
     ServerStatusData(ServerStatusData.class),
     SoundData(SoundData.class),
+    
+    // Requests
+    SpellMatrixRequest(SpellMatrixRequest.class),
     
     // Data properties
     Equipment(Equipment.class),
