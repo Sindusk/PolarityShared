@@ -11,18 +11,23 @@ import com.jme3.network.serializing.Serializable;
  */
 @Serializable
 public class ProjectileData extends AbstractMessage {
+    protected int hashCode;
     protected int owner;
     protected Vector2f start;
     protected Vector2f target;
     protected Event event;
     protected float speed;
     public ProjectileData() {}
-    public ProjectileData(int owner, Vector2f start, Vector2f target, Event event, float speed){
+    public ProjectileData(int hashCode, int owner, Vector2f start, Vector2f target, Event event, float speed){
+        this.hashCode = hashCode;
         this.owner = owner;
         this.start = start;
         this.target = target;
         this.event = event;
         this.speed = speed;
+    }
+    public int getHashCode(){
+        return hashCode;
     }
     public int getOwner(){
         return owner;

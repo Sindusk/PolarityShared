@@ -35,6 +35,8 @@ public class PlayerEntity extends Entity {
         Vector3f backSize = new Vector3f(0, nameTag.getLocalTranslation().y+(nameTag.getLineHeight()), 1);
         nameBackground = GeoFactory.createBoxAlpha(nameNode, backLoc, backSize, new ColorRGBA(0, 0, 0, 0.7f));
         parent.attachChild(nameNode);
+        oldLoc = player.getData().getLocation();
+        newLoc = player.getData().getLocation();
     }
     
     @Override

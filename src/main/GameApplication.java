@@ -1,5 +1,6 @@
 package main;
 
+import character.CharacterManager;
 import com.jme3.app.Application;
 import com.jme3.scene.Node;
 import netdata.ChunkData;
@@ -11,12 +12,22 @@ import world.World;
  */
 public class GameApplication extends Application {
     protected static final String VERSION = "0.02";
+    protected CharacterManager charManager;
     protected World world = new World(50);
     protected Node root = new Node("Root");
     protected Node gui = new Node("GUI");
     
+    @Override
+    public void start(){
+        charManager = new CharacterManager();
+        super.start();
+    }
+    
     public String getVersion(){
         return VERSION;
+    }
+    public CharacterManager getCharManager(){
+        return charManager;
     }
     public World getWorld(){
         return world;

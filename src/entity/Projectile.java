@@ -7,9 +7,9 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import java.util.ArrayList;
+import netdata.destroyers.DestroyProjectileData;
 import tools.GeoFactory;
 import tools.Sys;
-import tools.Util;
 import world.blocks.WallData;
 
 /**
@@ -35,6 +35,10 @@ public class Projectile extends Entity{
         this.attack = attack;
     }
     
+    public ProjectileAttack getAttack(){
+        return attack;
+    }
+    
     /**
      * Creates the geometry of the projectile.
      * <p>
@@ -44,10 +48,11 @@ public class Projectile extends Entity{
      * @param target Target location of the projectile. In general used to simply figure out direction the projectile travels.
      */
     public void create(float radius, Vector2f start, Vector2f target){
-        geo = GeoFactory.createSphere(node, "projectile", radius, Vector3f.ZERO, ColorRGBA.Pink);
         direction = target.subtract(start).normalize();
         // Apply a push forward so the projectile spawns infront of the player, instead of on top
         Vector2f moddedStart = start.add(direction);
+        node.setLocalTranslation(new Vector3f(moddedStart.x, moddedStart.y, 0));
+        geo = GeoFactory.createSphere(node, "projectile", radius, Vector3f.ZERO, ColorRGBA.Pink);
         oldLoc = moddedStart;
         newLoc = moddedStart;
     }
@@ -90,8 +95,8 @@ public class Projectile extends Entity{
         }
         if(collisions.size() > 0){
             if(attack.getEvent().onCollide(collisions)){
-                Util.log("Hit a player");
                 destroy();
+                Sys.getNetwork().send(new DestroyProjectileData(this.hashCode()));
             }
         }
         return collisions;

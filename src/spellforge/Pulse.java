@@ -1,7 +1,6 @@
 package spellforge;
 
 import spellforge.nodes.SpellNodeData;
-import tools.Util;
 import tools.Util.Vector2i;
 
 /**
@@ -17,7 +16,7 @@ public class Pulse {
         handler.setChecked(data);
         if(handler.getOrigin().canProvide(data)){
             handler.addGranted(data);
-        }else{
+        }else if(handler.getOrigin().canTravel(data)){
             handler.createPulse(data);
         }
     }

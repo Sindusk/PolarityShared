@@ -6,6 +6,7 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial.CullHint;
 import com.jme3.system.AppSettings;
 import input.ServerInputHandler;
+import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import network.ServerNetwork;
@@ -68,7 +69,7 @@ public class GameServer extends GameApplication{
         Logger.getLogger("com.jme3").setLevel(Level.WARNING);
         settings = new AppSettings(true);
         settings.setSamples(0);
-        settings.setVSync(false);
+        settings.setVSync(true);
         settings.setRenderer(AppSettings.LWJGL_OPENGL1);
         settings.setResolution(600, 400);
         settings.setTitle("Reach Server");
@@ -113,13 +114,24 @@ public class GameServer extends GameApplication{
         if(speed == 0 || paused){   // If the client is paused, do not update.
             return;
         }
-        float tpf = timer.getTimePerFrame() * speed;
+        final float tpf = timer.getTimePerFrame() * speed;
         
         // Update States:
         stateManager.update(tpf);
         
-        // Custom updates:
-        world.serverUpdate(tpf);
+        // Custom updates
+        enqueue(new Callable<Void>(){
+            public Void call() throws Exception{
+                world.serverUpdate(tpf);
+                return null;
+            }
+        });
+        enqueue(new Callable<Void>(){
+            public Void call() throws Exception{
+                charManager.serverUpdate(tpf);
+                return null;
+            }
+        });
 
         // Update logical and geometric states:
         updateNodeStates(tpf);

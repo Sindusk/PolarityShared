@@ -1,21 +1,16 @@
 package character;
 
-import action.Event;
-import action.ProjectileAttack;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.network.HostedConnection;
 import com.jme3.network.serializing.Serializable;
 import com.jme3.scene.Node;
-import entity.Entity;
-import entity.PlayerEntity;
 import items.Equipment;
+import items.Inventory;
 import items.Weapon;
-import java.util.ArrayList;
 import netdata.ActionData;
 import netdata.PlayerData;
-import netdata.ProjectileData;
 import screens.Screen;
 import stats.advanced.Vitals;
 import tools.Sys;
@@ -30,13 +25,18 @@ import types.AttackType;
 public class Player extends GameCharacter{
     protected int id;
     protected Vitals vitals;
+    protected Inventory inventory;
     protected Equipment equipment;
     protected PlayerData data;
     protected HostedConnection conn;
     protected Vector2f mousePos;
     protected String name;
+    protected float gcd = 0;    // Internal - actual storage of current global cooldown.
+    protected boolean attacking = false;
     protected boolean[] movement = new boolean[4];  // Up, Right, Down, Left
     protected boolean connected = false;
+    
+    protected float globalCooldown = 0.5f;  // Player's global cooldown value
     
     public Player(Node node, PlayerData d){
         connected = true;
@@ -46,7 +46,8 @@ public class Player extends GameCharacter{
             movement[i] = false;
             i++;
         }
-        name = "Player "+id;
+        name = d.getName();
+        //inventory = d.getInventory();
         equipment = d.getEquipment();
         vitals = new Vitals(id);
         this.data = d;
@@ -67,15 +68,21 @@ public class Player extends GameCharacter{
     public String getName(){
         return name;
     }
+    public Inventory getInventory(){
+        return inventory;
+    }
     public Vitals getVitals(){
         return vitals;
     }
     
+    public void setAttacking(boolean down){
+        this.attacking = down;
+    }
     public void setConnection(HostedConnection conn){
         this.conn = conn;
     }
-    public void setMousePosition(Vector2f mousePos){
-        this.mousePos = mousePos;
+    public void set3DMouseLocation(Vector2f loc){
+        this.mousePos = loc;
     }
     public void updateLocation(Vector2f loc){
         entity.updateLocation(loc);
@@ -93,7 +100,7 @@ public class Player extends GameCharacter{
         return connected;
     }
     
-    public void attack(Vector2f cursorLoc, boolean down){
+    public void attack(Vector2f cursorLoc){
         Weapon weapon = equipment.getWeapon();
         if(weapon == null){
             Util.log("Error: No weapon ["+id+"]");
@@ -102,41 +109,24 @@ public class Player extends GameCharacter{
         if(weapon.getAttackType() == AttackType.Charged){
             //chargeAttack(weapon, cursorLoc, down);
             Util.log("Error: Charged not yet implemented.");
-        }else if(down){
+        }else{
             Util.log("[Player] <attack> Creating new ProjectileAttack...", 2);
             Vector3f worldTarget = Util.getWorldLoc(cursorLoc, Sys.getCamera());    // Analyzes where in world space the player clicked.
             Vector2f target = new Vector2f(worldTarget.x, worldTarget.y);
-            /*
-            // --- TEST PROJECTILE ---
-            ProjectileAttack attack = new ProjectileAttack(this, getLocation(), new Vector2f(worldTarget.x, worldTarget.y), weapon.getSpeed(), down);
-            Event event = new Event(){
-                @Override
-                public boolean onCollide(ArrayList<Entity> collisions){
-                    int i = 0;
-                    Entity t;   // Temp entity
-                    while(i < collisions.size()){
-                        t = collisions.get(i);
-                        if(t instanceof PlayerEntity){
-                            PlayerEntity pe = (PlayerEntity) t; // Cast the Entity to a PlayerEntity to open up specific methods
-                            pe.damage(10);
-                            Util.log("Damaging "+t.toString()+" for 10");
-                            return true;
-                        }
-                        i++;
-                    }
-                    return false;
-                }
-            };
-            attack.setEvent(event);
-            // --- END TEST PROJECTILE --- */
             Screen.getClientNetwork().send(new ActionData(getID(), getLocation(), target));
-            //Sys.getWorld().addProjectile(a);
-            //Screen.getClientNetwork().send(new ProjectileData(getID(), attack.getStart(), attack.getTarget(), new Event(), attack.getSpeed()));
             Util.log("[Player] <attack> Sent ProjectileAttack to server.", 2);
         }
     }
     
-    public void updateMovement(float tpf){
+    public void updateLocal(float tpf, Vector2f cursorLoc){
+        if(attacking && gcd <= 0){
+            attack(cursorLoc);
+            gcd += globalCooldown;
+        }else{
+            if(gcd > 0){
+                gcd -= tpf;
+            }
+        }
         Vector2f move = new Vector2f(0, 0);
         tpf *= 5; //Temporary, for scaling.
         if(movement[0]){
@@ -160,6 +150,7 @@ public class Player extends GameCharacter{
     }
     
     public void destroy(){
+        entity.destroy();
         connected = false;
     }
 }

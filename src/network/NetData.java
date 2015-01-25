@@ -6,7 +6,9 @@ import items.Equipment;
 import items.Item;
 import items.Weapon;
 import netdata.*;
-import netdata.requests.SpellMatrixRequest;
+import netdata.destroyers.*;
+import netdata.requests.*;
+import netdata.responses.*;
 import stats.Stat;
 import stats.StatWithMax;
 import world.Chunk;
@@ -24,22 +26,29 @@ public enum NetData {
     ConnectData(ConnectData.class),
     DamageData(DamageData.class),
     DisconnectData(DisconnectData.class),
-    IDData(IDData.class),
     MoveData(MoveData.class),
     PingData(PingData.class),
     PlayerData(PlayerData.class),
+    PlayerConnectionData(PlayerConnectionData.class),
+    PlayerIDData(PlayerIDData.class),
     ProjectileData(ProjectileData.class),
     ServerStatusData(ServerStatusData.class),
     SoundData(SoundData.class),
     
     // Requests
+    InventoryRequest(InventoryRequest.class),
     SpellMatrixRequest(SpellMatrixRequest.class),
+    
+    // Responses
+    InventoryResponse(InventoryResponse.class),
+    
+    // Destroyers
+    DestroyProjectileData(DestroyProjectileData.class),
     
     // Data properties
     Equipment(Equipment.class),
     Event(Event.class),
     Item(Item.class),
-    ServerSettings(ServerSettings.class),
     ServerStatus(ServerStatus.class),
     Stat(Stat.class),
     StatWithMax(StatWithMax.class),

@@ -1,6 +1,7 @@
 package character;
 
 import com.jme3.math.Vector2f;
+import com.jme3.math.Vector3f;
 import com.jme3.network.serializing.Serializable;
 import entity.Entity;
 
@@ -14,6 +15,9 @@ public abstract class GameCharacter {
     
     public Entity getEntity(){
         return entity;
+    }
+    public Vector3f get3DLocation(){
+        return new Vector3f(entity.getLocation().x, entity.getLocation().y, 0);
     }
     public Vector2f getLocation(){
         return entity.getLocation();

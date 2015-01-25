@@ -18,7 +18,13 @@ import character.CharacterManager;
 import character.Player;
 import entity.Entity;
 import entity.PlayerEntity;
+import entity.Projectile;
+import files.properties.PlayerProperties;
+import files.properties.ServerProperties;
+import files.properties.vars.PlayerVar;
 import java.util.ArrayList;
+import netdata.requests.InventoryRequest;
+import netdata.responses.InventoryResponse;
 import tools.Util;
 
 /**
@@ -26,11 +32,16 @@ import tools.Util;
  * @author Sindusk
  */
 public class ServerNetwork extends GameNetwork{
+    // Constants:
+    private static final String SERVER_PROPERTIES_FILENAME  = "properties/server/server.properties";
+    private static final String PLAYER_PROPERTIES_PATH      = "properties/player/";
+    private static final String PLAYER_DATA_PATH            = "data/player/";
+    
     // Important variables:
     private ServerListener listener = new ServerListener();
     protected final GameServer app;
     protected Server server;
-    protected ServerSettings settings = new ServerSettings();
+    protected ServerProperties settings = new ServerProperties(SERVER_PROPERTIES_FILENAME);
     protected ServerStatus status = new ServerStatus();
     
     // Game variables:
@@ -81,16 +92,78 @@ public class ServerNetwork extends GameNetwork{
             if(id == -1){
                 return;
             }
+            Player p = characterManager.getPlayer(id);
+            PlayerProperties properties = new PlayerProperties(PLAYER_PROPERTIES_PATH+p.getName()+".properties");
+            properties.savePlayerData(p);
             server.broadcast(new DisconnectData(id));
             conn.close("Disconnected");
-            Util.log("[Connection Removed] Player "+id+" has disconnected.");
+            Util.log("[Connection Removed] Player "+id+" ("+p.getName()+") has disconnected.");
         }
         
-        private void ActionMessage(ActionData d){
-            final ActionData m = d;
+        // HANDSHAKING PROCESS BEGINS
+        
+        // Starts with version check from ConnectData
+        /** Recieved when a player first pings the server, checking if a slot is open.
+         * <p>
+         * This method determines if the player has the correct version & if there's an open
+         * slot in the server before telling the client it's a successful connection.
+         * If the checks pass, this will send an ID back to the player for connection.
+         * @param d Data from the message.
+         */
+        private void ConnectMessage(final ConnectData d){
+            Util.log("[ServerNetwork] <ConnectMessage> Recieving new connection...", 1);
+            if(d.getVersion().equals(app.getVersion())){    // Ensures application versions match
+                app.enqueue(new Callable<Void>(){
+                    public Void call() throws Exception{
+                        int id = characterManager.findEmptyID();    // Find an empty slot for the player, if one exists
+                        if(id != -1){
+                            //connection.send(new ServerStatusData(status));
+                            if(settings.getVar("serverPlayerData").equals("true")){
+                                PlayerProperties properties = new PlayerProperties(PLAYER_PROPERTIES_PATH+d.getName()+".properties");
+                                properties.load();
+                                if(properties.getVar(PlayerVar.PlayerName.getVar()).equals("")){
+                                    properties.setVar(PlayerVar.PlayerName.getVar(), d.getName());
+                                    properties.save();
+                                }
+                                PlayerData pd = properties.getPlayerData(id);
+                                connection.send(new PlayerConnectionData(id, pd));
+                            }else{
+                                connection.send(new PlayerIDData(id));
+                            }
+                        }else{
+                            connection.close("Server is full.");
+                        }
+                        return null;
+                    }
+                });
+            }else{  // Decline connection if the client version does not match
+                Util.log("[Connect Message] ERROR: Client has incorrect version. A player was denied connection.");
+                connection.close("Invalid Version. [Client: "+d.getVersion()+"] [Server: "+app.getVersion()+"]");
+            }
+        }
+        
+        // SSPD off - The player sends back his player data for the server to add, then send to all other players
+        /**
+         * Message is recieved when a player is authenticated for joining the server.
+         * <p>
+         * This contains all the data for the player themselves, such as character stats, location, etc.
+         * @param d The data of the message.
+         */
+        private void PlayerMessage(PlayerData d){
+            Util.log("[ServerNetwork] <PlayerMessage> Player "+d.getID()+" (v"+app.getVersion()+") connected successfully.");
+            characterManager.add(d);
+            server.broadcast(Filters.notEqualTo(connection), d);
+            characterManager.getPlayer(d.getID()).setConnection(connection);
+            app.getWorld().sendData(connection);
+            characterManager.sendData(connection);
+        }
+        
+        // HANDSHAKING PROCESS ENDS
+        
+        private void ActionMessage(final ActionData d){
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
-                    Player owner = characterManager.getPlayer(m.getID());
+                    Player owner = characterManager.getPlayer(d.getID());
                     Event event = new Event(){
                         @Override
                         public boolean onCollide(ArrayList<Entity> collisions){
@@ -101,7 +174,6 @@ public class ServerNetwork extends GameNetwork{
                                 if(t instanceof PlayerEntity){
                                     PlayerEntity pe = (PlayerEntity) t; // Cast the Entity to a PlayerEntity to open up specific methods
                                     pe.damage(10);
-                                    Util.log("Damaging "+t.toString()+" for 10");
                                     return true;
                                 }
                                 i++;
@@ -109,45 +181,19 @@ public class ServerNetwork extends GameNetwork{
                             return false;
                         }
                     };
-                    float speed = 10;
-                    app.getWorld().addProjectile(new ProjectileAttack(owner, m.getStart(), m.getTarget(), event, speed, true));
-                    server.broadcast(new ProjectileData(owner.getID(), m.getStart(), m.getTarget(), new Event(), speed));
+                    float speed = 15;
+                    Projectile p = app.getWorld().addProjectile(new ProjectileAttack(owner, d.getStart(), d.getTarget(), event, speed, true));
+                    server.broadcast(new ProjectileData(p.hashCode(), owner.getID(), d.getStart(), d.getTarget(), new Event(), speed));
                     return null;
                 }
             });
         }
-        /** Recieved when a player first pings the server, checking if a slot is open.
-         * <p>
-         * This method determines if the player has the correct version & if there's an open
-         * slot in the server before telling the client it's a successful connection.
-         * If the checks pass, this will send an ID back to the player for connection.
-         * @param d Data from the message.
-         */
-        private void ConnectMessage(ConnectData d){
-            Util.log("[ServerNetwork] <ConnectMessage> Recieving new connection...", 1);
-            if(d.GetVersion().equals(app.getVersion())){
-                app.enqueue(new Callable<Void>(){
-                    public Void call() throws Exception{
-                        int id = characterManager.findEmptyID();
-                        if(id != -1){
-                            //connection.send(new ServerStatusData(status));
-                            connection.send(new IDData(id, true));
-                        }
-                        return null;
-                    }
-                });
-            }else{
-                Util.log("[Connect Message] ERROR: Client has incorrect version. A player was denied connection.");
-                connection.close("Invalid Version. [Client: "+d.GetVersion()+"] [Server: "+app.getVersion()+"]");
-            }
-        }
         
-        private void DamageMessage(DamageData d){
+        private void DamageMessage(final DamageData d){
             server.broadcast(Filters.notEqualTo(connection), d);
-            final DamageData m = d;
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
-                    //characterManager.damagePlayer(m);
+                    //characterManager.damagePlayer(d);
                     return null;
                 }
             });
@@ -158,12 +204,11 @@ public class ServerNetwork extends GameNetwork{
          * This method is mainly used to broadcast the movement
          * @param d Data from the message.
          */
-        private void MoveMessage(MoveData d){
+        private void MoveMessage(final MoveData d){
             server.broadcast(Filters.notEqualTo(connection), d);
-            final MoveData m = d;
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
-                    characterManager.updatePlayerLocation(m);
+                    characterManager.updatePlayerLocation(d);
                     return null;
                 }
             });
@@ -182,8 +227,7 @@ public class ServerNetwork extends GameNetwork{
          * @param d The data of the message.
          */
         private void ProjectileMessage(ProjectileData d){
-            Util.log("[ServerNetwork] <ProjectileMessage> Projectile data recieved...", 2);
-            //server.broadcast(d);
+            //Util.log("[ServerNetwork] <ProjectileMessage> Projectile data recieved...", 2);
             final ProjectileData m = d;
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
@@ -197,30 +241,26 @@ public class ServerNetwork extends GameNetwork{
         private void SoundMessage(SoundData d){
             server.broadcast(d);
         }
-        /**
-         * Message is recieved when a player is authenticated for joining the server.
-         * <p>
-         * This contains all the data for the player themselves, such as character stats, location, etc.
-         * @param d The data of the message.
-         */
-        private void PlayerMessage(PlayerData d){
-            Util.log("[ServerNetwork] <PlayerMessage> Player "+d.getID()+" (v"+app.getVersion()+") connected successfully.");
-            int id = d.getID();
-            characterManager.add(d);
-            server.broadcast(Filters.notEqualTo(connection), d);
-            characterManager.getPlayer(id).setConnection(connection);
-            app.getWorld().sendData(connection);
-            characterManager.sendData(connection);
+        
+        private void InventoryRequested(InventoryRequest d){
+            //Inventory inv = characterManager.getPlayer(d.getID()).getInventory();
+            InventoryResponse response = new InventoryResponse();
+            //connection.send();
         }
         
         public void messageReceived(HostedConnection source, Message m) {
             connection = source;
             server = connection.getServer();
             
-            if(m instanceof ActionData){
-                ActionMessage((ActionData) m);
-            }else if(m instanceof ConnectData){
+            // Handshaking
+            if(m instanceof ConnectData){   // Version Checking
                 ConnectMessage((ConnectData) m);
+            }else if(m instanceof PlayerData){
+                PlayerMessage((PlayerData) m);
+            }
+            // Quick actions
+            else if(m instanceof ActionData){
+                ActionMessage((ActionData) m);
             }else if(m instanceof DamageData){
                 DamageMessage((DamageData) m);
             }else if(m instanceof MoveData){
@@ -231,8 +271,10 @@ public class ServerNetwork extends GameNetwork{
                 ProjectileMessage((ProjectileData) m);
             }else if(m instanceof SoundData){
                 SoundMessage((SoundData) m);
-            }else if(m instanceof PlayerData){
-                PlayerMessage((PlayerData) m);
+            }
+            // Data requests
+            else if(m instanceof InventoryRequest){
+                InventoryRequested((InventoryRequest) m);
             }
         }
     }

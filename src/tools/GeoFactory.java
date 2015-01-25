@@ -40,6 +40,9 @@ public class GeoFactory {
         node.attachChild(txt.getNode());
         return txt;
     }
+    public static SinText createSinText(Node node, float size, Vector3f trans, String font, ColorRGBA color, Alignment align){
+        return createSinText(node, size, trans, font, " ", color, align);
+    }
     /**
      * Same as createSinText, but makes background transparent.
      * <p>
@@ -51,7 +54,7 @@ public class GeoFactory {
         return txt;
     }
     public static SinText createSinTextAlpha(Node node, float size, Vector3f trans, String font, ColorRGBA color, Alignment align){
-        SinText txt = createSinText(node, size, trans, font, "Testing", color, align);
+        SinText txt = createSinText(node, size, trans, font, " ", color, align);
         txt.setQueueBucket(Bucket.Transparent);
         return txt;
     }
@@ -181,6 +184,7 @@ public class GeoFactory {
         Geometry g = new Geometry(name, b);
         Material m = Util.getMaterial(Sys.getAssetManager(), color);
         g.setMaterial(m);
+        g.setLocalTranslation(trans);
         if(node != null){
             node.attachChild(g);
         }

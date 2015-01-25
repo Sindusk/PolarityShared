@@ -1,5 +1,10 @@
 package spellforge.nodes;
 
+import spellforge.nodes.generators.EnergyGenData;
+import spellforge.nodes.modifiers.MultiModData;
+import spellforge.nodes.cores.ProjectileCoreData;
+import spellforge.nodes.conduits.ModifierConduitData;
+import spellforge.nodes.conduits.PowerConduitData;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
@@ -18,8 +23,8 @@ import ui.Menu;
  * @author SinisteRing
  */
 public class SpellNode {
-    public static final float SIZE = 4;
-    public static final float size = SIZE*0.5f;
+    public static float SIZE;
+    public static float size;
     public static final float CONNECTOR_WIDTH = 0.1f;
     public static final float CONNECTOR_OFFSET_W = 1.0f-CONNECTOR_WIDTH;
     public static final float CONNECTOR_LENGTH = 0.2f;
@@ -34,17 +39,6 @@ public class SpellNode {
     protected Geometry[] connections = new Geometry[4];
     protected SinText text;
     
-    private void createGeometry(String icon){
-        if(geo != null){
-            geo.removeFromParent();
-        }
-        geo = GeoFactory.createBox(parent, new Vector3f(size, size, 0f), center, Util.getSpellNodePath(icon));
-        if(text != null){
-            text.removeFromParent();
-        }
-        text = GeoFactory.createSinTextAlpha(parent, size*0.3f, center.add(new Vector3f(0, -size*0.7f, 0.5f)), "AW32", ColorRGBA.White, SinText.Alignment.Center);
-        text.setText(" ");
-    }
     public SpellNode(Node parent, SpellMatrix matrix, SpellNodeData data){
         this.parent = parent;
         this.matrix = matrix;
@@ -53,6 +47,22 @@ public class SpellNode {
         createGeometry("empty");
         Vector3f offset = Util.getOffset(parent);
         bounds = new Vector4f(offset.x+center.x-size, offset.x+center.x+size, offset.y+center.y-size, offset.y+center.y+size);
+    }
+    private void createGeometry(String icon){
+        if(geo != null){
+            geo.removeFromParent();
+        }
+        geo = GeoFactory.createBox(parent, new Vector3f(size, size, 0f), center, Util.getSpellNodePath(icon));
+        if(text != null){
+            text.removeFromParent();
+        }
+        text = GeoFactory.createSinText(parent, size*0.3f, center.add(new Vector3f(0, -size*0.7f, 0.5f)), "AW32", ColorRGBA.White, SinText.Alignment.Center);
+        text.setText(" ");
+    }
+    
+    public static void setNodeSize(float size){
+        SpellNode.SIZE = size;
+        SpellNode.size = SpellNode.SIZE/2f;
     }
     
     public SpellNodeData getData(){
@@ -186,11 +196,11 @@ public class SpellNode {
         b.setTextColor(ColorRGBA.White);
         return b;
     }
-    public Button addDamageModifierOption(Menu menu){
+    public Button addModifierOption(Menu menu){
         Button b = new Button(menu.getNode(), new Vector2f(0, -menu.size()*20), 200, 20, 1){
             @Override
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
-                changeData(new DamageModifierData(data), "modifier");
+                changeData(new MultiModData(data), "modifier");
             }
         };
         b.setColor(new ColorRGBA(0, 0, 1f, 1));

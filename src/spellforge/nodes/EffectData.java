@@ -4,6 +4,7 @@ import com.jme3.network.serializing.Serializable;
 import java.util.ArrayList;
 import spellforge.PulseHandler;
 import spellforge.SpellMatrix;
+import spellforge.nodes.conduits.EffectConduitData;
 import spellforge.nodes.conduits.ModifierConduitData;
 
 /**
@@ -11,12 +12,12 @@ import spellforge.nodes.conduits.ModifierConduitData;
  * @author SinisteRing
  */
 @Serializable
-public class ModifierData extends SpellNodeData {
+public class EffectData extends SpellNodeData {
     protected ArrayList<SpellNodeData> granted;
     protected float multiplier = 0;
     
-    public ModifierData(){} // For serialization
-    public ModifierData(SpellNodeData data){
+    public EffectData(){} // For serialization
+    public EffectData(SpellNodeData data){
         super(data.getX(), data.getY(), data.getLocation());
     }
     
@@ -36,7 +37,7 @@ public class ModifierData extends SpellNodeData {
     }
     @Override
     public boolean canTravel(SpellNodeData data){
-        if(data instanceof ModifierConduitData){
+        if(data instanceof EffectConduitData){
             return true;
         }
         return false;
@@ -59,7 +60,7 @@ public class ModifierData extends SpellNodeData {
         for(SpellNodeData data : granted){
             if(data instanceof CoreData){
                 coreData = (CoreData) data;
-                coreData.addModifier(this, multiplier);
+                coreData.addEffect(this, multiplier);
             }
         }
     }

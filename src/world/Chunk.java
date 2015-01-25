@@ -20,19 +20,29 @@ import world.blocks.WallData;
 public class Chunk {
     public static final int SIZE = 8;   // Amount of blocks per chunk
     protected ArrayList<ArrayList<Block>> blocks = new ArrayList();
+    protected Node parent;
     protected Node node = new Node("Chunk");
+    protected boolean loaded;
     protected Vector2i key;
     protected Vector2f loc;
     protected ColorRGBA color;  // Temporary, for testing/visualization.
     
     public Chunk(){}    // For serialization.
     public Chunk(Node parent, Vector2i key){
+        this.parent = parent;
         this.key = key;
         this.loc = new Vector2f(key.x*SIZE, key.y*SIZE);
         this.color = new ColorRGBA(0, FastMath.nextRandomFloat(), FastMath.nextRandomFloat(), 1);
         parent.attachChild(node);
+        loaded = true;
     }
     
+    public boolean loaded(){
+        return loaded;
+    }
+    public Vector2i getKey(){
+        return key;
+    }
     public Block getBlock(Vector2i coords){
         return blocks.get(coords.x).get(coords.y);
     }
@@ -84,5 +94,13 @@ public class Chunk {
             }
             x++;
         }
+    }
+    public void load(){
+        parent.attachChild(node);
+        loaded = true;
+    }
+    public void unload(){
+        node.removeFromParent();
+        loaded = false;
     }
 }

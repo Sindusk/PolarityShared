@@ -56,6 +56,9 @@ public class SpellNodeData {
     public boolean canConnect(SpellNodeData data){
         return false;
     }
+    public boolean canTravel(SpellNodeData data){
+        return false;
+    }
     public String getTooltip(){
         return type+"\nPosition: "+index.x+", "+index.y;
     }

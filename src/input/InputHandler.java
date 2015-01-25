@@ -54,7 +54,7 @@ public abstract class InputHandler {
      * Obtains the cursor location in world space.
      * @return Location (in world space) of the cursor
      */
-    public Vector2f getCursorLocation(){
+    public Vector2f get3DCursorLocation(){
         Vector3f worldPos = Sys.getCamera().getWorldCoordinates(app.getInputManager().getCursorPosition(), 0f).clone();
         Vector2f worldPos2D = new Vector2f(worldPos.x, worldPos.y);
         return worldPos2D;

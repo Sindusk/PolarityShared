@@ -23,7 +23,7 @@ public class Tooltip extends HUDElement {
         this.parent = parent;
         visible = true;
         node.setLocalTranslation(new Vector3f(loc.x, loc.y, 1));
-        text = GeoFactory.createSinText(node, 20, new Vector3f(0, 0, 0.01f), "ES32", "Testing", ColorRGBA.White, SinText.Alignment.Center);
+        text = GeoFactory.createSinText(node, 20, new Vector3f(0, 0, 0.01f), "ES32", " ", ColorRGBA.White, SinText.Alignment.Center);
         text.setAlignment(SinText.Alignment.Left);
         updateBackground();
     }

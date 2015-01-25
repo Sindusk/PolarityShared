@@ -19,8 +19,8 @@ import ui.UIElement;
  */
 public class MenuScreen extends Screen {
     private Button multiButton;
-    private Button spellForgeButton;
     private Button invButton;
+    private Button exitButton;
     
     public MenuScreen(GameApplication app, Node rootNode, Node guiNode){
         super(app, rootNode, guiNode);
@@ -49,22 +49,8 @@ public class MenuScreen extends Screen {
         multiButton.setText("Multiplayer");
         ui.add(multiButton);
         
-        // Spell Forge Button
-        final MenuScreen thisScreen = this;
-        spellForgeButton = new Button(gui, new Vector2f(width*0.5f, height*0.6f), width*0.4f, height*0.05f, 0){
-            @Override
-            public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
-                if(bind.equals(ClientBinding.LClick.toString()) && down){
-                    inputHandler.switchScreens(new SpellForgeScreen(app, thisScreen, root.getParent(), gui.getParent()));
-                }
-            }
-        };
-        spellForgeButton.setColor(new ColorRGBA(1, 0.3f, 0, 1));
-        spellForgeButton.setText("Spell Forge");
-        ui.add(spellForgeButton);
-        
-        // Inventory button
-        invButton = new Button(gui, new Vector2f(width*0.5f, height*0.5f), width*0.4f, height*0.05f, 0){
+        // Exit button
+        invButton = new Button(gui, new Vector2f(width*0.5f, height*0.6f), width*0.4f, height*0.05f, 0){
             @Override
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
                 if(bind.equals(ClientBinding.LClick.toString()) && down){
@@ -75,6 +61,19 @@ public class MenuScreen extends Screen {
         invButton.setColor(new ColorRGBA(1, 0.9f, 0, 1));
         invButton.setText("Inventory");
         ui.add(invButton);
+        
+        // Inventory button
+        exitButton = new Button(gui, new Vector2f(width*0.5f, height*0.3f), width*0.4f, height*0.05f, 0){
+            @Override
+            public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
+                if(bind.equals(ClientBinding.LClick.toString()) && down){
+                    app.stop();
+                }
+            }
+        };
+        exitButton.setColor(new ColorRGBA(1, 0.4f, 0, 1));
+        exitButton.setText("Exit");
+        ui.add(exitButton);
     }
     
     @Override
@@ -94,6 +93,11 @@ public class MenuScreen extends Screen {
         UIElement e = checkUI(cursorLoc);
         if(e != null){
             e.onAction(cursorLoc, bind, down, tpf);
+        }
+        
+        // Exit Application
+        if(bind.equals(ClientBinding.Escape.toString())){
+            app.stop();
         }
     }
     

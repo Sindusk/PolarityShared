@@ -1,6 +1,5 @@
-package network;
+package files;
 
-import com.jme3.network.serializing.Serializable;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -14,49 +13,41 @@ import tools.Util;
  *
  * @author SinisteRing
  */
-@Serializable
-public class ServerSettings {
-    private final String saveFilename = "server.properties";
+public class PropertiesFileManager extends FileManager{
     protected HashMap<String,String> vars = new HashMap<String,String>();
     
-    public ServerSettings(){
-        for(ServerVar v : ServerVar.values()){
-            vars.put(v.getVar(), v.getValue());
-        }
+    public PropertiesFileManager(String saveFilename){
+        this.saveFilename = saveFilename;
     }
     
+    public void setVar(String var, String value){
+        vars.put(var, value);
+    }
     public String getVar(String var){
         return vars.get(var);
     }
     
     public void save(File file){
         try{
-            if(!file.exists()){
-                Util.log("Saving server properties...");
-                file.createNewFile();
-                BufferedWriter bw = new BufferedWriter(new FileWriter(file.getAbsoluteFile()));
-                for(String var : vars.keySet()){
-                    bw.write(var+"="+vars.get(var)+"\n");
-                }
-                bw.close();
+            Util.log("Saving properties...");
+            file.createNewFile();
+            BufferedWriter bw = new BufferedWriter(new FileWriter(file.getAbsoluteFile()));
+            for(String var : vars.keySet()){
+                bw.write(var+"="+vars.get(var)+"\n");
             }
+            bw.close();
         }catch(IOException io){
             Util.log(io);
         }
     }
-    public void save(){
-        File file = new File(saveFilename);
-        save(file);
-    }
     
-    public void load(){
-        File file = new File(saveFilename);
+    public void load(File file){
         try{
             if(!file.exists()){
-                Util.log("Server properties not found, creating new file...");
+                Util.log("Properties not found, creating new file...");
                 save();
             }else{
-                Util.log("Server properties found, reading file...");
+                Util.log("Properties found, reading file...");
                 BufferedReader br = new BufferedReader(new FileReader(file.getAbsoluteFile()));
                 String[] line;
                 while(br.ready()){

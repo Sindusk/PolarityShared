@@ -1,6 +1,10 @@
-package spellforge.nodes;
+package spellforge.nodes.conduits;
 
+import spellforge.nodes.ConduitData;
 import com.jme3.network.serializing.Serializable;
+import spellforge.nodes.CoreData;
+import spellforge.nodes.ModifierData;
+import spellforge.nodes.SpellNodeData;
 
 /**
  *

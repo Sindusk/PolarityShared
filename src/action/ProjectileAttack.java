@@ -13,6 +13,7 @@ import netdata.ProjectileData;
  */
 @Serializable
 public class ProjectileAttack extends Action {
+    protected int hashCode;
     protected Event event;
     protected float speed;
     
@@ -24,10 +25,14 @@ public class ProjectileAttack extends Action {
     }
     public ProjectileAttack(CharacterManager characterManager, ProjectileData data){
         super(characterManager.getPlayer(data.getOwner()), data.getStart(), data.getTarget());
+        this.hashCode = data.getHashCode();
         this.event = data.getEvent();
         this.speed = data.getSpeed();
     }
     
+    public int getHashCode(){
+        return hashCode;
+    }
     public Event getEvent(){
         return event;
     }

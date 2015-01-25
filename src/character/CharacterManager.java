@@ -5,7 +5,6 @@ import com.jme3.scene.Node;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
-import main.GameServer;
 import netdata.DamageData;
 import netdata.MoveData;
 import netdata.PlayerData;
@@ -70,6 +69,13 @@ public class CharacterManager{
             players.get(playerID.get(d.getID())).updateRotation(d.getCursorLocation());
         }else{
             Util.log("[PlayerManager] <updatePlayerLocation> Key not found: "+d.getID(), 1);
+        }
+    }
+    public void serverUpdate(float tpf){
+        for(Integer i : playerIDSet){
+            if(i != myID){
+                //players.get(playerID.get(i)).serverUpdate(tpf);
+            }
         }
     }
     public void update(float tpf){

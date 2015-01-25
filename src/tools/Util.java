@@ -78,6 +78,13 @@ public class Util {
             }
             return true;
         }
+        
+        public boolean within(Vector2i other, int distance){
+            if(Math.abs(other.x-this.x) <= distance && Math.abs(other.y-this.y) <= distance){
+                return true;
+            }
+            return false;
+        }
 
         @Override
         public int hashCode() {

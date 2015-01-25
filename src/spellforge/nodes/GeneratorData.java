@@ -1,10 +1,10 @@
 package spellforge.nodes;
 
+import spellforge.nodes.conduits.PowerConduitData;
 import com.jme3.network.serializing.Serializable;
 import java.util.ArrayList;
 import spellforge.PulseHandler;
 import spellforge.SpellMatrix;
-import tools.Util;
 
 /**
  *
@@ -13,7 +13,9 @@ import tools.Util;
 @Serializable
 public class GeneratorData extends SpellNodeData {
     protected ArrayList<SpellNodeData> granted;
-    protected float rate = 2.5f;
+    protected float rate = 5f;
+    protected float storedPower = 0;
+    protected float maxPower = 100;
     
     public GeneratorData(){}    // For serialization
     public GeneratorData(SpellNodeData data){
@@ -21,13 +23,21 @@ public class GeneratorData extends SpellNodeData {
     }
     
     @Override
+    public String getTooltip(){
+        float roundedPower = Math.round(storedPower*100f);
+        roundedPower /= 100;
+        return super.getTooltip()+"\n\nStored Power: "+roundedPower;
+    }
+    @Override
     public String getText(){
-        return Math.round(rate*100f)/100f+"/sec";
+        return ""+Math.round(storedPower*100f)/100f;
     }
     
     @Override
     public boolean canProvide(SpellNodeData data){
-        if(data instanceof PoweredNodeData){
+        if(data instanceof CoreData){
+            return true;
+        }else if(data instanceof ModifierData){
             return true;
         }
         return false;
@@ -35,6 +45,13 @@ public class GeneratorData extends SpellNodeData {
     
     @Override
     public boolean canConnect(SpellNodeData data){
+        if(data instanceof PowerConduitData){
+            return true;
+        }
+        return false;
+    }
+    @Override
+    public boolean canTravel(SpellNodeData data){
         if(data instanceof PowerConduitData){
             return true;
         }
@@ -50,14 +67,9 @@ public class GeneratorData extends SpellNodeData {
     
     @Override
     public void update(float tpf){
-        PoweredNodeData poweredData;
-        for(SpellNodeData data : granted){
-            if(data instanceof PoweredNodeData){
-                poweredData = (PoweredNodeData) data;
-                poweredData.grantPower(rate*tpf);
-            }else{
-                Util.log("Error: Somehow powered node data is not within Generator's granted list!");
-            }
+        storedPower += rate*tpf;
+        if(storedPower > maxPower){
+            storedPower = maxPower;
         }
     }
 }

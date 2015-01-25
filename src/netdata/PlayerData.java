@@ -1,6 +1,7 @@
 package netdata;
 
 import com.jme3.math.Vector2f;
+import com.jme3.math.Vector3f;
 import com.jme3.network.AbstractMessage;
 import com.jme3.network.serializing.Serializable;
 import items.Equipment;
@@ -27,6 +28,9 @@ public class PlayerData extends AbstractMessage {
   }
   public String getName(){
       return name;
+  }
+  public Vector3f get3DLocation(){
+      return new Vector3f(loc.x, loc.y, 0);
   }
   public Vector2f getLocation(){
       return loc;

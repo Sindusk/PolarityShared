@@ -14,7 +14,7 @@ import ui.UIElement;
 
 /**
  *
- * @author SinisteRing
+ * @author Sindusk
  */
 public class ServerEntryScreen extends Screen {
     protected Button addButton;

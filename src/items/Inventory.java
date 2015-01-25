@@ -1,11 +1,13 @@
 package items;
 
+import com.jme3.network.serializing.Serializable;
 import java.util.ArrayList;
 
 /**
  *
  * @author SinisteRing
  */
+@Serializable
 public class Inventory {
     protected ArrayList<Item> items;
     // Default constructor.

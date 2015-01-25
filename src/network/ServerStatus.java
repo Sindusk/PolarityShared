@@ -4,7 +4,9 @@
  */
 package network;
 
+import files.properties.vars.ServerVar;
 import com.jme3.network.serializing.Serializable;
+import files.properties.ServerProperties;
 
 /**
  *
@@ -19,7 +21,7 @@ public class ServerStatus {
     
     public ServerStatus(){}
     
-    public void loadSettings(ServerSettings settings){
+    public void loadSettings(ServerProperties settings){
         serverPlayerData = Boolean.parseBoolean(settings.getVar(ServerVar.ServerPlayerData.getVar()));
         maxPlayers = Integer.parseInt(settings.getVar(ServerVar.MaxPlayers.getVar()));
         password = !settings.getVar(ServerVar.Password.getVar()).equals("");

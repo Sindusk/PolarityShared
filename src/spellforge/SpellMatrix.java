@@ -1,7 +1,6 @@
 package spellforge;
 
 import com.jme3.math.Vector2f;
-import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import java.util.ArrayList;
 import spellforge.nodes.CoreData;
@@ -10,14 +9,14 @@ import spellforge.nodes.ModifierData;
 import spellforge.nodes.SpellNode;
 import spellforge.nodes.SpellNodeData;
 import tools.Sys;
-import tools.Util;
 
 /**
  *
  * @author SinisteRing
  */
 public class SpellMatrix {
-    protected static final float SIZE = 5;
+    protected static final float MATRIX_MAX_HEIGHT = Sys.height*0.9f;
+    protected static final float MATRIX_MAX_WIDTH = Sys.width*0.4f;
     
     protected Node node = new Node("SpellMatrix");
     protected ArrayList<ArrayList<SpellNode>> spellNodes = new ArrayList();
@@ -28,7 +27,14 @@ public class SpellMatrix {
     public SpellMatrix(Node parent, int width, int height){
         int x = 0;
         int y;
-        node.setLocalTranslation(-(width*SIZE)*0.3f, -(height*SIZE)*0.3f, 0);
+        
+        float size = Math.min(MATRIX_MAX_WIDTH/width, MATRIX_MAX_HEIGHT/height);
+        
+        SpellNode.setNodeSize(size);
+        //node.setLocalTranslation(-(width*SIZE)*0.3f, -(height*SIZE)*0.3f, 0);
+        float nodeX = (Sys.width*0.5f)-(width*size*0.5f)+(size*0.5f);
+        float nodeY = Math.max((Sys.height/2f)-((Sys.height-MATRIX_MAX_HEIGHT)/2f)-(size*height*0.5f), size);
+        node.setLocalTranslation(nodeX, nodeY, 0);
         while(x < width){
             spellNodes.add(new ArrayList());
             y = 0;
@@ -90,11 +96,11 @@ public class SpellMatrix {
     }
     
     public SpellNode findNode(Vector2f cursorLoc){
-        Vector3f worldLoc = Util.getWorldLoc(cursorLoc, Sys.getCamera());
-        Vector2f worldCursorLoc = new Vector2f(worldLoc.x, worldLoc.y);
+        //Vector3f worldLoc = Util.getWorldLoc(cursorLoc, Sys.getCamera());
+        //Vector2f worldCursorLoc = new Vector2f(worldLoc.x, worldLoc.y);
         for(ArrayList<SpellNode> nodes : spellNodes){
             for(SpellNode spellNode : nodes){
-                if(spellNode.withinBounds(worldCursorLoc)){
+                if(spellNode.withinBounds(cursorLoc)){
                     return spellNode;
                 }
             }

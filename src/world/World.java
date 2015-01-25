@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import netdata.ChunkData;
 import tools.Sys;
-import tools.Util;
 import tools.Util.Vector2i;
 
 /**
@@ -26,6 +25,8 @@ import tools.Util.Vector2i;
 public class World {
     private static final int SIZE_X = 10;
     private static final int SIZE_Y = 10;
+    private static final int UNLOAD_DISTANCE = 7;
+    private static final int LOAD_DISTANCE = 4;
     
     protected HashMap<Vector2i, Chunk> chunkMap = new HashMap();
     protected Node node = new Node("World");
@@ -43,6 +44,10 @@ public class World {
     }
     public ArrayList<Entity> getEntities(){
         return entities;
+    }
+    public Chunk getChunk(Vector2f loc){
+        Vector2i chunk = new Vector2i(Math.round(((loc.x+0.5f)/Chunk.SIZE)-0.5f), Math.round(((loc.y+0.5f)/Chunk.SIZE)-0.5f));
+        return chunkMap.get(chunk);
     }
     public Block getBlock(Vector2f loc){
         Vector2i chunk = new Vector2i(Math.round(((loc.x+0.5f)/Chunk.SIZE)-0.5f), Math.round(((loc.y+0.5f)/Chunk.SIZE)-0.5f));
@@ -75,6 +80,18 @@ public class World {
         p.create(0.4f, attack.getStart(), attack.getTarget());    // Creates the projectile entity
         entities.add(p);    // Adds to the list of entities in the world
         return p;
+    }
+    public void destroyProjectile(int hashCode){
+        Projectile p;
+        for(Entity e : entities){
+            if(e instanceof Projectile){
+                p = (Projectile) e;
+                if(p.getAttack().getHashCode() == hashCode){
+                    p.destroy();
+                    return;
+                }
+            }
+        }
     }
     public PlayerEntity addPlayerEntity(Player player, ColorRGBA color){
         PlayerEntity e = new PlayerEntity(node, player, color);
@@ -117,6 +134,28 @@ public class World {
         Chunk chunk = new Chunk(node, key);
         chunk.generateBlocks(d.getBlocks());
         chunkMap.put(key, chunk);
+    }
+    
+    public void reloadChunks(Chunk chunk){
+        Vector2i key = chunk.getKey();
+        int x = key.x - UNLOAD_DISTANCE;
+        int y;
+        Vector2i temp;
+        Chunk c;
+        while(x < key.x+UNLOAD_DISTANCE){
+            y = key.y - UNLOAD_DISTANCE;
+            while(y < key.y+UNLOAD_DISTANCE){
+                temp = new Vector2i(x, y);
+                c = chunkMap.get(temp);
+                if(c != null && !chunk.getKey().within(temp, LOAD_DISTANCE)){
+                    c.unload();
+                }else if(c != null && !c.loaded()){
+                    c.load();
+                }
+                y++;
+            }
+            x++;
+        }
     }
     
     // World generation algorithm

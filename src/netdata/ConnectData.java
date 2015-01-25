@@ -10,12 +10,17 @@ import com.jme3.network.serializing.Serializable;
 @Serializable
 public class ConnectData extends AbstractMessage {
     private String version;
+    private String name;
     public ConnectData() {}
-    public ConnectData(String ver){
-        version = ver;
+    public ConnectData(String version, String name){
+        this.version = version;
+        this.name = name;
         this.setReliable(true);
     }
-    public String GetVersion(){
+    public String getVersion(){
         return version;
+    }
+    public String getName(){
+        return name;
     }
 }

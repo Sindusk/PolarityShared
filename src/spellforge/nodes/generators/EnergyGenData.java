@@ -1,6 +1,8 @@
-package spellforge.nodes;
+package spellforge.nodes.generators;
 
 import com.jme3.network.serializing.Serializable;
+import spellforge.nodes.GeneratorData;
+import spellforge.nodes.SpellNodeData;
 
 /**
  *
