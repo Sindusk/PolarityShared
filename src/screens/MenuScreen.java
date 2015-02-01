@@ -5,7 +5,7 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
-import input.ClientBinding;
+import input.Bind;
 import input.InputHandler;
 import main.GameApplication;
 import tools.Sys;
@@ -40,7 +40,7 @@ public class MenuScreen extends Screen {
         multiButton = new Button(gui, new Vector2f(width*0.5f, height*0.7f), width*0.4f, height*0.05f, 0){
             @Override
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
-                if(bind.equals(ClientBinding.LClick.toString()) && down){
+                if(bind.equals(Bind.LClick.toString()) && down){
                     inputHandler.switchScreens(new MultiplayerScreen(app, root.getParent(), gui.getParent()));
                 }
             }
@@ -53,7 +53,7 @@ public class MenuScreen extends Screen {
         invButton = new Button(gui, new Vector2f(width*0.5f, height*0.6f), width*0.4f, height*0.05f, 0){
             @Override
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
-                if(bind.equals(ClientBinding.LClick.toString()) && down){
+                if(bind.equals(Bind.LClick.toString()) && down){
                     inputHandler.switchScreens(new InventoryScreen(app, root.getParent(), gui.getParent()));
                 }
             }
@@ -66,7 +66,7 @@ public class MenuScreen extends Screen {
         exitButton = new Button(gui, new Vector2f(width*0.5f, height*0.3f), width*0.4f, height*0.05f, 0){
             @Override
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
-                if(bind.equals(ClientBinding.LClick.toString()) && down){
+                if(bind.equals(Bind.LClick.toString()) && down){
                     app.stop();
                 }
             }
@@ -96,7 +96,7 @@ public class MenuScreen extends Screen {
         }
         
         // Exit Application
-        if(bind.equals(ClientBinding.Escape.toString())){
+        if(bind.equals(Bind.Escape.toString())){
             app.stop();
         }
     }

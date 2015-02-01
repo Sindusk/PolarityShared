@@ -19,6 +19,11 @@ public class ModifierConduitData extends ConduitData {
     }
     
     @Override
+    public String getIcon(){
+        return "modifierConduit";
+    }
+    
+    @Override
     public boolean canConnect(SpellNodeData data){
         if(data instanceof CoreData || data instanceof ModifierData || data instanceof ModifierConduitData){
             return true;

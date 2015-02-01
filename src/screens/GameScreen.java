@@ -4,7 +4,7 @@ import com.jme3.input.event.KeyInputEvent;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
-import input.ClientBinding;
+import input.Bind;
 import input.InputHandler;
 import character.CharacterManager;
 import com.jme3.math.ColorRGBA;
@@ -48,6 +48,9 @@ public class GameScreen extends Screen {
         charManager.setMyID(playerID);
         name="Game Screen";
     }
+    public int getPlayerID(){
+        return playerID;
+    }
     
     @Override
     public void initialize(final InputHandler inputHandler) {
@@ -62,7 +65,7 @@ public class GameScreen extends Screen {
         Button returnButton = new Button(gameMenu.getNode(), new Vector2f(0, Sys.height*0.08f), Sys.width*0.4f, Sys.height*0.05f, 0){
             @Override
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
-                if(bind.equals(ClientBinding.LClick.toString()) && down){
+                if(bind.equals(Bind.LClick.toString()) && down){
                     gameMenu.setVisible(ui, false);
                 }
             }
@@ -76,7 +79,7 @@ public class GameScreen extends Screen {
         Button spellMatrixButton = new Button(gameMenu.getNode(), new Vector2f(0, 0), Sys.width*0.4f, Sys.height*0.05f, 0){
             @Override
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
-                if(bind.equals(ClientBinding.LClick.toString()) && down){
+                if(bind.equals(Bind.LClick.toString()) && down){
                     clientNetwork.send(new SpellMatrixRequest(playerID));
                     inputHandler.changeScreens(spellForges[0]);
                 }
@@ -91,7 +94,7 @@ public class GameScreen extends Screen {
         Button exitButton = new Button(gameMenu.getNode(), new Vector2f(0, -Sys.height*0.08f), Sys.width*0.4f, Sys.height*0.05f, 0){
             @Override
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
-                if(bind.equals(ClientBinding.LClick.toString()) && down){
+                if(bind.equals(Bind.LClick.toString()) && down){
                     app.stop();
                 }
             }
@@ -135,7 +138,9 @@ public class GameScreen extends Screen {
         }
         
         for(SpellForgeScreen spellForge : spellForges){
-            spellForge.getMatrix().update(tpf);
+            if(spellForge.getMatrix() != null){
+                spellForge.getMatrix().update(tpf);
+            }
         }
         
         Vector2f tempVect = charManager.getPlayer(playerID).getLocation();
@@ -160,20 +165,20 @@ public class GameScreen extends Screen {
             e.onAction(cursorLoc, bind, down, tpf);
         }
         // Actions
-        if(bind.equals(ClientBinding.LClick.toString())){
+        if(bind.equals(Bind.LClick.toString())){
             charManager.getPlayer(playerID).setAttacking(down);
-        }else if(bind.equals(ClientBinding.RClick.toString()) && down){
+        }else if(bind.equals(Bind.RClick.toString()) && down){
             //app.getWorld().getBlock(Util.getWorldLoc(cursorLoc, Sys.getCamera()));
         // Movement
-        }else if(bind.equals(ClientBinding.W.toString())){
+        }else if(bind.equals(Bind.W.toString())){
             charManager.getPlayer(playerID).setMovement(0, down);
-        }else if(bind.equals(ClientBinding.D.toString())){
+        }else if(bind.equals(Bind.D.toString())){
             charManager.getPlayer(playerID).setMovement(1, down);
-        }else if(bind.equals(ClientBinding.S.toString())){
+        }else if(bind.equals(Bind.S.toString())){
             charManager.getPlayer(playerID).setMovement(2, down);
-        }else if(bind.equals(ClientBinding.A.toString())){
+        }else if(bind.equals(Bind.A.toString())){
             charManager.getPlayer(playerID).setMovement(3, down);
-        }else if(bind.equals(ClientBinding.Escape.toString()) && down && !gameMenu.isActive()){
+        }else if(bind.equals(Bind.Escape.toString()) && down && !gameMenu.isActive()){
             gameMenu.setVisible(ui, true);
         }
     }

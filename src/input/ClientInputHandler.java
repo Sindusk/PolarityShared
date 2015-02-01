@@ -22,7 +22,7 @@ public class ClientInputHandler extends InputHandler implements ActionListener, 
         super(app);
     }
     public void setupInputs(){
-        for(ClientBinding bind : ClientBinding.values()){
+        for(Bind bind : Bind.values()){
             app.getInputManager().addMapping(bind.mapping, bind.trigger);
             app.getInputManager().addListener(this, bind.mapping);
         }
@@ -34,7 +34,7 @@ public class ClientInputHandler extends InputHandler implements ActionListener, 
         if(screen == null){
             return;
         }
-        if(bind.equals(ClientBinding.LClick.toString()) && !down){
+        if(bind.equals(Bind.LClick.toString()) && !down){
             moving = null;
         }
         screen.onAction(app.getInputManager().getCursorPosition(), bind, down, tpf);
@@ -51,13 +51,13 @@ public class ClientInputHandler extends InputHandler implements ActionListener, 
         }
         value *= 1000f;
         if(moving != null){
-            if(name.equals(ClientBinding.MouseUp.toString())){
+            if(name.equals(Bind.MouseUp.toString())){
                 moving.move(0, value);
-            }else if(name.equals(ClientBinding.MouseDown.toString())){
+            }else if(name.equals(Bind.MouseDown.toString())){
                 moving.move(0, -value);
-            }else if(name.equals(ClientBinding.MouseRight.toString())){
+            }else if(name.equals(Bind.MouseRight.toString())){
                 moving.move(value, 0);
-            }else if(name.equals(ClientBinding.MouseLeft.toString())){
+            }else if(name.equals(Bind.MouseLeft.toString())){
                 moving.move(-value, 0);
             }
         }

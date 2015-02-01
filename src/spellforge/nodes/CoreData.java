@@ -1,6 +1,8 @@
 package spellforge.nodes;
 
+import com.jme3.math.ColorRGBA;
 import com.jme3.network.serializing.Serializable;
+import items.creation.ItemGenerator;
 import java.util.ArrayList;
 import java.util.HashMap;
 import spellforge.PulseHandler;
@@ -17,9 +19,14 @@ public class CoreData extends SpellNodeData {
     protected ArrayList<ModifierData> mods = new ArrayList();
     protected ArrayList<EffectData> effects = new ArrayList();
     
-    public CoreData(){} // For serialization
+    public CoreData(){
+        type = "Core";
+        typeColor = ColorRGBA.Cyan;
+    }
     public CoreData(SpellNodeData data){
         super(data.getX(), data.getY(), data.getLocation());
+        type = "Core";
+        typeColor = ColorRGBA.Cyan;
     }
     
     @Override
@@ -28,6 +35,13 @@ public class CoreData extends SpellNodeData {
             return true;
         }
         return false;
+    }
+    
+    @Override
+    public HashMap<String,Float> genProperties(int level){
+        properties = new HashMap();
+        properties.put("Cost", ItemGenerator.leveledRandomFloat(10f, level, 2));
+        return properties;
     }
     
     @Override

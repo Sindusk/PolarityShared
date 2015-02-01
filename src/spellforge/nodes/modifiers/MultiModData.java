@@ -10,9 +10,11 @@ import spellforge.nodes.SpellNodeData;
  */
 @Serializable
 public class MultiModData extends ModifierData {
-    public MultiModData(){}   // For serialization
+    public MultiModData(){
+        name = "Multiplier Modifier";
+    }
     public MultiModData(SpellNodeData data){
         super(data);
-        type = "Multiplier Modifier";
+        name = "Multiplier Modifier";
     }
 }

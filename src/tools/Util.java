@@ -30,7 +30,6 @@ import java.util.logging.Logger;
  * T (Tools) - Provides miscellaneous tools for various functions.
  * @author SinisteRing
  */
-@Serializable
 public class Util {
     public static final float ROOT_HALF = 1.0f/FastMath.sqrt(2);
     
@@ -158,20 +157,8 @@ public class Util {
         m.getTextureParam("ColorMap").getTextureValue().setMagFilter(Texture.MagFilter.Nearest);
         return m;
     }
-    public static String getGraphicPath(String tex){
-        return "Interface/Graphic/"+tex+".png";
-    }
-    public static String getIconPath(String tex){
-        return "Interface/Icons/"+tex+".png";
-    }
-    public static String getSpellNodePath(String tex){
-        return "Textures/SpellNode/"+tex+".png";
-    }
-    public static String getMaterialPath(String tex){
-        return "Textures/Material/"+tex+".png";
-    }
-    public static String getNeuroPath(String tex){
-        return "Textures/Neuros/"+tex+".png";
+    public static String getItemIcon(String tex){
+        return "Interface/Icons/Items/"+tex+".png";
     }
     
     // Key Mappings:
@@ -191,6 +178,9 @@ public class Util {
     // Random numbers:
     public static float randFloat(float min, float max){
         return (FastMath.nextRandomFloat()*(max-min))+min;
+    }
+    public static float roundedRandFloat(float min, float max, int spaces){
+        return Math.round(randFloat(min, max)*Math.pow(10f, spaces))/(float)Math.pow(10f, spaces);
     }
     
     // Mouse targeting and collision:

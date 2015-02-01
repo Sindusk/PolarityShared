@@ -1,31 +1,101 @@
 package items;
 
+import com.jme3.math.ColorRGBA;
 import com.jme3.network.serializing.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import tools.Util;
+import tools.Util.Vector2i;
+import ui.interfaces.TooltipInfo;
 
 /**
  *
  * @author SinisteRing
  */
 @Serializable
-public abstract class Item {
-    protected String icon;      // Icon (without path) to be used by the item.
-    protected String archtype;  // Upper type, such as weapon, armor, etc.
-    protected String type;      // Lower type, such as ranged, melee, head, etc.
-    protected HashMap<String,Float> properties = new HashMap(); // Stat table for tooltip & effects.
+public abstract class Item implements TooltipInfo {
+    protected static final ColorRGBA PROPERTY_NAME_COLOR = new ColorRGBA(0.8f, 0, 0.8f, 1);
+    protected static final ColorRGBA PROPERTY_VALUE_COLOR = new ColorRGBA(0.9f, 0.4f, 0.9f, 1);
+    
+    protected Inventory container;  // The inventory or other container for this item.
+    
+    protected HashMap<Vector2i,ColorRGBA> colorMap = new HashMap();         // Stores the map of colors for the tooltip
+    protected HashMap<String,Float> properties = new HashMap();             // Stat table for tooltip & effects
     protected HashMap<String,ArrayList<Float>> flatMods = new HashMap();    // Flat modifiers
     protected HashMap<String,ArrayList<Float>> percentMods = new HashMap(); // Percent modifiers
+    
+    protected int itemLevel;    // Item level
+    protected String name;      // Name of the item.
+    protected String icon;      // Icon (without path) to be used by the item.
+    protected String archetype; // Upper type, such as weapon, armor, etc.
+    protected String type;      // Lower type, such as ranged, melee, helm, etc.
+    
+    protected ColorRGBA nameColor = new ColorRGBA(1, 0.8f, 0, 1);               // Tooltip color for name
+    protected ColorRGBA archetypeColor = new ColorRGBA(0.5f, 0.5f, 0.5f, 1);    // Tooltip color for archetype
+    protected ColorRGBA typeColor = new ColorRGBA(0.5f, 0.5f, 0.5f, 1);         // Tooltip color for type
     
     public Item(){}
     
     // Default constructor.
-    public Item(String icon){
+    public Item(Inventory inv, int itemLevel, String icon){
+        this.container = inv;
+        this.itemLevel = itemLevel;
+        this.name = "Random Item";
         this.icon = icon;
+        this.archetype = "Unknown";
+        this.type = "Unknown";
+    }
+    public Inventory getContainer(){
+        return container;
+    }
+    public int getItemLevel(){
+        return itemLevel;
+    }
+    public String getIcon(){
+        return icon;
+    }
+    public HashMap<Vector2i,ColorRGBA> getColorMap(){
+        return colorMap;
+    }
+    public String getTooltip(){
+        int start = 0;
+        String info = name;
+        colorMap.put(new Vector2i(start, info.length()), nameColor);
+        
+        start = info.length();
+        info += " Lv"+itemLevel;
+        colorMap.put(new Vector2i(start, info.length()), new ColorRGBA(1, 1, 1, 1));
+        
+        info += '\n';
+        
+        start = info.length();
+        info += archetype;
+        colorMap.put(new Vector2i(start, info.length()), archetypeColor);
+        
+        info += " - ";
+        
+        start = info.length();
+        info += type;
+        colorMap.put(new Vector2i(start, info.length()), typeColor);
+        
+        if(properties.keySet().isEmpty()){
+            return info;
+        }
+        info += "\n";
+        for(String key : properties.keySet()){
+            info += "\n";
+            start = info.length();
+            info += key+": ";
+            colorMap.put(new Vector2i(start, info.length()), PROPERTY_NAME_COLOR);
+            
+            start = info.length();
+            info += properties.get(key);
+            colorMap.put(new Vector2i(start, info.length()), PROPERTY_VALUE_COLOR);
+        }
+        return info;
     }
     public String getArchtype(){
-        return archtype;
+        return archetype;
     }
     public String getType(){
         return type;

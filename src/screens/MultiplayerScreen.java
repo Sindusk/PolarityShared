@@ -5,7 +5,7 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
-import input.ClientBinding;
+import input.Bind;
 import input.InputHandler;
 import main.GameApplication;
 import tools.Sys;
@@ -39,7 +39,7 @@ public class MultiplayerScreen extends Screen {
         localButton = new Button(gui, new Vector2f(width*0.5f, height*0.7f), width*0.4f, height*0.05f, 0){
             @Override
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
-                if(bind.equals(ClientBinding.LClick.toString()) && down){
+                if(bind.equals(Bind.LClick.toString()) && down){
                     clientNetwork.connect("127.0.0.1");
                 }
             }
@@ -52,7 +52,7 @@ public class MultiplayerScreen extends Screen {
         hamachiButton = new Button(gui, new Vector2f(width*0.5f, height*0.6f), width*0.4f, height*0.05f, 0){
             @Override
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
-                if(bind.equals(ClientBinding.LClick.toString()) && down){
+                if(bind.equals(Bind.LClick.toString()) && down){
                     clientNetwork.connect("25.183.100.124");
                 }
             }
@@ -64,7 +64,7 @@ public class MultiplayerScreen extends Screen {
         addServerButton = new Button(gui, new Vector2f(width*0.35f, height*0.3f), width*0.2f, height*0.05f, 0){
             @Override
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
-                if(bind.equals(ClientBinding.LClick.toString()) && down){
+                if(bind.equals(Bind.LClick.toString()) && down){
                     inputHandler.switchScreens(new ServerEntryScreen(app, root.getParent(), gui.getParent()));
                 }
             }
@@ -94,7 +94,7 @@ public class MultiplayerScreen extends Screen {
         }
         
         // Default bind back to menu screen
-        if(bind.equals(ClientBinding.Escape.toString())){
+        if(bind.equals(Bind.Escape.toString())){
             Sys.getInputHandler().switchScreens(new MenuScreen(app, root.getParent(), gui.getParent()));
         }
     }

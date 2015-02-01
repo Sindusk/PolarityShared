@@ -16,8 +16,8 @@ import tools.Util;
 public class PropertiesFileManager extends FileManager{
     protected HashMap<String,String> vars = new HashMap<String,String>();
     
-    public PropertiesFileManager(String saveFilename){
-        this.saveFilename = saveFilename;
+    public PropertiesFileManager(String filename){
+        super(filename);
     }
     
     public void setVar(String var, String value){
@@ -29,7 +29,7 @@ public class PropertiesFileManager extends FileManager{
     
     public void save(File file){
         try{
-            Util.log("Saving properties...");
+            Util.log("[PropertiesFileManager] Saving properties...");
             file.createNewFile();
             BufferedWriter bw = new BufferedWriter(new FileWriter(file.getAbsoluteFile()));
             for(String var : vars.keySet()){
@@ -44,7 +44,7 @@ public class PropertiesFileManager extends FileManager{
     public void load(File file){
         try{
             if(!file.exists()){
-                Util.log("Properties not found, creating new file...");
+                Util.log("[PropertiesFileManager] Properties not found, creating new file...");
                 save();
             }else{
                 Util.log("Properties found, reading file...");
@@ -54,10 +54,10 @@ public class PropertiesFileManager extends FileManager{
                     line = br.readLine().split("=");
                     if(line.length > 1){
                         vars.put(line[0], line[1]);
-                        Util.log(line[0]+" = "+line[1]);
+                        Util.log(line[0]+" = "+line[1], 2);
                     }else{
                         vars.put(line[0], "");
-                        Util.log(line[0]+" not found");
+                        Util.log(line[0]+" not found", 2);
                     }
                 }
                 br.close();

@@ -10,9 +10,16 @@ import spellforge.nodes.SpellNodeData;
  */
 @Serializable
 public class ProjectileCoreData extends CoreData{
-    public ProjectileCoreData(){}   // For serialization
+    public ProjectileCoreData(){
+        name = "Projectile Core";
+    }
     public ProjectileCoreData(SpellNodeData data){
         super(data);
-        type = "Projectile Core";
+        name = "Projectile Core";
+    }
+    
+    @Override
+    public String getIcon(){
+        return "projectile";
     }
 }

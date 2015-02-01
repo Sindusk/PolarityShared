@@ -1,7 +1,9 @@
 package items;
 
+import com.jme3.math.FastMath;
 import com.jme3.network.serializing.Serializable;
 import java.util.ArrayList;
+import tools.Util;
 
 /**
  *
@@ -27,6 +29,16 @@ public class Inventory {
     // Add an item priority-wise.
     public void add(Item item){
         items.add(item);
+    }
+    public void remove(Item item){
+        items.remove(item);
+    }
+    public void removeRandom(){
+        if(items.size() > 0){
+            items.remove(FastMath.nextRandomInt(0, items.size()-1));
+        }else{
+            Util.log("Error: Inventory is empty, cannot remove item.");
+        }
     }
 }
 

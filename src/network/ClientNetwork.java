@@ -74,7 +74,11 @@ public class ClientNetwork extends GameNetwork{
             registerSerials();
             client.addClientStateListener(listener);
             client.start();
-            client.send(new ConnectData(Sys.getVersion(), "Sindusk"));
+            if(System.getProperty("user.name").equals("SinisteRing")){
+                client.send(new ConnectData(Sys.getVersion(), "Sindusk"));
+            }else{
+                client.send(new ConnectData(Sys.getVersion(), System.getProperty("user.name")));
+            }
             timers[PING] = 1;
             timers[MOVE] = 0;
             return true;
@@ -172,8 +176,8 @@ public class ClientNetwork extends GameNetwork{
             client.send(d.getPlayerData());
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
-                    inputHandler.switchScreens(new GameScreen(app, Screen.getTopRoot(), Screen.getTopGUI()));
                     charManager.add(d.getPlayerData());
+                    inputHandler.switchScreens(new GameScreen(app, Screen.getTopRoot(), Screen.getTopGUI()));
                     CLIENT_CONNECTED = true;
                     return null;
                 }
@@ -194,8 +198,8 @@ public class ClientNetwork extends GameNetwork{
             client.send(pd);
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
-                    inputHandler.switchScreens(new GameScreen(app, Screen.getTopRoot(), Screen.getTopGUI()));
                     charManager.add(pd);
+                    inputHandler.switchScreens(new GameScreen(app, Screen.getTopRoot(), Screen.getTopGUI()));
                     CLIENT_CONNECTED = true;
                     return null;
                 }

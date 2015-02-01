@@ -40,15 +40,14 @@ public class ServerNetwork extends GameNetwork{
     // Important variables:
     private ServerListener listener = new ServerListener();
     protected final GameServer app;
+    protected CharacterManager charManager;
     protected Server server;
     protected ServerProperties settings = new ServerProperties(SERVER_PROPERTIES_FILENAME);
     protected ServerStatus status = new ServerStatus();
     
-    // Game variables:
-    protected CharacterManager characterManager = new CharacterManager();
-    
     public ServerNetwork(GameServer app){
         this.app = app;
+        this.charManager = app.getCharManager();
         try {
             server = Network.createServer(6143);
             registerSerials();
@@ -88,11 +87,11 @@ public class ServerNetwork extends GameNetwork{
             // Nothing needed here.
         }
         public void connectionRemoved(Server server, HostedConnection conn) {
-            int id = characterManager.remove(conn);
+            int id = charManager.remove(conn);
             if(id == -1){
                 return;
             }
-            Player p = characterManager.getPlayer(id);
+            Player p = charManager.getPlayer(id);
             PlayerProperties properties = new PlayerProperties(PLAYER_PROPERTIES_PATH+p.getName()+".properties");
             properties.savePlayerData(p);
             server.broadcast(new DisconnectData(id));
@@ -115,7 +114,7 @@ public class ServerNetwork extends GameNetwork{
             if(d.getVersion().equals(app.getVersion())){    // Ensures application versions match
                 app.enqueue(new Callable<Void>(){
                     public Void call() throws Exception{
-                        int id = characterManager.findEmptyID();    // Find an empty slot for the player, if one exists
+                        int id = charManager.findEmptyID();    // Find an empty slot for the player, if one exists
                         if(id != -1){
                             //connection.send(new ServerStatusData(status));
                             if(settings.getVar("serverPlayerData").equals("true")){
@@ -151,11 +150,11 @@ public class ServerNetwork extends GameNetwork{
          */
         private void PlayerMessage(PlayerData d){
             Util.log("[ServerNetwork] <PlayerMessage> Player "+d.getID()+" (v"+app.getVersion()+") connected successfully.");
-            characterManager.add(d);
+            charManager.add(d);
             server.broadcast(Filters.notEqualTo(connection), d);
-            characterManager.getPlayer(d.getID()).setConnection(connection);
+            charManager.getPlayer(d.getID()).setConnection(connection);
             app.getWorld().sendData(connection);
-            characterManager.sendData(connection);
+            charManager.sendData(connection);
         }
         
         // HANDSHAKING PROCESS ENDS
@@ -163,7 +162,7 @@ public class ServerNetwork extends GameNetwork{
         private void ActionMessage(final ActionData d){
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
-                    Player owner = characterManager.getPlayer(d.getID());
+                    Player owner = charManager.getPlayer(d.getID());
                     Event event = new Event(){
                         @Override
                         public boolean onCollide(ArrayList<Entity> collisions){
@@ -208,7 +207,7 @@ public class ServerNetwork extends GameNetwork{
             server.broadcast(Filters.notEqualTo(connection), d);
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
-                    characterManager.updatePlayerLocation(d);
+                    charManager.updatePlayerLocation(d);
                     return null;
                 }
             });
@@ -231,7 +230,7 @@ public class ServerNetwork extends GameNetwork{
             final ProjectileData m = d;
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
-                    ProjectileAttack attack = new ProjectileAttack(characterManager, m);
+                    ProjectileAttack attack = new ProjectileAttack(charManager, m);
                     app.getWorld().addProjectile(attack);
                     server.broadcast(m);
                     return null;

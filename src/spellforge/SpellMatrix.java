@@ -24,7 +24,7 @@ public class SpellMatrix {
     protected ArrayList<SpellNode> modifiers = new ArrayList();
     protected ArrayList<SpellNode> cores = new ArrayList();
     
-    public SpellMatrix(Node parent, int width, int height){
+    public SpellMatrix(Node parent, Vector2f loc, int width, int height){
         int x = 0;
         int y;
         
@@ -32,8 +32,8 @@ public class SpellMatrix {
         
         SpellNode.setNodeSize(size);
         //node.setLocalTranslation(-(width*SIZE)*0.3f, -(height*SIZE)*0.3f, 0);
-        float nodeX = (Sys.width*0.5f)-(width*size*0.5f)+(size*0.5f);
-        float nodeY = Math.max((Sys.height/2f)-((Sys.height-MATRIX_MAX_HEIGHT)/2f)-(size*height*0.5f), size);
+        float nodeX = loc.x-(width*size*0.5f)+(size*0.5f);
+        float nodeY = Math.max(loc.y-((Sys.height-MATRIX_MAX_HEIGHT)/2f)-(size*height*0.5f), size);
         node.setLocalTranslation(nodeX, nodeY, 0);
         while(x < width){
             spellNodes.add(new ArrayList());

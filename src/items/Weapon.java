@@ -16,8 +16,8 @@ public class Weapon extends Item {
         this.attackType = AttackType.Normal;
     }
     
-    public Weapon(String icon, AttackType attackType){
-        super(icon);
+    public Weapon(Inventory inv, int itemLevel, String icon, AttackType attackType){
+        super(inv, itemLevel, icon);
         this.attackType = attackType;
     }
     

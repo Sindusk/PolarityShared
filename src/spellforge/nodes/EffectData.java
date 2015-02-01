@@ -1,11 +1,11 @@
 package spellforge.nodes;
 
+import com.jme3.math.ColorRGBA;
 import com.jme3.network.serializing.Serializable;
 import java.util.ArrayList;
 import spellforge.PulseHandler;
 import spellforge.SpellMatrix;
 import spellforge.nodes.conduits.EffectConduitData;
-import spellforge.nodes.conduits.ModifierConduitData;
 
 /**
  *
@@ -16,9 +16,19 @@ public class EffectData extends SpellNodeData {
     protected ArrayList<SpellNodeData> granted;
     protected float multiplier = 0;
     
-    public EffectData(){} // For serialization
+    public EffectData(){
+        type = "Effect";
+        typeColor = ColorRGBA.Orange;
+    }
     public EffectData(SpellNodeData data){
         super(data.getX(), data.getY(), data.getLocation());
+        type = "Effect";
+        typeColor = ColorRGBA.Orange;
+    }
+    
+    @Override
+    public String getIcon(){
+        return "effect";
     }
     
     @Override

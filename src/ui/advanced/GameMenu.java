@@ -5,7 +5,7 @@ import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
-import input.ClientBinding;
+import input.Bind;
 import java.util.ArrayList;
 import tools.GeoFactory;
 import tools.Sys;
@@ -33,7 +33,7 @@ public class GameMenu extends Menu {
         Button b = new Button(node, new Vector2f(0, Sys.height*0.08f), Sys.width*0.4f, Sys.height*0.05f, 0){
             @Override
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
-                if(bind.equals(ClientBinding.LClick.toString()) && down){
+                if(bind.equals(Bind.LClick.toString()) && down){
                     setVisible(ui, false);
                 }
             }

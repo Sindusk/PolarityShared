@@ -48,6 +48,7 @@ public class Player extends GameCharacter{
         }
         name = d.getName();
         //inventory = d.getInventory();
+        inventory = new Inventory();
         equipment = d.getEquipment();
         vitals = new Vitals(id);
         this.data = d;

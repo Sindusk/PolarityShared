@@ -11,7 +11,7 @@ import world.World;
  * @author SinisteRing
  */
 public class GameApplication extends Application {
-    protected static final String VERSION = "0.02";
+    protected static final String VERSION = "0.03";
     protected CharacterManager charManager;
     protected World world = new World(50);
     protected Node root = new Node("Root");

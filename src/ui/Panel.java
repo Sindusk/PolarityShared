@@ -18,7 +18,7 @@ public class Panel extends UIElement {
         super(parent, loc, x, y, z);
         x /= 2.0f;
         y /= 2.0f;
-        geo = GeoFactory.createBox(node, new Vector3f(x, y, z), Vector3f.ZERO, ColorRGBA.Blue);
+        geo = GeoFactory.createBox(node, new Vector3f(x, y, 0), Vector3f.ZERO, ColorRGBA.Blue);
     }
     
     // Default override to ensure all inner controls are interacted with
@@ -34,7 +34,7 @@ public class Panel extends UIElement {
         controls.add(e);
     }
     
-    protected UIElement checkControls(Vector2f cursorLoc){
+    public UIElement checkControls(Vector2f cursorLoc){
         // Find all UI elements that are underneath the cursor location
         ArrayList<UIElement> results = new ArrayList();
         for(UIElement e : controls){

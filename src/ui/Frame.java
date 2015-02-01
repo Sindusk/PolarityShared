@@ -3,7 +3,7 @@ package ui;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.scene.Node;
-import input.ClientBinding;
+import input.Bind;
 import tools.Sys;
 
 /**
@@ -21,7 +21,7 @@ public class Frame extends Panel {
         head = new Button(node, new Vector2f(0, y*0.93f), x*1.95f, y*0.13f, z+5f){
             @Override
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
-                if(bind.equals(ClientBinding.LClick.toString())){
+                if(bind.equals(Bind.LClick.toString())){
                     if(down){
                         Sys.getInputHandler().moving = frame;
                     }

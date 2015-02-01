@@ -19,6 +19,11 @@ public class EffectConduitData extends ConduitData {
     }
     
     @Override
+    public String getIcon(){
+        return "effectConduit";
+    }
+    
+    @Override
     public boolean canConnect(SpellNodeData data){
         if(data instanceof CoreData || data instanceof EffectData || data instanceof EffectConduitData){
             return true;

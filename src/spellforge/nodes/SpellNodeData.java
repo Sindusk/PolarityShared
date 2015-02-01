@@ -1,8 +1,11 @@
 package spellforge.nodes;
 
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.network.serializing.Serializable;
+import items.SpellNodeItem;
+import java.util.HashMap;
 import spellforge.SpellMatrix;
 import tools.Util;
 import tools.Util.Vector2i;
@@ -13,20 +16,32 @@ import tools.Util.Vector2i;
  */
 @Serializable
 public class SpellNodeData {
+    protected SpellNodeItem item;
+    protected HashMap<String,Float> properties = new HashMap();
     protected Vector2i index;
     protected Vector2f loc;
-    protected String type;
+    protected String name = "Spell Node";
+    protected String type = "Empty Node";
+    protected ColorRGBA typeColor = ColorRGBA.Gray;
     protected boolean[] connected = {false, false, false, false};
     
     public SpellNodeData(){}    // For serialization
     public SpellNodeData(int x, int y, Vector2f loc){
         this.index = new Vector2i(x, y);
         this.loc = loc;
-        type = "Empty Node";
     }
     
+    public void setItem(SpellNodeItem item){
+        this.item = item;
+    }
+    public void setIndex(Vector2i index){
+        this.index = index;
+    }
+    public void setLocation(Vector2f loc){
+        this.loc = loc;
+    }
     public void setConnection(int index, boolean value){
-        connected[index] = value;
+        this.connected[index] = value;
     }
     
     public Vector2i getIndex(){
@@ -41,8 +56,17 @@ public class SpellNodeData {
     public Vector2f getLocation(){
         return loc;
     }
+    public String getIcon(){
+        return "empty";
+    }
+    public String getName(){
+        return name;
+    }
     public String getType(){
         return type;
+    }
+    public ColorRGBA getTypeColor(){
+        return typeColor;
     }
     public boolean[] getConnections(){
         return connected;
@@ -59,13 +83,21 @@ public class SpellNodeData {
     public boolean canTravel(SpellNodeData data){
         return false;
     }
-    public String getTooltip(){
-        return type+"\nPosition: "+index.x+", "+index.y;
-    }
     public String getText(){
         return " ";
     }
     
+    public SpellNodeItem toItem(){
+        return item;
+    }
+    
+    public HashMap<String,Float> getSpellNodeProperties(){
+        return properties;
+    }
+    public HashMap<String,Float> genProperties(int level){
+        Util.log("[SpellNodeData] Critical Error: No override on genProperties()");
+        return null;
+    }
     public void recalculate(SpellMatrix matrix){
         Util.log("Error: Recalculating Empty Node! ["+index.x+", "+index.y+"]");
     }

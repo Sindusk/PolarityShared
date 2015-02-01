@@ -4,7 +4,7 @@ import com.jme3.input.event.KeyInputEvent;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.scene.Node;
-import input.ClientBinding;
+import input.Bind;
 import input.InputHandler;
 import main.GameApplication;
 import tools.Sys;
@@ -34,7 +34,7 @@ public class InventoryScreen extends Screen {
         Button test = new Button(invFrame.getPanel("all").getNode(), new Vector2f(10, 10), 50, 50, 1){
             @Override
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
-                if(bind.equals(ClientBinding.LClick.toString()) && down){
+                if(bind.equals(Bind.LClick.toString()) && down){
                     Util.log("This is the item");
                 }
             }
@@ -69,7 +69,7 @@ public class InventoryScreen extends Screen {
         }
         
         // Default bind back to menu screen
-        if(bind.equals(ClientBinding.Escape.toString())){
+        if(bind.equals(Bind.Escape.toString())){
             Sys.getInputHandler().switchScreens(new MenuScreen(app, root.getParent(), gui.getParent()));
         }
     }

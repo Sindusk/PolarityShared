@@ -5,7 +5,7 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
-import input.ClientBinding;
+import input.Bind;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -51,7 +51,7 @@ public class FrameWithTabs extends Frame {
                 (buttonScalingUnit*buttonSpacingY)*curTab), buttonScalingUnit*buttonScale, buttonScalingUnit*buttonScale, 0){
             @Override
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
-                if(bind.equals(ClientBinding.LClick.toString()) && down){
+                if(bind.equals(Bind.LClick.toString()) && down){
                     thisFrame.setTab(curTab, key);
                 }
             }

@@ -65,7 +65,7 @@ public class GameClient extends GameApplication {
         settings.setSamples(0);
         settings.setVSync(false);
         settings.setRenderer(AppSettings.LWJGL_OPENGL1);
-        settings.setResolution(1200, 750);
+        settings.setResolution(1280, 720);
         settings.setTitle("Polarity");
         this.setSettings(settings);
         super.start();

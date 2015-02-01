@@ -1,0 +1,37 @@
+package items.creation;
+
+import spellforge.nodes.SpellNodeData;
+import spellforge.nodes.cores.ProjectileCoreData;
+import spellforge.nodes.effect.DamageEffectData;
+import spellforge.nodes.generators.EnergyGenData;
+import spellforge.nodes.modifiers.MultiModData;
+
+/**
+ *
+ * @author SinisteRing
+ */
+public enum SpellNodeTypes {
+    // Generators
+    EnergyGenerator(EnergyGenData.class, 3),
+    // Cores
+    ProjectileCore(ProjectileCoreData.class, 2),
+    // Effects
+    DamageEffect(DamageEffectData.class, 5),
+    // Modifier
+    MultiplierModifier(MultiModData.class, 4);
+
+    protected Class<? extends SpellNodeData> clazz;
+    protected int dropWeight;
+
+    public Class getTypeClass(){
+        return clazz;
+    }
+    public int getDropWeight(){
+        return dropWeight;
+    }
+
+    SpellNodeTypes(Class<? extends SpellNodeData> clazz, int dropWeight){
+        this.clazz = clazz;
+        this.dropWeight = dropWeight;
+    }
+}

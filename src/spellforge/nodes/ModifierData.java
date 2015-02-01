@@ -1,7 +1,10 @@
 package spellforge.nodes;
 
+import com.jme3.math.ColorRGBA;
 import com.jme3.network.serializing.Serializable;
+import items.creation.ItemGenerator;
 import java.util.ArrayList;
+import java.util.HashMap;
 import spellforge.PulseHandler;
 import spellforge.SpellMatrix;
 import spellforge.nodes.conduits.ModifierConduitData;
@@ -13,11 +16,22 @@ import spellforge.nodes.conduits.ModifierConduitData;
 @Serializable
 public class ModifierData extends SpellNodeData {
     protected ArrayList<SpellNodeData> granted;
+    protected float effectMult = 1;
     protected float multiplier = 0;
     
-    public ModifierData(){} // For serialization
+    public ModifierData(){
+        type = "Modifier";
+        typeColor = ColorRGBA.Blue;
+    }
     public ModifierData(SpellNodeData data){
         super(data.getX(), data.getY(), data.getLocation());
+        type = "Modifier";
+        typeColor = ColorRGBA.Blue;
+    }
+    
+    @Override
+    public String getIcon(){
+        return "modifier";
     }
     
     @Override
@@ -45,6 +59,14 @@ public class ModifierData extends SpellNodeData {
     @Override
     public String getText(){
         return Math.round(multiplier*100f)+"%";
+    }
+    
+    @Override
+    public HashMap<String,Float> genProperties(int level){
+        properties = new HashMap();
+        effectMult = ItemGenerator.leveledRandomFloat(35f, level, 1);
+        properties.put("Effect Multiplier", effectMult);
+        return properties;
     }
     
     @Override
