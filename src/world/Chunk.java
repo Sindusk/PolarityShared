@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import world.blocks.BlockData;
 import netdata.ChunkData;
 import tools.Util.Vector2i;
+import world.blocks.ColorBlockData;
+import world.blocks.IconBlockData;
 import world.blocks.WallData;
 
 /**
@@ -71,8 +73,13 @@ public class Chunk {
             blocks.add(new ArrayList());
             while(y < blockDatas.size()){
                 data = blockDatas.get(x).get(y);
-                Block b = new Block(node, data);
-                blocks.get(x).add(b);
+                if(data instanceof ColorBlockData){
+                    Block b = new Block(node, (ColorBlockData)data);
+                    blocks.get(x).add(b);
+                }else if(data instanceof IconBlockData){
+                    Block b = new Block(node, (IconBlockData)data);
+                    blocks.get(x).add(b);
+                }
                 y++;
             }
             x++;
@@ -85,10 +92,13 @@ public class Chunk {
             y = 0;
             blocks.add(new ArrayList());
             while(y < Chunk.SIZE){
-                if(FastMath.nextRandomInt(1, 20) == 1){
+                float rng = FastMath.nextRandomInt(0, 50);
+                if(rng <= 2){
                     blocks.get(x).add(new Block(node, new WallData(new Vector2f(loc.x+x, loc.y+y), ColorRGBA.Red)));
+                }else if(rng <= 27){
+                    blocks.get(x).add(new Block(node, new IconBlockData(new Vector2f(loc.x+x, loc.y+y), "grass")));
                 }else{
-                    blocks.get(x).add(new Block(node, new BlockData(new Vector2f(loc.x+x, loc.y+y), color)));
+                    blocks.get(x).add(new Block(node, new IconBlockData(new Vector2f(loc.x+x, loc.y+y), "wood")));
                 }
                 y++;
             }

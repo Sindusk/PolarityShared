@@ -8,7 +8,7 @@ import types.AttackType;
  * @author SinisteRing
  */
 @Serializable
-public class Weapon extends Item {
+public class Weapon extends ItemData {
     protected AttackType attackType;
     protected float speed = 10f;
     

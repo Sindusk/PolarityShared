@@ -4,7 +4,7 @@ import character.Player;
 import com.jme3.math.Vector2f;
 import com.jme3.scene.Node;
 import items.Inventory;
-import items.Item;
+import items.ItemData;
 import java.util.ArrayList;
 import tools.Util;
 import ui.Panel;
@@ -22,6 +22,9 @@ public class InventoryPanel extends Panel {
         super(parent, loc, x, y, z);
         this.itemsPerRow = itemsPerRow;
     }
+    public Inventory getInventory(){
+        return inventory;
+    }
     public void setInventory(Player p){
         this.inventory = p.getInventory();
     }
@@ -34,9 +37,12 @@ public class InventoryPanel extends Panel {
         int num = 0;
         float x;
         float y = (sizeY*0.5f)-(spacing*0.5f);
-        for(Item item : inventory.getList()){
+        for(ItemData item : inventory.getList()){
             x = (spacing*num)-(sizeX*0.5f)+(spacing*0.5f);
-            itemButton = new ItemButton(node, item, new Vector2f(x, y), size, size, 0){
+            if(item == null){
+                Util.log("ERROR!");
+            }
+            itemButton = new ItemButton(node, inventory, item, new Vector2f(x, y), size, size, 0){
                 @Override
                 public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
                     Util.log("onAction for ItemButton in an InventoryPanel", 2);

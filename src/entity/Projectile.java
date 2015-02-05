@@ -1,13 +1,15 @@
 package entity;
 
-import action.ProjectileAttack;
+import events.ProjectileEvent;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
+import events.Action;
 import java.util.ArrayList;
 import netdata.destroyers.DestroyProjectileData;
+import network.GameNetwork;
 import tools.GeoFactory;
 import tools.Sys;
 import world.blocks.WallData;
@@ -17,7 +19,7 @@ import world.blocks.WallData;
  * @author Sindusk
  */
 public class Projectile extends Entity{
-    protected ProjectileAttack attack;
+    protected ProjectileEvent event;
     protected Geometry geo;
     protected Vector2f direction;       // Normalized vector for directional movement.
     protected float lifetime = 5.0f;    // How long (in seconds) the projectile is to last.
@@ -30,13 +32,13 @@ public class Projectile extends Entity{
      * @param parent Parent node to attach the projectile to.
      * @param attack Data for the projectile, including the method used when the projectile encounters an object.
      */
-    public Projectile(Node parent, ProjectileAttack attack){
+    public Projectile(Node parent, ProjectileEvent event){
         super(parent);
-        this.attack = attack;
+        this.event = event;
     }
     
-    public ProjectileAttack getAttack(){
-        return attack;
+    public ProjectileEvent getAttack(){
+        return event;
     }
     
     /**
@@ -60,7 +62,7 @@ public class Projectile extends Entity{
     @Override
     public void update(float tpf){
         super.update(tpf);
-        moveLocation(direction.mult(tpf*attack.getSpeed()));
+        moveLocation(direction.mult(tpf*event.getSpeed()));
         lifetime -= tpf;
         if(lifetime <= 0){
             destroy();
@@ -82,21 +84,31 @@ public class Projectile extends Entity{
     }
     
     @Override
-    public ArrayList<Entity> checkCollisions(ArrayList<Entity> collisions){
-        collisions = super.checkCollisions(collisions);
+    public ArrayList<Entity> checkCollisions(GameNetwork server, ArrayList<Entity> collisions){
+        collisions = super.checkCollisions(server, collisions);
         int i = 0;
         while(i < collisions.size()){
             // Filters: Owner of this projectile
-            if(attack.getOwner().getEntity() == collisions.get(i)){
+            if(event.getOwner().getEntity() == collisions.get(i)){
                 collisions.remove(i);
             }else{
                 i++;
             }
         }
         if(collisions.size() > 0){
-            if(attack.getEvent().onCollide(collisions)){
-                destroy();
-                Sys.getNetwork().send(new DestroyProjectileData(this.hashCode()));
+            i = 0;
+            Entity t;   // Temp entity
+            while(i < collisions.size()){
+                t = collisions.get(i);
+                if(t instanceof LivingEntity){
+                    LivingEntity livingEntity = (LivingEntity) t; // Cast the Entity to a PlayerEntity to open up specific methods
+                    for(Action action : event.getActions()){
+                        action.onCollide(livingEntity);
+                    }
+                    destroy();
+                    server.send(new DestroyProjectileData(this.hashCode()));
+                }
+                i++;
             }
         }
         return collisions;

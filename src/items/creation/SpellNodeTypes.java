@@ -1,10 +1,10 @@
 package items.creation;
 
 import spellforge.nodes.SpellNodeData;
-import spellforge.nodes.cores.ProjectileCoreData;
-import spellforge.nodes.effect.DamageEffectData;
-import spellforge.nodes.generators.EnergyGenData;
-import spellforge.nodes.modifiers.MultiModData;
+import spellforge.nodes.cores.*;
+import spellforge.nodes.effect.*;
+import spellforge.nodes.generators.*;
+import spellforge.nodes.modifiers.*;
 
 /**
  *
@@ -12,13 +12,14 @@ import spellforge.nodes.modifiers.MultiModData;
  */
 public enum SpellNodeTypes {
     // Generators
-    EnergyGenerator(EnergyGenData.class, 3),
+    EnergyGenerator(EnergyGenData.class, 4),
     // Cores
-    ProjectileCore(ProjectileCoreData.class, 2),
+    ProjectileCore(ProjectileCoreData.class, 4),
     // Effects
-    DamageEffect(DamageEffectData.class, 5),
+    DamageEffect(DamageEffectData.class, 3),
     // Modifier
-    MultiplierModifier(MultiModData.class, 4);
+    MultiplierModifier(MultiModData.class, 0),
+    SpeedModifier(SpeedModData.class, 3);
 
     protected Class<? extends SpellNodeData> clazz;
     protected int dropWeight;

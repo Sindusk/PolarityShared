@@ -11,10 +11,13 @@ import spellforge.nodes.SpellNodeData;
 @Serializable
 public class EnergyGenData extends GeneratorData {
     public EnergyGenData(){
-        name = "Energy Generator";
+        init();
     }
     public EnergyGenData(SpellNodeData data){
         super(data);
+        init();
+    }
+    private void init(){
         name = "Energy Generator";
     }
 }

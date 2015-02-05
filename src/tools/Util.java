@@ -17,6 +17,7 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
+import com.jme3.network.HostedConnection;
 import com.jme3.network.serializing.Serializable;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Node;
@@ -25,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import netdata.DevLogData;
 
 /**
  * T (Tools) - Provides miscellaneous tools for various functions.
@@ -38,6 +40,7 @@ public class Util {
         public int x;
         public int y;
         
+        public Vector2i(){} // For serialization
         public Vector2i(int x, int y){
             this.x = x;
             this.y = y;
@@ -157,6 +160,9 @@ public class Util {
         m.getTextureParam("ColorMap").getTextureValue().setMagFilter(Texture.MagFilter.Nearest);
         return m;
     }
+    public static String getBlockIcon(String tex){
+        return "Interface/Icons/Blocks/"+tex+".png";
+    }
     public static String getItemIcon(String tex){
         return "Interface/Icons/Items/"+tex+".png";
     }
@@ -175,12 +181,33 @@ public class Util {
         inputManager.addListener(listener, name);
     }
     
+    // Numbers:
+    public static float roundedFloat(float value, int spaces){
+        return Math.round(value*Math.pow(10f, spaces))/(float)Math.pow(10f, spaces);
+    }
+    
     // Random numbers:
     public static float randFloat(float min, float max){
         return (FastMath.nextRandomFloat()*(max-min))+min;
     }
     public static float roundedRandFloat(float min, float max, int spaces){
         return Math.round(randFloat(min, max)*Math.pow(10f, spaces))/(float)Math.pow(10f, spaces);
+    }
+    
+    // This variable scales the result of the random float generation.
+    // Higher values will deflate the result, causing high values to be more rare
+    // Lower values will inflate the result, causing high values to be more common
+    protected static final float SCALE_EXPONENT = 1f;
+    // Random number scaling algorithm: result = 1-sqrt(1-rng^[variable])
+    // rng: The value produced by FastMath.nextRandomFloat() (a 0-1 float with an equal spread)
+    // variable: SCALE_EXPONENT
+    public static float scaledRandFloat(float min, float max){
+        return ((1-(float)Math.sqrt(1-(float)Math.pow(FastMath.nextRandomFloat(), SCALE_EXPONENT)))*(max-min))+min;
+    }
+    // This function simply rounds the resulting float from scaledRandFloat() above.
+    // Done by multiplying the result by 10^spaces, rounding to nearest int value, then dividing by 10^spaces 
+    public static float roundedScaledRandFloat(float min, float max, int spaces){
+        return Math.round(scaledRandFloat(min, max)*Math.pow(10f, spaces))/(float)Math.pow(10f, spaces);
     }
     
     // Mouse targeting and collision:
@@ -224,6 +251,9 @@ public class Util {
     }
     
     // Logging
+    public static void log(HostedConnection conn, String s){
+        conn.send(new DevLogData(s));
+    }
     public static void log(String s, int debug){
         if(Sys.debug >= debug){
             System.out.println(s);

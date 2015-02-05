@@ -5,6 +5,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.network.AbstractMessage;
 import com.jme3.network.serializing.Serializable;
 import items.Equipment;
+import items.Inventory;
 
 /**
  *
@@ -15,6 +16,7 @@ public class PlayerData extends AbstractMessage {
   private int id;           // Server-side ID number for proper reference
   private String name;      // Player name
   private Vector2f loc;     // Location to spawn the player in
+  private Inventory inv;    // Inventory of the player
   private Equipment equip;  // Equipment the player is currently wearing (may need to be removed/changed)
   public PlayerData() {}
   public PlayerData(int id, String name, Vector2f loc, Equipment equip){
@@ -23,6 +25,11 @@ public class PlayerData extends AbstractMessage {
       this.loc = loc;
       this.equip = equip;
   }
+  
+  public void setInventory(Inventory inv){
+      this.inv = inv;
+  }
+  
   public int getID(){
       return id;
   }
@@ -34,6 +41,9 @@ public class PlayerData extends AbstractMessage {
   }
   public Vector2f getLocation(){
       return loc;
+  }
+  public Inventory getInventory(){
+      return inv;
   }
   public Equipment getEquipment(){
       return equip;

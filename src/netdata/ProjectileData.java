@@ -1,6 +1,5 @@
 package netdata;
 
-import action.Event;
 import com.jme3.math.Vector2f;
 import com.jme3.network.AbstractMessage;
 import com.jme3.network.serializing.Serializable;
@@ -15,15 +14,13 @@ public class ProjectileData extends AbstractMessage {
     protected int owner;
     protected Vector2f start;
     protected Vector2f target;
-    protected Event event;
     protected float speed;
     public ProjectileData() {}
-    public ProjectileData(int hashCode, int owner, Vector2f start, Vector2f target, Event event, float speed){
+    public ProjectileData(int hashCode, int owner, Vector2f start, Vector2f target, float speed){
         this.hashCode = hashCode;
         this.owner = owner;
         this.start = start;
         this.target = target;
-        this.event = event;
         this.speed = speed;
     }
     public int getHashCode(){
@@ -37,9 +34,6 @@ public class ProjectileData extends AbstractMessage {
     }
     public Vector2f getTarget(){
         return target;
-    }
-    public Event getEvent(){
-        return event;
     }
     public float getSpeed(){
         return speed;

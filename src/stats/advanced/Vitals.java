@@ -1,28 +1,20 @@
 package stats.advanced;
 
-import netdata.DamageData;
-import screens.Screen;
-import stats.Energy;
 import stats.Health;
 import stats.Shield;
-import tools.Sys;
 
 /**
  *
  * @author SinisteRing
  */
 public class Vitals {
-    protected int id;
     protected boolean dead = false;
     protected Health health;
     protected Shield shield;
-    protected Energy energy;
     
-    public Vitals(int id){
-        this.id = id;
+    public Vitals(){
         health = new Health(100, 100);
         shield = new Shield(100, 100);
-        energy = new Energy(100, 100);
     }
     
     public Health getHealth(){
@@ -30,9 +22,6 @@ public class Vitals {
     }
     public Shield getShield(){
         return shield;
-    }
-    public Energy getEnergy(){
-        return energy;
     }
     
     public void damage(float value){

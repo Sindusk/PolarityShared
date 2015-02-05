@@ -31,6 +31,7 @@ public abstract class InputHandler {
     public void changeScreens(Screen newScreen){
         screen.setVisible(false);
         newScreen.setVisible(true);
+        newScreen.changeInit();
         screen = newScreen;
     }
     

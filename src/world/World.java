@@ -1,7 +1,7 @@
 package world;
 
 import world.blocks.Block;
-import action.ProjectileAttack;
+import events.ProjectileEvent;
 import character.Player;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
@@ -23,8 +23,8 @@ import tools.Util.Vector2i;
  * @author SinisteRing
  */
 public class World {
-    private static final int SIZE_X = 10;
-    private static final int SIZE_Y = 10;
+    private static final int SIZE_X = 25;
+    private static final int SIZE_Y = 25;
     private static final int UNLOAD_DISTANCE = 7;
     private static final int LOAD_DISTANCE = 4;
     
@@ -75,7 +75,7 @@ public class World {
         }
     }
     
-    public Projectile addProjectile(ProjectileAttack attack){
+    public Projectile addProjectile(ProjectileEvent attack){
         Projectile p = new Projectile(node, attack);        // Creates the projectile class data
         p.create(0.4f, attack.getStart(), attack.getTarget());    // Creates the projectile entity
         entities.add(p);    // Adds to the list of entities in the world
@@ -124,7 +124,7 @@ public class World {
         Entity t;   // Temp entity
         while(i < entities.size()){
             t = entities.get(i);
-            t.checkCollisions(quadTree.retrieve(collisions, t));
+            t.checkCollisions(Sys.getNetwork(), quadTree.retrieve(collisions, t));
             i++;
         }
     }
@@ -156,6 +156,10 @@ public class World {
             }
             x++;
         }
+    }
+    public void reloadChunks(Player p){
+        Vector2f loc = p.getLocation();
+        Chunk chunk = getChunk(loc);
     }
     
     // World generation algorithm

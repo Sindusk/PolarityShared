@@ -11,26 +11,26 @@ import tools.Util;
  */
 @Serializable
 public class Inventory {
-    protected ArrayList<Item> items;
+    protected ArrayList<ItemData> items;
     // Default constructor.
     public Inventory(){
         items = new ArrayList();
     }
     // Constructor with prior ArrayList of items
-    public Inventory(ArrayList<Item> items){
+    public Inventory(ArrayList<ItemData> items){
         this.items = items;
     }
     
     // Getters:
-    public ArrayList<Item> getList(){
+    public ArrayList<ItemData> getList(){
         return items;
     }
     
     // Add an item priority-wise.
-    public void add(Item item){
+    public void add(ItemData item){
         items.add(item);
     }
-    public void remove(Item item){
+    public void remove(ItemData item){
         items.remove(item);
     }
     public void removeRandom(){

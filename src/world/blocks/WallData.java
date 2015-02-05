@@ -9,7 +9,7 @@ import com.jme3.network.serializing.Serializable;
  * @author Sindusk
  */
 @Serializable
-public class WallData extends BlockData {
+public class WallData extends ColorBlockData {
     public WallData(){} // For serialization
     public WallData(Vector2f loc, ColorRGBA color){
         super(loc, color);

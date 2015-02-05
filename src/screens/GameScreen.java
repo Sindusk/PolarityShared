@@ -7,6 +7,7 @@ import com.jme3.scene.Node;
 import input.Bind;
 import input.InputHandler;
 import character.CharacterManager;
+import character.Player;
 import com.jme3.math.ColorRGBA;
 import hud.advanced.ActionBar;
 import hud.advanced.FPSCounter;
@@ -17,13 +18,13 @@ import java.util.ArrayList;
 import java.util.concurrent.Callable;
 import main.GameApplication;
 import netdata.requests.SpellMatrixRequest;
+import spellforge.SpellMatrix;
 import tools.Sys;
 import tools.Util;
 import ui.Button;
 import ui.UIElement;
 import ui.advanced.GameMenu;
 import world.Chunk;
-import world.World;
 
 /**
  * Screen encompassing Gameplay.
@@ -31,7 +32,7 @@ import world.World;
  */
 public class GameScreen extends Screen {
     protected ArrayList<HUDElement> hud = new ArrayList();
-    protected SpellForgeScreen[] spellForges = new SpellForgeScreen[6];
+    protected SpellForgeScreen spellForge;
     protected GameMenu gameMenu;
     protected CharacterManager charManager;
     protected Chunk chunk;
@@ -48,8 +49,8 @@ public class GameScreen extends Screen {
         charManager.setMyID(playerID);
         name="Game Screen";
     }
-    public int getPlayerID(){
-        return playerID;
+    public Player getPlayer(){
+        return charManager.getPlayer(playerID);
     }
     
     @Override
@@ -81,7 +82,7 @@ public class GameScreen extends Screen {
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
                 if(bind.equals(Bind.LClick.toString()) && down){
                     clientNetwork.send(new SpellMatrixRequest(playerID));
-                    inputHandler.changeScreens(spellForges[0]);
+                    inputHandler.changeScreens(spellForge);
                 }
             }
         };
@@ -104,50 +105,60 @@ public class GameScreen extends Screen {
         gameMenu.addOption(ui, exitButton);
         ui.remove(exitButton);
         
-        int i = 0;
-        while(i < spellForges.length){
-            spellForges[i] = new SpellForgeScreen(app, this, Screen.getTopRoot(), Screen.getTopGUI());
-            spellForges[i].setSpellForgeArray(spellForges);
-            spellForges[i].initialize(inputHandler);
-            spellForges[i].setVisible(false);
-            i++;
-        }
+        spellForge = new SpellForgeScreen(app, this, Screen.getTopRoot(), Screen.getTopGUI());
+        spellForge.initialize(inputHandler);
+        spellForge.setVisible(false);
         
         root.attachChild(app.getWorld().getNode());
         root.attachChild(charManager.getNode());
     }
     
     @Override
+    public void changeInit(){
+        getPlayer().setAttacking(false);
+    }
+    
+    @Override
     public void update(final float tpf){
-        //Util.log("[GameScreen] <update> playerID = "+playerID, 4);
-        final World world = app.getWorld();
         charManager.getPlayer(playerID).set3DMouseLocation(inputHandler.get3DCursorLocation());
         charManager.getPlayer(playerID).updateLocal(tpf, app.getInputManager().getCursorPosition());
+        
         // For multithreading of heavy CPU usage loops, create an enqueue:
         app.enqueue(new Callable<Void>(){
             public Void call() throws Exception{
                 charManager.update(tpf);
-                world.update(tpf);
                 return null;
             }
         });
+        app.enqueue(new Callable<Void>(){
+            public Void call() throws Exception{
+                app.getWorld().update(tpf);
+                return null;
+            }
+        });
+        app.enqueue(new Callable<Void>(){
+            public Void call() throws Exception{
+                app.getWorld().reloadChunks(getPlayer());
+                return null;
+            }
+        });
+        
+        for(SpellMatrix matrix : charManager.getPlayer(playerID).getMatrixArray()){
+            if(matrix != null){
+                matrix.update(tpf);
+            }
+        }
         
         // Update all HUD elements
         for(HUDElement h : hud){
             h.update(charManager.getPlayer(playerID), tpf);
         }
         
-        for(SpellForgeScreen spellForge : spellForges){
-            if(spellForge.getMatrix() != null){
-                spellForge.getMatrix().update(tpf);
-            }
-        }
-        
         Vector2f tempVect = charManager.getPlayer(playerID).getLocation();
         Sys.getCamera().setLocation(new Vector3f(tempVect.x, tempVect.y, 40));
-        Chunk newChunk = world.getChunk(tempVect);
+        Chunk newChunk = app.getWorld().getChunk(tempVect);
         if(newChunk != chunk){
-            world.reloadChunks(newChunk);
+            app.getWorld().reloadChunks(newChunk);
             chunk = newChunk;
         }
         clientNetwork.update(tpf);
@@ -166,18 +177,18 @@ public class GameScreen extends Screen {
         }
         // Actions
         if(bind.equals(Bind.LClick.toString())){
-            charManager.getPlayer(playerID).setAttacking(down);
+            getPlayer().setAttacking(down);
         }else if(bind.equals(Bind.RClick.toString()) && down){
             //app.getWorld().getBlock(Util.getWorldLoc(cursorLoc, Sys.getCamera()));
         // Movement
         }else if(bind.equals(Bind.W.toString())){
-            charManager.getPlayer(playerID).setMovement(0, down);
+            getPlayer().setMovement(0, down);
         }else if(bind.equals(Bind.D.toString())){
-            charManager.getPlayer(playerID).setMovement(1, down);
+            getPlayer().setMovement(1, down);
         }else if(bind.equals(Bind.S.toString())){
-            charManager.getPlayer(playerID).setMovement(2, down);
+            getPlayer().setMovement(2, down);
         }else if(bind.equals(Bind.A.toString())){
-            charManager.getPlayer(playerID).setMovement(3, down);
+            getPlayer().setMovement(3, down);
         }else if(bind.equals(Bind.Escape.toString()) && down && !gameMenu.isActive()){
             gameMenu.setVisible(ui, true);
         }

@@ -1,7 +1,7 @@
 package network;
 
-import action.Event;
-import action.ProjectileAttack;
+import netdata.updates.MatrixUpdate;
+import events.ProjectileEvent;
 import com.jme3.network.ConnectionListener;
 import com.jme3.network.Filters;
 import com.jme3.network.HostedConnection;
@@ -16,15 +16,15 @@ import main.GameServer;
 import netdata.*;
 import character.CharacterManager;
 import character.Player;
-import entity.Entity;
-import entity.PlayerEntity;
-import entity.Projectile;
+import com.jme3.scene.Node;
+import events.EventChain;
 import files.properties.PlayerProperties;
 import files.properties.ServerProperties;
 import files.properties.vars.PlayerVar;
-import java.util.ArrayList;
-import netdata.requests.InventoryRequest;
-import netdata.responses.InventoryResponse;
+import items.Inventory;
+import items.creation.ItemGenerator;
+import spellforge.SpellMatrix;
+import tools.DevCheats;
 import tools.Util;
 
 /**
@@ -81,8 +81,6 @@ public class ServerNetwork extends GameNetwork{
     }
     
     private class ServerListener implements MessageListener<HostedConnection>, ConnectionListener{
-        private HostedConnection connection;
-        
         public void connectionAdded(Server server, HostedConnection conn) {
             // Nothing needed here.
         }
@@ -109,7 +107,7 @@ public class ServerNetwork extends GameNetwork{
          * If the checks pass, this will send an ID back to the player for connection.
          * @param d Data from the message.
          */
-        private void ConnectMessage(final ConnectData d){
+        private void ConnectMessage(final HostedConnection source, final ConnectData d){
             Util.log("[ServerNetwork] <ConnectMessage> Recieving new connection...", 1);
             if(d.getVersion().equals(app.getVersion())){    // Ensures application versions match
                 app.enqueue(new Callable<Void>(){
@@ -125,19 +123,26 @@ public class ServerNetwork extends GameNetwork{
                                     properties.save();
                                 }
                                 PlayerData pd = properties.getPlayerData(id);
-                                connection.send(new PlayerConnectionData(id, pd));
+                                Inventory inv = new Inventory();
+                                int i = 0;
+                                while(i < 15){
+                                    inv.add(ItemGenerator.randomItem(inv, (int)Util.scaledRandFloat(1, 50)));
+                                    i++;
+                                }
+                                pd.setInventory(inv);
+                                source.send(new PlayerConnectionData(id, pd));
                             }else{
-                                connection.send(new PlayerIDData(id));
+                                source.send(new PlayerIDData(id));
                             }
                         }else{
-                            connection.close("Server is full.");
+                            source.close("Server is full.");
                         }
                         return null;
                     }
                 });
             }else{  // Decline connection if the client version does not match
                 Util.log("[Connect Message] ERROR: Client has incorrect version. A player was denied connection.");
-                connection.close("Invalid Version. [Client: "+d.getVersion()+"] [Server: "+app.getVersion()+"]");
+                source.close("Invalid Version. [Client: "+d.getVersion()+"] [Server: "+app.getVersion()+"]");
             }
         }
         
@@ -148,48 +153,57 @@ public class ServerNetwork extends GameNetwork{
          * This contains all the data for the player themselves, such as character stats, location, etc.
          * @param d The data of the message.
          */
-        private void PlayerMessage(PlayerData d){
+        private void PlayerMessage(final HostedConnection source, final PlayerData d){
             Util.log("[ServerNetwork] <PlayerMessage> Player "+d.getID()+" (v"+app.getVersion()+") connected successfully.");
-            charManager.add(d);
-            server.broadcast(Filters.notEqualTo(connection), d);
-            charManager.getPlayer(d.getID()).setConnection(connection);
-            app.getWorld().sendData(connection);
-            charManager.sendData(connection);
+            final Player player = charManager.add(d);
+            player.setConnection(source);
+            app.enqueue(new Callable<Void>(){
+                public Void call() throws Exception{
+                    player.initializeMatrixArray(new Node());
+                    DevCheats.initPlayerMatrix(source, d.getID(), player.getMatrix(0));
+                    return null;
+                }
+            });
+            server.broadcast(Filters.notEqualTo(source), d);
+            app.getWorld().sendData(source);
+            charManager.sendData(source);
         }
         
         // HANDSHAKING PROCESS ENDS
         
-        private void ActionMessage(final ActionData d){
+        // SPELL MATRIX
+        
+        private void MatrixUpdateMessage(final HostedConnection source, final MatrixUpdate d){
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
-                    Player owner = charManager.getPlayer(d.getID());
-                    Event event = new Event(){
-                        @Override
-                        public boolean onCollide(ArrayList<Entity> collisions){
-                            int i = 0;
-                            Entity t;   // Temp entity
-                            while(i < collisions.size()){
-                                t = collisions.get(i);
-                                if(t instanceof PlayerEntity){
-                                    PlayerEntity pe = (PlayerEntity) t; // Cast the Entity to a PlayerEntity to open up specific methods
-                                    pe.damage(10);
-                                    return true;
-                                }
-                                i++;
-                            }
-                            return false;
-                        }
-                    };
-                    float speed = 15;
-                    Projectile p = app.getWorld().addProjectile(new ProjectileAttack(owner, d.getStart(), d.getTarget(), event, speed, true));
-                    server.broadcast(new ProjectileData(p.hashCode(), owner.getID(), d.getStart(), d.getTarget(), new Event(), speed));
+                    source.send(d);
+                    charManager.updateMatrix(d);
                     return null;
                 }
             });
         }
         
-        private void DamageMessage(final DamageData d){
-            server.broadcast(Filters.notEqualTo(connection), d);
+        // END SPELL MATRIX
+        
+        private void ActionMessage(final HostedConnection source, final ActionData d){
+            app.enqueue(new Callable<Void>(){
+                public Void call() throws Exception{
+                    Player owner = charManager.getPlayer(d.getID());
+                    SpellMatrix matrix = owner.getMatrix(d.getSlot());
+                    EventChain events = new EventChain();
+                    events.addEvents(matrix.calculateEvents(source, d));
+                    events.execute(server, app);
+                    //matrix.calculateEvent(connection, d);
+                    //float speed = 15;
+                    //Projectile p = app.getWorld().addProjectile(new ProjectileEvent(owner, d.getStart(), d.getTarget(), event, speed));
+                    //server.broadcast(new ProjectileData(p.hashCode(), owner.getID(), d.getStart(), d.getTarget(), speed));
+                    return null;
+                }
+            });
+        }
+        
+        private void DamageMessage(HostedConnection source, final DamageData d){
+            server.broadcast(Filters.notEqualTo(source), d);
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
                     //characterManager.damagePlayer(d);
@@ -203,8 +217,8 @@ public class ServerNetwork extends GameNetwork{
          * This method is mainly used to broadcast the movement
          * @param d Data from the message.
          */
-        private void MoveMessage(final MoveData d){
-            server.broadcast(Filters.notEqualTo(connection), d);
+        private void MoveMessage(HostedConnection source, final MoveData d){
+            server.broadcast(Filters.notEqualTo(source), d);
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
                     charManager.updatePlayerLocation(d);
@@ -216,8 +230,8 @@ public class ServerNetwork extends GameNetwork{
          * Ping data is empty, simply used as a timing device.
          * @param d Data from the message.
          */
-        private void PingMessage(PingData d){
-            connection.send(d);
+        private void PingMessage(HostedConnection source, PingData d){
+            source.send(d);
         }
         /**
          * Message recieved when a new Projectile is spawned.
@@ -226,11 +240,10 @@ public class ServerNetwork extends GameNetwork{
          * @param d The data of the message.
          */
         private void ProjectileMessage(ProjectileData d){
-            //Util.log("[ServerNetwork] <ProjectileMessage> Projectile data recieved...", 2);
             final ProjectileData m = d;
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
-                    ProjectileAttack attack = new ProjectileAttack(charManager, m);
+                    ProjectileEvent attack = new ProjectileEvent(charManager, m);
                     app.getWorld().addProjectile(attack);
                     server.broadcast(m);
                     return null;
@@ -241,39 +254,32 @@ public class ServerNetwork extends GameNetwork{
             server.broadcast(d);
         }
         
-        private void InventoryRequested(InventoryRequest d){
-            //Inventory inv = characterManager.getPlayer(d.getID()).getInventory();
-            InventoryResponse response = new InventoryResponse();
-            //connection.send();
-        }
-        
         public void messageReceived(HostedConnection source, Message m) {
-            connection = source;
-            server = connection.getServer();
+            //server = source.getServer();
             
             // Handshaking
             if(m instanceof ConnectData){   // Version Checking
-                ConnectMessage((ConnectData) m);
+                ConnectMessage(source, (ConnectData) m);
             }else if(m instanceof PlayerData){
-                PlayerMessage((PlayerData) m);
+                PlayerMessage(source, (PlayerData) m);
+            }
+            // Spell Matrix
+            else if(m instanceof MatrixUpdate){
+                MatrixUpdateMessage(source, (MatrixUpdate) m);
             }
             // Quick actions
             else if(m instanceof ActionData){
-                ActionMessage((ActionData) m);
+                ActionMessage(source, (ActionData) m);
             }else if(m instanceof DamageData){
-                DamageMessage((DamageData) m);
+                DamageMessage(source, (DamageData) m);
             }else if(m instanceof MoveData){
-                MoveMessage((MoveData) m);
+                MoveMessage(source, (MoveData) m);
             }else if(m instanceof PingData){
-                PingMessage((PingData) m);
+                PingMessage(source, (PingData) m);
             }else if (m instanceof ProjectileData){
                 ProjectileMessage((ProjectileData) m);
             }else if(m instanceof SoundData){
                 SoundMessage((SoundData) m);
-            }
-            // Data requests
-            else if(m instanceof InventoryRequest){
-                InventoryRequested((InventoryRequest) m);
             }
         }
     }

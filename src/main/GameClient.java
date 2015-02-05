@@ -1,6 +1,5 @@
 package main;
 
-import action.ActionManager;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Spatial;
 import com.jme3.system.AppSettings;
@@ -45,7 +44,6 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 public class GameClient extends GameApplication {
-    protected ActionManager actionManager = new ActionManager();
     protected ClientInputHandler inputHandler;
     protected ClientNetwork clientNetwork;
     
@@ -85,7 +83,6 @@ public class GameClient extends GameApplication {
         // Initialize system variables
         Sys.height = settings.getHeight();
         Sys.width = settings.getWidth();
-        Sys.setActionManager(actionManager);
         Sys.setAssetManager(assetManager);
         Sys.setCamera(cam);
         Sys.setInputManager(inputManager);

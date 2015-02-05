@@ -5,7 +5,9 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
+import items.Inventory;
 import items.Item;
+import items.ItemData;
 import java.util.HashMap;
 import tools.Util.Vector2i;
 import ui.Button;
@@ -23,9 +25,9 @@ public class ItemButton extends Button implements TooltipInfo, Draggable {
         super(parent, loc, x, y, z);
         setColor(new ColorRGBA(FastMath.nextRandomFloat(), FastMath.nextRandomFloat(), FastMath.nextRandomFloat(), 1));
     }
-    public ItemButton(Node parent, Item item, Vector2f loc, float x, float y, float z){
-        super(parent, item.getIcon(), loc, x, y, z);
-        this.item = item;
+    public ItemButton(Node parent, Inventory inv, ItemData itemData, Vector2f loc, float x, float y, float z){
+        super(parent, itemData.getIcon(), loc, x, y, z);
+        this.item = new Item(inv, itemData);
     }
     
     public Item getItem(){
@@ -36,9 +38,9 @@ public class ItemButton extends Button implements TooltipInfo, Draggable {
         node.setLocalTranslation(new Vector3f(loc.x, loc.y, localZ));
     }
     public HashMap<Vector2i,ColorRGBA> getColorMap(){
-        return item.getColorMap();
+        return item.getData().getColorMap();
     }
     public String getTooltip(){
-        return item.getTooltip();
+        return item.getData().getTooltip();
     }
 }

@@ -3,28 +3,29 @@ package spellforge.nodes;
 import com.jme3.math.ColorRGBA;
 import com.jme3.network.serializing.Serializable;
 import items.creation.ItemGenerator;
-import java.util.ArrayList;
 import java.util.HashMap;
 import spellforge.PulseHandler;
 import spellforge.SpellMatrix;
 import spellforge.nodes.conduits.ModifierConduitData;
+import tools.Util;
 
 /**
  *
  * @author SinisteRing
  */
 @Serializable
-public class ModifierData extends SpellNodeData {
-    protected ArrayList<SpellNodeData> granted;
+public class ModifierData extends PowerableData {
     protected float effectMult = 1;
-    protected float multiplier = 0;
+    protected float multiplier = 1;
     
     public ModifierData(){
-        type = "Modifier";
-        typeColor = ColorRGBA.Blue;
+        init();
     }
     public ModifierData(SpellNodeData data){
-        super(data.getX(), data.getY(), data.getLocation());
+        super(data);
+        init();
+    }
+    private void init(){
         type = "Modifier";
         typeColor = ColorRGBA.Blue;
     }
@@ -64,8 +65,9 @@ public class ModifierData extends SpellNodeData {
     @Override
     public HashMap<String,Float> genProperties(int level){
         properties = new HashMap();
-        effectMult = ItemGenerator.leveledRandomFloat(35f, level, 1);
-        properties.put("Effect Multiplier", effectMult);
+        properties.put("Efficiency", multiplier);
+        cost = ItemGenerator.leveledRandomFloat(-5f, level, 2);
+        properties.put("Cost", cost);
         return properties;
     }
     
@@ -77,6 +79,7 @@ public class ModifierData extends SpellNodeData {
         if(granted.size() > 0){
             multiplier = Math.min(1, 2f/granted.size());
         }
+        properties.put("Efficiency", Util.roundedFloat(multiplier, 2));
         CoreData coreData;
         for(SpellNodeData data : granted){
             if(data instanceof CoreData){

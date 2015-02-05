@@ -9,10 +9,11 @@ import spellforge.nodes.SpellNodeData;
  * @author SinisteRing
  */
 @Serializable
-public class SpellNodeItem extends Item {
+public class SpellNodeItemData extends ItemData {
     protected SpellNodeData data;
     
-    public SpellNodeItem(Inventory inv, int itemLevel, SpellNodeData data){
+    public SpellNodeItemData(){}    // For serialization
+    public SpellNodeItemData(Inventory inv, int itemLevel, SpellNodeData data){
         super(inv, itemLevel, data.getIcon());
         this.data = data;
         this.name = data.getName();

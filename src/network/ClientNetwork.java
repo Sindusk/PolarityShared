@@ -1,6 +1,7 @@
 package network;
 
-import action.ProjectileAttack;
+import netdata.updates.MatrixUpdate;
+import events.ProjectileEvent;
 import com.jme3.audio.AudioNode;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector2f;
@@ -21,10 +22,13 @@ import main.GameClient;
 import netdata.*;
 import character.CharacterManager;
 import netdata.destroyers.DestroyProjectileData;
+import netdata.updates.GeneratorPowerUpdate;
 import screens.GameScreen;
 import screens.MenuScreen;
 import screens.MultiplayerScreen;
 import screens.Screen;
+import spellforge.SpellMatrix;
+import spellforge.nodes.GeneratorData;
 import tools.Sys;
 import tools.Util;
 
@@ -206,6 +210,32 @@ public class ClientNetwork extends GameNetwork{
             });
         }
         
+        // HANDSHAKE PROCESS ENDS
+        
+        // SPELL MATRIX
+        
+        private void GeneratorPowerMessage(final GeneratorPowerUpdate d){
+            app.enqueue(new Callable<Void>(){
+                public Void call() throws Exception{
+                    SpellMatrix matrix = charManager.getPlayer(CLIENT_ID).getMatrix(d.getSlot());
+                    GeneratorData data = (GeneratorData) matrix.getSpellNode(d.getIndex().x, d.getIndex().y).getData();
+                    data.setStoredPower(d.getPower());
+                    return null;
+                }
+            });
+        }
+        
+        public void MatrixUpdateMessage(final MatrixUpdate d){
+            app.enqueue(new Callable<Void>(){
+                public Void call() throws Exception{
+                    charManager.updateMatrix(d);
+                    return null;
+                }
+            });
+        }
+        
+        // END SPELL MATRIX
+        
         private void ChunkMessage(ChunkData d){
             final ChunkData m = d;
             app.enqueue(new Callable<Void>(){
@@ -311,7 +341,7 @@ public class ClientNetwork extends GameNetwork{
             final ProjectileData m = d;
             app.enqueue(new Callable(){
                 public Void call() throws Exception{
-                    Sys.getWorld().addProjectile(new ProjectileAttack(charManager, m));
+                    Sys.getWorld().addProjectile(new ProjectileEvent(charManager, m));
                     return null;
                 }
             });
@@ -376,6 +406,12 @@ public class ClientNetwork extends GameNetwork{
             }else if(m instanceof PlayerIDData){
                 PlayerIDMessage((PlayerIDData) m);
             }
+            // Spell Matrix Updates
+            else if(m instanceof GeneratorPowerUpdate){
+                GeneratorPowerMessage((GeneratorPowerUpdate) m);
+            }else if(m instanceof MatrixUpdate){
+                MatrixUpdateMessage((MatrixUpdate) m);
+            }
             // Quick actions and creation messages
             else if(m instanceof ChunkData){
                 ChunkMessage((ChunkData) m);
@@ -401,6 +437,11 @@ public class ClientNetwork extends GameNetwork{
             // Data cleanup/destruction messages
             else if(m instanceof DestroyProjectileData){
                 DestroyProjectile((DestroyProjectileData) m);
+            }
+            // Development message
+            else if(m instanceof DevLogData){
+                DevLogData d = (DevLogData) m;
+                Util.log(d.getMessage());
             }
         }
     }

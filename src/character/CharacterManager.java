@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 import netdata.DamageData;
+import netdata.updates.MatrixUpdate;
 import netdata.MoveData;
 import netdata.PlayerData;
 import tools.Util;
@@ -61,6 +62,9 @@ public class CharacterManager{
         }
     }
     
+    public void updateMatrix(MatrixUpdate d){
+        players.get(playerID.get(d.getID())).updateMatrix(d);
+    }
     public void updatePlayerLocation(MoveData d){
         Util.log("[PlayerManager] <updatePlayerLocation> Updating player "+d.getID()+" location to "+d.getLocation().toString(), 4);
         Util.log("playerID = "+playerID.toString(), 4);
@@ -74,7 +78,7 @@ public class CharacterManager{
     public void serverUpdate(float tpf){
         for(Integer i : playerIDSet){
             if(i != myID){
-                //players.get(playerID.get(i)).serverUpdate(tpf);
+                players.get(playerID.get(i)).serverUpdate(tpf);
             }
         }
     }
@@ -95,12 +99,13 @@ public class CharacterManager{
             i++;
         }
     }
-    public void add(PlayerData d){
+    public Player add(PlayerData d){
         int id = d.getID();
         Player p = new Player(node, d);
         p.create();
         players.add(p);
         playerID.put(id,players.indexOf(p));
+        return p;
     }
     public void remove(int id){
         players.get(playerID.get(id)).destroy();

@@ -8,6 +8,7 @@ import com.jme3.scene.Node;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import network.ClientNetwork;
+import network.GameNetwork;
 import tools.Sys;
 import tools.Util;
 import world.blocks.WallData;
@@ -36,17 +37,14 @@ public abstract class Entity {
         Vector3f old3D = new Vector3f(oldLoc.x, oldLoc.y, 0);
         Vector3f new3D = new Vector3f(newLoc.x, newLoc.y, 0);
         node.setLocalTranslation(old3D.interpolate(new3D, interp));
-        Util.log("[Entity] <update> interpolation = "+old3D.interpolate(new3D, interp).toString()+" - interp = "+interp, 3);
         if(interp < 1.0f){
-            Util.log("[Entity] <update> tpf*MOVE_INVERSE = "+tpf*ClientNetwork.MOVE_INVERSE, 4);
             interp += tpf*ClientNetwork.MOVE_INVERSE;
         }else{
-            Util.log("Late message for movement!", 5);
+            Util.log("[Entity] <update> Late message for movement!", 5);
         }
     }
     
     public Vector2f getLocation(){
-        Util.log("[Entity] <getLocation> location = "+newLoc.toString(), 3);
         return newLoc.clone();
     }
     public Rectangle2D.Float getBounds(){
@@ -60,15 +58,12 @@ public abstract class Entity {
     }
     
     public void moveLocation(Vector2f offset){
-        Util.log("[Entity] <updateLocation> OLD locs = "+oldLoc.toString()+" - "+newLoc.toString(), 4);
         this.oldLoc = newLoc.clone();
         this.newLoc = newLoc.add(offset);
         this.interp = 0;
         this.bounds = new Rectangle2D.Float(newLoc.x-radius, newLoc.y-radius, radius*2, radius*2);
-        Util.log("[Entity] <updateLocation> NEW locs = "+oldLoc.toString()+" - "+newLoc.toString(), 4);
     }
     public void updateLocation(Vector2f loc){
-        Util.log("[Entity] <updateLocation> OLD locs = "+oldLoc.toString()+" - "+newLoc.toString(), 4);
         if(Sys.getWorld().getBlock(loc) == null){
             return; // This ensures no errors occur if the client has not recieved the data for this area yet.
         }
@@ -85,7 +80,6 @@ public abstract class Entity {
         this.newLoc = loc;
         this.interp = 0;
         this.bounds = new Rectangle2D.Float(newLoc.x-radius, newLoc.y-radius, radius*2, radius*2);
-        Util.log("[Entity] <updateLocation> NEW locs = "+oldLoc.toString()+" - "+newLoc.toString(), 4);
     }
     
     public void updateRotation(Vector2f loc){
@@ -108,7 +102,7 @@ public abstract class Entity {
      * @param collisions ArrayList of the entities that could possibly collide with this one.
      * @return Returns the ArrayList of possible collisions *after* filtering.
      */
-    public ArrayList<Entity> checkCollisions(ArrayList<Entity> collisions){
+    public ArrayList<Entity> checkCollisions(GameNetwork network, ArrayList<Entity> collisions){
         int i = 0;
         while(i < collisions.size()){
             // Filters: This entity (checking against itself), Distance/Radius

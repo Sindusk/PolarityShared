@@ -1,14 +1,23 @@
 package spellforge;
 
+import character.Player;
 import com.jme3.math.Vector2f;
+import com.jme3.network.HostedConnection;
 import com.jme3.scene.Node;
+import events.Action;
+import events.Event;
 import java.util.ArrayList;
+import netdata.ActionData;
+import netdata.updates.MatrixUpdate;
+import spellforge.nodes.ConduitData;
 import spellforge.nodes.CoreData;
+import spellforge.nodes.EffectData;
 import spellforge.nodes.GeneratorData;
 import spellforge.nodes.ModifierData;
 import spellforge.nodes.SpellNode;
 import spellforge.nodes.SpellNodeData;
 import tools.Sys;
+import tools.Util;
 
 /**
  *
@@ -18,20 +27,25 @@ public class SpellMatrix {
     protected static final float MATRIX_MAX_HEIGHT = Sys.height*0.9f;
     protected static final float MATRIX_MAX_WIDTH = Sys.width*0.4f;
     
+    protected Player owner;
+    protected Node parent;
     protected Node node = new Node("SpellMatrix");
     protected ArrayList<ArrayList<SpellNode>> spellNodes = new ArrayList();
+    protected ArrayList<SpellNode> conduits = new ArrayList();
     protected ArrayList<SpellNode> generators = new ArrayList();
+    protected ArrayList<SpellNode> effects = new ArrayList();
     protected ArrayList<SpellNode> modifiers = new ArrayList();
     protected ArrayList<SpellNode> cores = new ArrayList();
     
-    public SpellMatrix(Node parent, Vector2f loc, int width, int height){
+    public SpellMatrix(Node parent, Player owner, Vector2f loc, int width, int height){
+        this.parent = parent;
+        this.owner = owner;
         int x = 0;
         int y;
         
         float size = Math.min(MATRIX_MAX_WIDTH/width, MATRIX_MAX_HEIGHT/height);
         
         SpellNode.setNodeSize(size);
-        //node.setLocalTranslation(-(width*SIZE)*0.3f, -(height*SIZE)*0.3f, 0);
         float nodeX = loc.x-(width*size*0.5f)+(size*0.5f);
         float nodeY = Math.max(loc.y-((Sys.height-MATRIX_MAX_HEIGHT)/2f)-(size*height*0.5f), size);
         node.setLocalTranslation(nodeX, nodeY, 0);
@@ -47,6 +61,35 @@ public class SpellMatrix {
         parent.attachChild(node);
     }
     
+    public void setVisible(boolean show){
+        if(show){
+            parent.attachChild(node);
+        }else{
+            node.removeFromParent();
+        }
+    }
+    
+    public float getCost(){
+        float power = 0;
+        for(SpellNode spellNode : cores){
+            power += ((CoreData)spellNode.getData()).getCost();
+        }
+        for(SpellNode spellNode : effects){
+            power += ((EffectData)spellNode.getData()).getCost();
+        }
+        for(SpellNode spellNode : modifiers){
+            power += ((ModifierData)spellNode.getData()).getCost();
+        }
+        return Util.roundedFloat(power, 1);
+    }
+    public float getStoredPower(){
+        float power = 0;
+        for(SpellNode spellNode : generators){
+            power += ((GeneratorData)spellNode.getData()).getStoredPower();
+        }
+        return Util.roundedFloat(power, 1);
+    }
+    
     public SpellNode getSpellNode(int x, int y){
         if(x >= 0 && x < spellNodes.size() && y >= 0 && y < spellNodes.get(x).size()){
             return spellNodes.get(x).get(y);
@@ -54,8 +97,42 @@ public class SpellMatrix {
         return null;
     }
     
+    public void changeData(MatrixUpdate d){
+        SpellNodeData data = d.getData();
+        getSpellNode(data.getX(), data.getY()).changeData(data);
+    }
+    
+    public ArrayList<Event> calculateEvents(HostedConnection conn, ActionData actionData){
+        if(cores.size() > 0){
+            ArrayList<Event> events = new ArrayList();
+            for(SpellNode core : cores){
+                CoreData data = (CoreData) core.getData();
+                if(data.getSources().size() > 0){
+                    Event event = data.getEvent(owner, actionData.getStart(), actionData.getTarget());
+                    ArrayList<Action> actions = data.calculateActions(conn, owner, actionData);
+                    if(actions != null){
+                        event.addActions(actions);
+                        events.add(event);
+                    }
+                }else{
+                    //Util.log(conn, "No generators attached to Core @ "+data.getX()+", "+data.getY());
+                }
+            }
+            if(events.size() > 0){
+                return events;
+            }else{
+                //Util.log(conn, "No events found!");
+            }
+        }else{
+            //Util.log(conn, "No cores!");
+        }
+        return null;
+    }
+    
     public void recalculate(){
+        conduits = new ArrayList();
         generators = new ArrayList();
+        effects = new ArrayList();
         modifiers = new ArrayList();
         cores = new ArrayList();
         int x = 0;
@@ -67,8 +144,13 @@ public class SpellMatrix {
             while(y < spellNodes.get(x).size()){
                 spellNode = spellNodes.get(x).get(y);
                 data = spellNode.getData();
-                if(data instanceof GeneratorData){
+                if(data instanceof ConduitData){
+                    conduits.add(spellNode);
+                }else if(data instanceof GeneratorData){
                     generators.add(spellNode);
+                    spellNode.recalculate();
+                }else if(data instanceof EffectData){
+                    effects.add(spellNode);
                     spellNode.recalculate();
                 }else if(data instanceof ModifierData){
                     modifiers.add(spellNode);
@@ -85,6 +167,9 @@ public class SpellMatrix {
     
     public void update(float tpf){
         for(SpellNode spellNode : generators){
+            spellNode.update(tpf);
+        }
+        for(SpellNode spellNode : effects){
             spellNode.update(tpf);
         }
         for(SpellNode spellNode : modifiers){

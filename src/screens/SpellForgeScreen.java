@@ -13,13 +13,18 @@ import hud.advanced.FPSCounter;
 import input.Bind;
 import input.InputHandler;
 import items.Inventory;
-import items.SpellNodeItem;
+import items.SpellNodeItemData;
 import items.creation.ItemGenerator;
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
 import main.GameApplication;
+import netdata.updates.MatrixUpdate;
 import spellforge.SpellMatrix;
 import spellforge.nodes.SpellNode;
+import spellforge.nodes.SpellNodeData;
+import spellforge.nodes.conduits.EffectConduitData;
+import spellforge.nodes.conduits.ModifierConduitData;
+import spellforge.nodes.conduits.PowerConduitData;
 import tools.Sys;
 import ui.Button;
 import ui.Menu;
@@ -35,55 +40,71 @@ import ui.items.ItemButton;
  */
 public class SpellForgeScreen extends Screen {
     protected ArrayList<HUDElement> hud = new ArrayList();
-    protected SpellForgeScreen[] spellForges;
     protected Button[] slots = new Button[4];
     protected GameScreen gameScreen;
     protected Draggable dragging;
     protected InventoryPanel invPanel;
-    protected SpellMatrix matrix;
     protected Menu menu;
     protected Tooltip tooltip;
     protected Tooltip itemTooltip;
     
+    // Data
+    protected Player player;
+    protected SpellMatrix matrix;
+    protected int matrixIndex = 0;
+    
     public SpellForgeScreen(GameApplication app, GameScreen gameScreen, Node root, Node gui){
         super(app, root, gui);
         this.gameScreen = gameScreen;
+        this.player = gameScreen.getPlayer();
     }
     
     public SpellMatrix getMatrix(){
         return matrix;
     }
     
+    private void loadMatrix(int index){
+        if(matrix == player.getMatrix(index)){
+            return;
+        }
+        matrix.setVisible(false);
+        matrix = player.getMatrix(index);
+        matrix.setVisible(true);
+        matrixIndex = index;
+    }
+    
     @Override
     public void initialize(final InputHandler inputHandler) {
         this.inputHandler = inputHandler;
         
-        final Player p = app.getCharManager().getPlayer(gameScreen.getPlayerID());
-        Button b;
+        final Player p = gameScreen.getPlayer();
         float spacing = 0.35f;
         int i = 0;
         while(i < slots.length){
             final int slot = i;
-            b = new Button(gui, new Vector2f(Sys.width*spacing, Sys.height*0.9f), 50, 50, 0){
+            slots[i] = new Button(gui, new Vector2f(Sys.width*spacing, Sys.height*0.9f), 50, 50, 0){
                 @Override
                 public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
-                    inputHandler.changeScreens(spellForges[slot]);
+                    slots[matrixIndex].setColor(ColorRGBA.Blue);
+                    loadMatrix(slot);
+                    this.setColor(ColorRGBA.Orange);
                 }
             };
-            if(this == spellForges[i]){
-                b.setColor(ColorRGBA.Orange);
+            if(i == 0){
+                slots[i].setColor(ColorRGBA.Orange);
             }
-            b.setText(""+(i+1));
-            b.setTextColor(ColorRGBA.Green);
+            slots[i].setText(""+(i+1));
+            slots[i].setTextColor(ColorRGBA.Green);
             spacing += 0.1f;
-            ui.add(b);
+            ui.add(slots[i]);
             i++;
         }
-        
-        matrix = new SpellMatrix(gui, new Vector2f(Sys.width*0.5f, Sys.height*0.5f), 7, 7);
+        player.initializeMatrixArray(gui);
+        matrix = player.getMatrix(0);
+        matrix.setVisible(true);
         invPanel = new InventoryPanel(gui, new Vector2f(Sys.width*0.15f, Sys.height*0.5f), Sys.width*0.25f, Sys.height*0.9f, 0, 5);
         invPanel.setColor(new ColorRGBA(0.1f, 0.1f, 0.1f, 1));
-        invPanel.setInventory(app.getCharManager().getPlayer(gameScreen.getPlayerID()));
+        invPanel.setInventory(gameScreen.getPlayer());
         invPanel.display();
         ui.add(invPanel);
         hud.add(new FPSCounter(gui, new Vector2f(10, Sys.height-15), 15));   // Creates the FPS Counter
@@ -91,7 +112,7 @@ public class SpellForgeScreen extends Screen {
         itemTooltip = new Tooltip(gui, Vector2f.ZERO);
         itemTooltip.toggleVisible();
         
-        b = new Button(gui, new Vector2f(Sys.width*0.0875f, Sys.height*0.1f), Sys.width*0.1f, Sys.height*0.03f, 1){
+        Button b = new Button(gui, new Vector2f(Sys.width*0.0875f, Sys.height*0.1f), Sys.width*0.1f, Sys.height*0.03f, 1){
             @Override
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
                 app.enqueue(new Callable<Void>(){
@@ -126,52 +147,85 @@ public class SpellForgeScreen extends Screen {
         ui.add(b);
     }
     
-    public void setSpellForgeArray(SpellForgeScreen[] spellForges){
-        this.spellForges = spellForges;
+    @Override
+    public void changeInit(){
+        //
     }
     
     @Override
     public void update(float tpf) {
         Vector2f cursorLoc = app.getInputManager().getCursorPosition();
+        
+        // Update any new data from the server
+        // !!! TBI !!!
+        
+        // Update dragging target location
         if(dragging != null){
             dragging.moveWithOffset(cursorLoc);
         }
-        for(SpellForgeScreen spellForge : spellForges){
-            if(spellForge.getMatrix() != null){
-                spellForge.getMatrix().update(tpf);
+        
+        // Update spell matricies
+        for(SpellMatrix spellMatrix : player.getMatrixArray()){
+            if(spellMatrix != null){
+                spellMatrix.update(tpf);
             }
         }
+        
+        // Update HUD elements with new data (FPS counter, etc.)
         for(HUDElement e : hud){
             e.update(null, tpf);
         }
+        
+        // Reset the buttons on the menu to white
+        // !! ROOM FOR IMPROVEMENT !!
+        if(menu != null){
+            for(Button b : menu.getOptions()){
+                b.setTextColor(ColorRGBA.White);
+            }
+        }
+        
+        // Gets the top UI element that the cursor is currently over
         UIElement e = checkUI(cursorLoc);
-        if(e != null && e instanceof InventoryPanel){
-            InventoryPanel panel = (InventoryPanel) e;
-            UIElement uielement = panel.checkControls(cursorLoc);
-            if(uielement != null && uielement instanceof TooltipInfo){
-                TooltipInfo ttinfo = (TooltipInfo) uielement;
-                if(!itemTooltip.isVisible()){
-                    itemTooltip.toggleVisible();
+        if(e != null){
+            if(e instanceof InventoryPanel){
+                // Sift through the controls of the InventoryPanel to find the item the cursor is over
+                InventoryPanel panel = (InventoryPanel) e;
+                e = panel.checkControls(cursorLoc);
+                if(e != null && e instanceof TooltipInfo){
+                    // If there's an item, display new tooltip
+                    TooltipInfo ttinfo = (TooltipInfo) e;
+                    if(!itemTooltip.isVisible()){
+                        itemTooltip.toggleVisible();
+                    }
+                    itemTooltip.setText(ttinfo.getTooltip(), ttinfo.getColorMap());
+                    itemTooltip.setLocation(cursorLoc.add(new Vector2f(50, 5)));
+                }else{
+                    // Else, ensure the tooltip is hidden.
+                    if(itemTooltip.isVisible()){
+                        itemTooltip.toggleVisible();
+                    }
                 }
-                itemTooltip.setText(ttinfo.getTooltip(), ttinfo.getColorMap());
-                itemTooltip.setLocation(cursorLoc.add(new Vector2f(50, 5)));
-            }else{
-                if(itemTooltip.isVisible()){
-                    itemTooltip.toggleVisible();
-                }
+            }else if(e instanceof Button && menu != null && menu.getOptions().contains((Button)e)){
+                Button b = (Button) e;
+                b.setTextColor(ColorRGBA.Cyan);
             }
         }else{
+            // If no UI element is found, make sure the item tooltip is hidden
             if(itemTooltip.isVisible()){
                 itemTooltip.toggleVisible();
             }
         }
+        
+        // Find the spellNode the cursor is hovering over
         SpellNode spellNode = matrix.findNode(cursorLoc);
         if(spellNode != null){
+            // If one is found, update the tooltip for it
             if(!tooltip.isVisible()){
                 tooltip.toggleVisible();
             }
             tooltip.setText(spellNode.getTooltip(), spellNode.getColorMap());
         }else if(tooltip.isVisible()){
+            // Else, ensure the tooltip is hidden
             tooltip.toggleVisible();
         }
     }
@@ -196,9 +250,10 @@ public class SpellForgeScreen extends Screen {
         }
         menu = new Menu(gui, cursorLoc.add(new Vector2f(100, -30)), 1);
         if(spellNode.isEmpty()){
-            menu.addOption(ui, spellNode.addPowerConduitOption(menu));
-            menu.addOption(ui, spellNode.addModifierConduitOption(menu));
-            menu.addOption(ui, spellNode.addEffectConduitOption(menu));
+            menu.addOption(ui, addPowerConduitOption(menu, spellNode));
+            menu.addOption(ui, addModifierConduitOption(menu, spellNode));
+            menu.addOption(ui, addEffectConduitOption(menu, spellNode));
+            menu.addOption(ui, addRemoveOption(menu, spellNode));
         }
     }
 
@@ -223,11 +278,14 @@ public class SpellForgeScreen extends Screen {
         SpellNode spellNode = matrix.findNode(cursorLoc);
         if(spellNode != null){
             if(dragging != null && !down && bind.equals(Bind.LClick.toString()) && dragging instanceof ItemButton){
+                // If the mouse is released when dragging an item over a spell node, replace the spell node
                 ItemButton button = (ItemButton) dragging;
-                if(button.getItem() instanceof SpellNodeItem){
-                    SpellNodeItem item = (SpellNodeItem) button.getItem();
-                    spellNode.changeData(item.getData());
-                    item.getContainer().remove(item);
+                if(button.getItem().getData() instanceof SpellNodeItemData){
+                    SpellNodeItemData item = (SpellNodeItemData) button.getItem().getData();
+                    SpellNodeData data = item.getData().cleanData(spellNode.getData());
+                    //spellNode.changeData(button.getItem());
+                    clientNetwork.send(new MatrixUpdate(gameScreen.getPlayer().getID(), matrixIndex, data));
+                    button.getItem().getInventory().remove(item);
                     invPanel.display();
                 }
             }else if(down && bind.equals(Bind.RClick.toString())){
@@ -252,4 +310,79 @@ public class SpellForgeScreen extends Screen {
         // implement
     }
     
+    public Button addPowerConduitOption(Menu menu, final SpellNode spellNode){
+        Button b = new Button(menu.getNode(), new Vector2f(0, -menu.size()*20), 200, 20, 1){
+            @Override
+            public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
+                SpellNodeData data = spellNode.getData();
+                if(data.toItem() != null){
+                    invPanel.getInventory().add(data.toItem());
+                }
+                PowerConduitData conduit = new PowerConduitData(data);
+                clientNetwork.send(new MatrixUpdate(gameScreen.getPlayer().getID(), matrixIndex, conduit));
+                invPanel.display();
+            }
+        };
+        b.setColor(new ColorRGBA(0.5f, 0, 0, 1));
+        b.setText("Power Conduit");
+        b.setTextColor(ColorRGBA.White);
+        return b;
+    }
+    public Button addModifierConduitOption(Menu menu, final SpellNode spellNode){
+        Button b = new Button(menu.getNode(), new Vector2f(0, -menu.size()*20), 200, 20, 1){
+            @Override
+            public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
+                SpellNodeData data = spellNode.getData();
+                if(data.toItem() != null){
+                    invPanel.getInventory().add(data.toItem());
+                }
+                ModifierConduitData conduit = new ModifierConduitData(data);
+                clientNetwork.send(new MatrixUpdate(gameScreen.getPlayer().getID(), matrixIndex, conduit));
+                spellNode.changeData(conduit);
+                invPanel.display();
+            }
+        };
+        b.setColor(new ColorRGBA(0, 0, 0.5f, 1));
+        b.setText("Modifier Conduit");
+        b.setTextColor(ColorRGBA.White);
+        return b;
+    }
+    public Button addEffectConduitOption(Menu menu, final SpellNode spellNode){
+        Button b = new Button(menu.getNode(), new Vector2f(0, -menu.size()*20), 200, 20, 1){
+            @Override
+            public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
+                SpellNodeData data = spellNode.getData();
+                if(data.toItem() != null){
+                    invPanel.getInventory().add(data.toItem());
+                }
+                EffectConduitData conduit = new EffectConduitData(data);
+                clientNetwork.send(new MatrixUpdate(gameScreen.getPlayer().getID(), matrixIndex, conduit));
+                spellNode.changeData(conduit);
+                invPanel.display();
+            }
+        };
+        b.setColor(new ColorRGBA(1, 0.5f, 0, 1));
+        b.setText("Effect Conduit");
+        b.setTextColor(ColorRGBA.White);
+        return b;
+    }
+    public Button addRemoveOption(Menu menu, final SpellNode spellNode){
+        Button b = new Button(menu.getNode(), new Vector2f(0, -menu.size()*20), 200, 20, 1){
+            @Override
+            public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
+                SpellNodeData data = spellNode.getData();
+                if(data.toItem() != null){
+                    invPanel.getInventory().add(data.toItem());
+                }
+                SpellNodeData removal = new SpellNodeData(data.getX(), data.getY(), data.getLocation());
+                clientNetwork.send(new MatrixUpdate(gameScreen.getPlayer().getID(), matrixIndex, removal));
+                spellNode.changeData(removal);
+                invPanel.display();
+            }
+        };
+        b.setColor(new ColorRGBA(0.5f, 0.5f, 0.5f, 1));
+        b.setText("Remove");
+        b.setTextColor(ColorRGBA.White);
+        return b;
+    }
 }

@@ -11,16 +11,21 @@ import com.jme3.network.serializing.Serializable;
 @Serializable
 public class ActionData extends AbstractMessage {
     protected int id;
+    protected int slot;
     protected Vector2f start;
     protected Vector2f target;
     public ActionData(){}   // For serialization
-    public ActionData(int id, Vector2f start, Vector2f target){
+    public ActionData(int id, int slot, Vector2f start, Vector2f target){
         this.id = id;
+        this.slot = slot;
         this.start = start;
         this.target = target;
     }
     public int getID(){
         return id;
+    }
+    public int getSlot(){
+        return slot;
     }
     public Vector2f getStart(){
         return start;

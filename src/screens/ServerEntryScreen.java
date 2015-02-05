@@ -58,7 +58,12 @@ public class ServerEntryScreen extends Screen {
         backButton.setText("Back");
         ui.add(backButton);
     }
-
+    
+    @Override
+    public void changeInit(){
+        //
+    }
+    
     @Override
     public void update(float tpf) {
         //

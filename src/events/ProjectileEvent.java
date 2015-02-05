@@ -1,9 +1,12 @@
-package action;
+package events;
 
 import character.CharacterManager;
 import character.GameCharacter;
 import com.jme3.math.Vector2f;
+import com.jme3.network.Server;
 import com.jme3.network.serializing.Serializable;
+import entity.Projectile;
+import main.GameApplication;
 import netdata.ProjectileData;
 
 /**
@@ -12,41 +15,32 @@ import netdata.ProjectileData;
  * @author Sindusk
  */
 @Serializable
-public class ProjectileAttack extends Action {
+public class ProjectileEvent extends Event {
     protected int hashCode;
-    protected Event event;
     protected float speed;
     
-    public ProjectileAttack(GameCharacter owner, Vector2f start, Vector2f target, Event event, float speed, boolean down){
+    public ProjectileEvent(GameCharacter owner, Vector2f start, Vector2f target, float speed){
         super(owner, start, target);
-        this.event = event;
         this.speed = speed;
+        this.start = start;
         this.target = target;
     }
-    public ProjectileAttack(CharacterManager characterManager, ProjectileData data){
+    public ProjectileEvent(CharacterManager characterManager, ProjectileData data){
         super(characterManager.getPlayer(data.getOwner()), data.getStart(), data.getTarget());
         this.hashCode = data.getHashCode();
-        this.event = data.getEvent();
         this.speed = data.getSpeed();
+    }
+    
+    @Override
+    public void execute(Server server, GameApplication app){
+        Projectile p = app.getWorld().addProjectile(this);
+        server.broadcast(new ProjectileData(p.hashCode(), owner.getID(), start, target, speed));
     }
     
     public int getHashCode(){
         return hashCode;
     }
-    public Event getEvent(){
-        return event;
-    }
-    public Vector2f getStart(){
-        return owner.getLocation();
-    }
-    public Vector2f getTarget(){
-        return target;
-    }
     public float getSpeed(){
         return speed;
-    }
-    
-    public void setEvent(Event e){
-        this.event = e;
     }
 }

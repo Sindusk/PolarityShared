@@ -2,8 +2,8 @@ package items.creation;
 
 import com.jme3.math.FastMath;
 import items.Inventory;
-import items.Item;
-import items.SpellNodeItem;
+import items.ItemData;
+import items.SpellNodeItemData;
 import spellforge.nodes.SpellNodeData;
 import tools.Util;
 
@@ -12,8 +12,8 @@ import tools.Util;
  * @author SinisteRing
  */
 public class ItemGenerator {
-    public static Item randomItem(Inventory inv, int itemLevel){
-        Item item;
+    public static ItemData randomItem(Inventory inv, int itemLevel){
+        ItemData item;
         //int archetype = FastMath.nextRandomInt(0, 1);
         if(true){   // Spell Node is selected
             SpellNodeTypes[] types = SpellNodeTypes.values();
@@ -48,17 +48,32 @@ public class ItemGenerator {
                 Util.log("[ItemGenerator] Error: Spell Node data was null, returning no item.");
                 return null;
             }
-            item = new SpellNodeItem(inv, itemLevel, data);
+            item = new SpellNodeItemData(inv, itemLevel, data);
         }
         return item;
     }
     
+    private static final float LEVEL_BASE_MULT = 0.05f;     // Changes the baseline value by level
+    private static final float LEVEL_RANGE_MULT = 0.01f;    // Changes the spread of values by level
+    private static final float MAX_INVERSE_PERC = 0.9f;     // Maximum % of baseline to reduce the baseline by when inverse
+    private static final float MIN_BASE_MULT = 0.8f;        // Minimum % of baseline for min value
+    private static final float MIN_RANGE_MULT = 0.25f;      // Adjusts the min value by level
+    private static final float MAX_BASE_MULT = 1.2f;        // Minimum % of baseline for max value
+    private static final float MAX_RANGE_MULT = 1.5f;       // Adjusts the max value by level
     public static float leveledRandomFloat(float base, int level, int spaces){
-        float mult = 1+0.05f*(float)Math.sqrt(level);
-        float val = base*mult;
-        float range = level*0.01f;
-        float min = val-(val*range);
-        float max = val+(val*range);
-        return Util.roundedRandFloat(min, max, spaces);
+        float mult;
+        if(base > 0){
+            mult = 1+LEVEL_BASE_MULT*(float)Math.sqrt(level);
+        }else if(base < 0){
+            mult = 1-Math.min(LEVEL_BASE_MULT*(float)Math.sqrt(level), MAX_INVERSE_PERC);
+        }else{
+            Util.log("[ItemGenerator] Error: Base is zero.");
+            return 0;
+        }
+        float newBase = Math.abs(base)*mult;
+        float range = level*LEVEL_RANGE_MULT;
+        float min = (newBase*MIN_BASE_MULT)*(1+(MIN_RANGE_MULT*range));
+        float max = (newBase*MAX_BASE_MULT)*(1+(MAX_RANGE_MULT*range));
+        return Util.roundedScaledRandFloat(min, max, spaces);
     }
 }

@@ -51,6 +51,11 @@ public class InventoryScreen extends Screen {
     }
     
     @Override
+    public void changeInit(){
+        //
+    }
+    
+    @Override
     public void update(float tpf){
         //
     }

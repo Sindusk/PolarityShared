@@ -2,28 +2,35 @@ package spellforge.nodes;
 
 import com.jme3.math.ColorRGBA;
 import com.jme3.network.serializing.Serializable;
-import java.util.ArrayList;
+import events.Action;
 import spellforge.PulseHandler;
 import spellforge.SpellMatrix;
 import spellforge.nodes.conduits.EffectConduitData;
+import tools.Util;
 
 /**
  *
  * @author SinisteRing
  */
 @Serializable
-public class EffectData extends SpellNodeData {
-    protected ArrayList<SpellNodeData> granted;
+public class EffectData extends PowerableData {
     protected float multiplier = 0;
     
     public EffectData(){
+        init();
+    }
+    public EffectData(SpellNodeData data){
+        super(data);
+        init();
+    }
+    private void init(){
         type = "Effect";
         typeColor = ColorRGBA.Orange;
     }
-    public EffectData(SpellNodeData data){
-        super(data.getX(), data.getY(), data.getLocation());
-        type = "Effect";
-        typeColor = ColorRGBA.Orange;
+    
+    public Action getAction(){
+        Util.log("[EffectData] <getAction> Critical error: no override on getAction()!");
+        return null;
     }
     
     @Override

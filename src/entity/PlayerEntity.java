@@ -5,25 +5,22 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
-import netdata.DamageData;
 import tools.GeoFactory;
 import tools.SinText;
-import tools.Sys;
 
 /**
  *
  * @author SinisteRing
  */
-public class PlayerEntity extends Entity {
+public class PlayerEntity extends LivingEntity {
     protected Node nameNode = new Node("Player Name");    // Node that holds the nametag
-    protected Player owner;
     protected SinText nameTag;
     protected Geometry nameBackground;  // Transparent background to make the name stand out
     protected Geometry geo;
     protected Geometry point;
     
     public PlayerEntity(Node parent, Player player, ColorRGBA color){
-        super(parent);
+        super(parent, player);
         owner = player;
         // Create the (mock-up) player model
         geo = GeoFactory.createBox(node, new Vector3f(0.6f, 0.4f, 1), Vector3f.ZERO, color);
@@ -43,10 +40,5 @@ public class PlayerEntity extends Entity {
     public void update(float tpf){
         super.update(tpf);
         nameNode.setLocalTranslation(node.getLocalTranslation());
-    }
-    
-    public void damage(float value){
-        owner.damage(value);
-        Sys.getNetwork().send(new DamageData(owner.getID(), value));
     }
 }

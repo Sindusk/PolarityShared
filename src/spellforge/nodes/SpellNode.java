@@ -8,6 +8,8 @@ import com.jme3.math.Vector3f;
 import com.jme3.math.Vector4f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
+import items.Item;
+import items.SpellNodeItemData;
 import java.util.HashMap;
 import spellforge.SpellMatrix;
 import spellforge.nodes.conduits.EffectConduitData;
@@ -15,8 +17,6 @@ import tools.GeoFactory;
 import tools.SinText;
 import tools.Util;
 import tools.Util.Vector2i;
-import ui.Button;
-import ui.Menu;
 import ui.interfaces.TooltipInfo;
 
 /**
@@ -67,6 +67,16 @@ public class SpellNode implements TooltipInfo {
         text.setText(" ");
     }
     
+    public static ColorRGBA getConnectionColor(SpellNodeData data){
+        if(data instanceof PowerConduitData){
+            return ColorRGBA.Red;
+        }else if(data instanceof ModifierConduitData){
+            return ColorRGBA.Blue;
+        }else if(data instanceof EffectConduitData){
+            return ColorRGBA.Orange;
+        }
+        return ColorRGBA.Red;
+    }
     public static void setNodeSize(float size){
         SpellNode.SIZE = size;
         SpellNode.size = SpellNode.SIZE/2f;
@@ -87,7 +97,7 @@ public class SpellNode implements TooltipInfo {
     public String getTooltip(){
         colorMap.clear();
         int start = 0;
-        String info = data.getType();
+        String info = data.getName();
         colorMap.put(new Vector2i(start, info.length()), data.getTypeColor());
         
         if(data.toItem() != null){
@@ -129,21 +139,21 @@ public class SpellNode implements TooltipInfo {
         //
     }
     
-    public void createConnection(int index){
+    public void createConnection(int index, ColorRGBA color){
         if(connections[index] != null){
             connections[index].removeFromParent();
         }
         if(index == 0){ // North
-            connections[index] = GeoFactory.createBox(parent, new Vector3f(size*CONNECTOR_WIDTH, size*CONNECTOR_LENGTH, 0), Vector3f.ZERO, ColorRGBA.Red);
+            connections[index] = GeoFactory.createBox(parent, new Vector3f(size*CONNECTOR_WIDTH, size*CONNECTOR_LENGTH, 0), Vector3f.ZERO, color);
             connections[index].setLocalTranslation(new Vector3f(center.x, center.y+(size*CONNECTOR_OFFSET_L), CONNECTOR_Z));
         }else if(index == 1){ // East
-            connections[index] = GeoFactory.createBox(parent, new Vector3f(size*CONNECTOR_LENGTH, size*CONNECTOR_WIDTH, 0), Vector3f.ZERO, ColorRGBA.Red);
+            connections[index] = GeoFactory.createBox(parent, new Vector3f(size*CONNECTOR_LENGTH, size*CONNECTOR_WIDTH, 0), Vector3f.ZERO, color);
             connections[index].setLocalTranslation(new Vector3f(center.x+(size*CONNECTOR_OFFSET_L), center.y, CONNECTOR_Z));
         }else if(index == 2){ // South
-            connections[index] = GeoFactory.createBox(parent, new Vector3f(size*CONNECTOR_WIDTH, size*CONNECTOR_LENGTH, 0), Vector3f.ZERO, ColorRGBA.Red);
+            connections[index] = GeoFactory.createBox(parent, new Vector3f(size*CONNECTOR_WIDTH, size*CONNECTOR_LENGTH, 0), Vector3f.ZERO, color);
             connections[index].setLocalTranslation(new Vector3f(center.x, center.y-(size*CONNECTOR_OFFSET_L), CONNECTOR_Z));
         }else if(index == 3){ // West
-            connections[index] = GeoFactory.createBox(parent, new Vector3f(size*CONNECTOR_LENGTH, size*CONNECTOR_WIDTH, 0), Vector3f.ZERO, ColorRGBA.Red);
+            connections[index] = GeoFactory.createBox(parent, new Vector3f(size*CONNECTOR_LENGTH, size*CONNECTOR_WIDTH, 0), Vector3f.ZERO, color);
             connections[index].setLocalTranslation(new Vector3f(center.x-(size*CONNECTOR_OFFSET_L), center.y, CONNECTOR_Z));
         }
         data.setConnection(index, true);
@@ -166,8 +176,14 @@ public class SpellNode implements TooltipInfo {
         while(i < spellNodes.length){
             if(spellNodes[i] != null){
                 if(data.canConnect(spellNodes[i].getData())){
-                    createConnection(i);
-                    spellNodes[i].createConnection((i+2)%4);
+                    ColorRGBA color = ColorRGBA.Red;
+                    if(data instanceof ConduitData){
+                        color = getConnectionColor(data);
+                    }else if(spellNodes[i].getData() instanceof ConduitData){
+                        color = getConnectionColor(spellNodes[i].getData());
+                    }
+                    createConnection(i, color);
+                    spellNodes[i].createConnection((i+2)%4, color);
                 }else{
                     removeConnection(i);
                     spellNodes[i].removeConnection((i+2)%4);
@@ -185,6 +201,15 @@ public class SpellNode implements TooltipInfo {
         calculateConnections();
         matrix.recalculate();
     }
+    public void changeData(Item item){
+        if(item.getData() instanceof SpellNodeItemData){
+            if(data.toItem() != null){
+                item.getInventory().add(data.toItem());
+            }
+            SpellNodeItemData spellNodeItem = (SpellNodeItemData) item.getData();
+            changeData(spellNodeItem.getData());
+        }
+    }
     
     public void recalculate(){
         data.recalculate(matrix);
@@ -193,43 +218,6 @@ public class SpellNode implements TooltipInfo {
     public void update(float tpf){
         data.update(tpf);
         text.setText(data.getText());
-    }
-    
-    public Button addPowerConduitOption(Menu menu){
-        Button b = new Button(menu.getNode(), new Vector2f(0, -menu.size()*20), 200, 20, 1){
-            @Override
-            public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
-                changeData(new PowerConduitData(data));
-            }
-        };
-        b.setColor(new ColorRGBA(0.5f, 0, 0, 1));
-        b.setText("Power Conduit");
-        b.setTextColor(ColorRGBA.White);
-        return b;
-    }
-    public Button addModifierConduitOption(Menu menu){
-        Button b = new Button(menu.getNode(), new Vector2f(0, -menu.size()*20), 200, 20, 1){
-            @Override
-            public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
-                changeData(new ModifierConduitData(data));
-            }
-        };
-        b.setColor(new ColorRGBA(0, 0, 0.5f, 1));
-        b.setText("Modifier Conduit");
-        b.setTextColor(ColorRGBA.White);
-        return b;
-    }
-    public Button addEffectConduitOption(Menu menu){
-        Button b = new Button(menu.getNode(), new Vector2f(0, -menu.size()*20), 200, 20, 1){
-            @Override
-            public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
-                changeData(new EffectConduitData(data));
-            }
-        };
-        b.setColor(new ColorRGBA(1, 0.5f, 0, 1));
-        b.setText("Effect Conduit");
-        b.setTextColor(ColorRGBA.White);
-        return b;
     }
     
     // Check if the location given is within the bounds of the current UI element.

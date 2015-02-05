@@ -12,12 +12,10 @@ import com.jme3.network.serializing.Serializable;
 @Serializable
 public class BlockData {
     protected Vector2f loc;
-    protected ColorRGBA color;
     
     public BlockData(){}    // For serialization
-    public BlockData(Vector2f loc, ColorRGBA color){
+    public BlockData(Vector2f loc){
         this.loc = loc;
-        this.color = color;
     }
     
     public Vector2f getLocation(){
@@ -25,8 +23,5 @@ public class BlockData {
     }
     public Vector3f get3DLocation(){
         return new Vector3f(loc.x, loc.y, 0);
-    }
-    public ColorRGBA getColor(){
-        return color;
     }
 }

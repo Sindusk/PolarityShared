@@ -11,10 +11,13 @@ import spellforge.nodes.SpellNodeData;
 @Serializable
 public class MultiModData extends ModifierData {
     public MultiModData(){
-        name = "Multiplier Modifier";
+        init();
     }
     public MultiModData(SpellNodeData data){
         super(data);
+        init();
+    }
+    private void init(){
         name = "Multiplier Modifier";
     }
 }

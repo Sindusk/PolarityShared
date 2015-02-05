@@ -4,7 +4,8 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.network.serializing.Serializable;
-import items.SpellNodeItem;
+import items.SpellNodeItemData;
+import java.util.ArrayList;
 import java.util.HashMap;
 import spellforge.SpellMatrix;
 import tools.Util;
@@ -16,7 +17,8 @@ import tools.Util.Vector2i;
  */
 @Serializable
 public class SpellNodeData {
-    protected SpellNodeItem item;
+    protected ArrayList<SpellNodeData> granted = new ArrayList();
+    protected SpellNodeItemData item;
     protected HashMap<String,Float> properties = new HashMap();
     protected Vector2i index;
     protected Vector2f loc;
@@ -31,7 +33,7 @@ public class SpellNodeData {
         this.loc = loc;
     }
     
-    public void setItem(SpellNodeItem item){
+    public void setItem(SpellNodeItemData item){
         this.item = item;
     }
     public void setIndex(Vector2i index){
@@ -44,6 +46,9 @@ public class SpellNodeData {
         this.connected[index] = value;
     }
     
+    public float getProperty(String key){
+        return properties.get(key);
+    }
     public Vector2i getIndex(){
         return index;
     }
@@ -87,8 +92,15 @@ public class SpellNodeData {
         return " ";
     }
     
-    public SpellNodeItem toItem(){
+    public SpellNodeItemData toItem(){
         return item;
+    }
+    
+    public SpellNodeData cleanData(SpellNodeData data){
+        this.index = new Vector2i(data.getX(), data.getY());
+        this.loc = data.getLocation();
+        this.item = null;
+        return this;
     }
     
     public HashMap<String,Float> getSpellNodeProperties(){

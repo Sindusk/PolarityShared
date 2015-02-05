@@ -11,8 +11,12 @@ import entity.Entity;
  */
 @Serializable
 public abstract class GameCharacter {
+    protected int id;
     protected Entity entity;
     
+    public int getID(){
+        return id;
+    }
     public Entity getEntity(){
         return entity;
     }

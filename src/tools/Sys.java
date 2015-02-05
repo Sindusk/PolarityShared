@@ -1,6 +1,5 @@
 package tools;
 
-import action.ActionManager;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
 import com.jme3.bullet.BulletAppState;
@@ -79,14 +78,6 @@ public class Sys {
     }
     
     // Other:
-    private static ActionManager actionManager;
-    public static ActionManager getActionManager(){
-        return actionManager;
-    }
-    public static void setActionManager(ActionManager actionManager){
-        Sys.actionManager = actionManager;
-    }
-    
     private static BulletAppState bulletAppState;
     public static BulletAppState getBulletAppState(){
         return bulletAppState;
