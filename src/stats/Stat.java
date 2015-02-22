@@ -41,8 +41,9 @@ public abstract class Stat {
         value -= amount;
         return value;
     }
-    public void subtractBase(float amount){
+    public float subtractBase(float amount){
         base -= amount;
+        return base;
     }
     // Reduce function serves to ensure that the value does not go below zero
     public void reduce(float amount){

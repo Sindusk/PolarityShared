@@ -8,7 +8,7 @@ import com.jme3.network.HostedConnection;
 import com.jme3.network.serializing.Serializable;
 import events.Action;
 import events.Event;
-import items.creation.ItemGenerator;
+import items.creation.ItemFactory;
 import java.util.ArrayList;
 import java.util.HashMap;
 import netdata.ActionData;
@@ -21,16 +21,20 @@ import tools.Util;
  * @author SinisteRing
  */
 @Serializable
-public class CoreData extends PowerableData {
+public class CoreData extends SpellNodeData {
+    protected ArrayList<GeneratorData> sources = new ArrayList();
     protected HashMap<SpellNodeData, Float> efficiency = new HashMap();
     protected ArrayList<EffectData> effects = new ArrayList();
     protected ArrayList<ModifierData> mods = new ArrayList();
+    
+    public CoreVals values = new CoreVals();
+    protected float cost = 0;
     
     public CoreData(){
         init();
     }
     public CoreData(SpellNodeData data){
-        super(data);
+        super(data.getX(), data.getY(), data.getLocation());
         init();
     }
     private void init(){
@@ -44,6 +48,12 @@ public class CoreData extends PowerableData {
     public ArrayList<ModifierData> getModifiers(){
         return mods;
     }
+    public ArrayList<GeneratorData> getSources(){
+        return sources;
+    }
+    public float getCost(){
+        return cost;
+    }
     
     @Override
     public boolean canConnect(SpellNodeData data){
@@ -56,11 +66,20 @@ public class CoreData extends PowerableData {
     @Override
     public HashMap<String,Float> genProperties(int level){
         properties = new HashMap();
-        cost = ItemGenerator.leveledRandomFloat(-5f, level, 2);
+        values.speed = ItemFactory.leveledRandomFloat(7f, level, 2);
+        properties.put("Speed", values.speed);
+        cost = ItemFactory.leveledRandomFloat(-5f, level, 2);
         properties.put("Cost", cost);
         return properties;
     }
     
+    @Override
+    public void preRecalculate(){
+        sources.clear();
+        efficiency.clear();
+        effects.clear();
+        mods.clear();
+    }
     @Override
     public void recalculate(SpellMatrix matrix){
         PulseHandler handler = new PulseHandler(matrix, this);
@@ -68,9 +87,10 @@ public class CoreData extends PowerableData {
         granted = handler.getGranted();
     }
     
-    @Override
-    public void update(float tpf){
-        // Update in-game tooltips etc.
+    public void addPowerSource(GeneratorData data){
+        if(!sources.contains(data)){
+            sources.add(data);
+        }
     }
     
     public Event getEvent(GameCharacter owner, Vector2f start, Vector2f target){
@@ -93,9 +113,13 @@ public class CoreData extends PowerableData {
         }
         //
         if(actionCost < storedPower){
+            values.reset();
             ArrayList<Action> actions = new ArrayList();
+            for(ModifierData mod : mods){
+                mod.modifyCore(values);
+            }
             for(EffectData effect : effects){
-                actions.add(effect.getAction());
+                actions.add(effect.getAction(values.m_effectMult));
             }
             float perc = actionCost / storedPower;
             for(GeneratorData gen : sources){
@@ -106,6 +130,11 @@ public class CoreData extends PowerableData {
             //Util.log(conn, "Failed to use core at ["+getX()+","+getY()+"]: Not enough power.");
         }
         return null;
+    }
+    
+    @Override
+    public void update(float tpf){
+        // Prevents error messages.
     }
     
     public void addEffect(EffectData data, float mult){

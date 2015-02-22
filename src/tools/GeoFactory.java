@@ -1,5 +1,6 @@
 package tools;
 
+import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
@@ -12,6 +13,7 @@ import com.jme3.scene.shape.Cylinder;
 import com.jme3.scene.shape.Line;
 import com.jme3.scene.shape.Quad;
 import com.jme3.scene.shape.Sphere;
+import java.util.ArrayList;
 import tools.SinText.Alignment;
 
 /**
@@ -19,6 +21,23 @@ import tools.SinText.Alignment;
  * @author SinisteRing
  */
 public class GeoFactory {
+    private static AssetManager assetManager;
+    public static ArrayList<Material> materials = new ArrayList();
+    
+    protected static boolean wireframe = false;
+    
+    public static void initialize(AssetManager assetManager){
+        GeoFactory.assetManager = assetManager;
+    }
+    
+    public static boolean toggleWireframe(){
+        wireframe = !wireframe;
+        for(Material mat : materials){
+            mat.getAdditionalRenderState().setWireframe(wireframe);
+        }
+        return wireframe;
+    }
+    
     /**
      * Creates a text geometry.
      * @param node Parent node - this is the node that the text will attach to.
@@ -31,7 +50,7 @@ public class GeoFactory {
      * @return Returns the resulting text geometry.
      */
     public static SinText createSinText(Node node, float size, Vector3f trans, String font, String text, ColorRGBA color, Alignment align){
-        SinText txt = new SinText(Util.getFont(Sys.getAssetManager(), font));
+        SinText txt = new SinText(Util.getFont(assetManager, font));
         txt.setColor(color);
         txt.setSize(size);
         txt.setLocalTranslation(trans);
@@ -70,9 +89,10 @@ public class GeoFactory {
      * @return Returns the resulting geometry.
      */
     public static Geometry createBox(Node node, String name, Vector3f size, Vector3f trans, ColorRGBA color){
-        Box b = new Box(Vector3f.ZERO, size.getX(), size.getY(), size.getZ());
+        Box b = new Box(size.getX(), size.getY(), size.getZ());
         Geometry g = new Geometry(name, b);
-        Material m = Util.getMaterial(Sys.getAssetManager(), color);
+        Material m = Util.getMaterial(assetManager, color);
+        materials.add(m);   // For global material editing
         g.setMaterial(m);
         g.setLocalTranslation(trans);
         if(node != null) {
@@ -122,10 +142,11 @@ public class GeoFactory {
      * @return Returns the resulting geometry.
      */
     public static Geometry createBox(Node node, String name, Vector3f size, Vector3f trans, String tex, Vector2f scale){
-        Box b = new Box(Vector3f.ZERO, size.getX(), size.getY(), size.getZ());
+        Box b = new Box(size.getX(), size.getY(), size.getZ());
         b.scaleTextureCoordinates(scale);
         Geometry g = new Geometry(name, b);
-        Material m = Util.getMaterial(Sys.getAssetManager(), tex);
+        Material m = Util.getMaterial(assetManager, tex);
+        materials.add(m);
         g.setMaterial(m);
         g.setLocalTranslation(trans);
         if(node != null) {
@@ -144,7 +165,7 @@ public class GeoFactory {
     public static Geometry createCylinder(Node node, String name, float radius, float length, Vector3f trans, ColorRGBA color){
         Cylinder b = new Cylinder(16, 16, radius, length, true);
         Geometry g = new Geometry(name, b);
-        Material m = Util.getMaterial(Sys.getAssetManager(), color);
+        Material m = Util.getMaterial(assetManager, color);
         g.setMaterial(m);
         g.setLocalTranslation(trans);
         if(node != null) {
@@ -156,7 +177,7 @@ public class GeoFactory {
         Cylinder b = new Cylinder(16, 16, radius, length, true);
         b.scaleTextureCoordinates(scale);
         Geometry g = new Geometry(name, b);
-        Material m = Util.getMaterial(Sys.getAssetManager(), tex);
+        Material m = Util.getMaterial(assetManager, tex);
         g.setMaterial(m);
         g.setLocalTranslation(trans);
         if(node != null) {
@@ -170,19 +191,33 @@ public class GeoFactory {
         Line b = new Line(start, stop);
         b.setLineWidth(width);
         Geometry g = new Geometry(name, b);
-        Material m = Util.getMaterial(Sys.getAssetManager(), color);
+        Material m = Util.getMaterial(assetManager, color);
         g.setMaterial(m);
         if(node != null) {
             node.attachChild(g);
         }
         return g;
     }
+    public static Geometry createLine(Node node, float width, Vector3f start, Vector3f stop, ColorRGBA color){
+        return createLine(node, " ", width, start, stop, color);
+    }
     
     // Quads:
     public static Geometry createQuad(Node node, String name, float width, float height, Vector3f trans, ColorRGBA color){
         Quad b = new Quad(width, height);
         Geometry g = new Geometry(name, b);
-        Material m = Util.getMaterial(Sys.getAssetManager(), color);
+        Material m = Util.getMaterial(assetManager, color);
+        g.setMaterial(m);
+        g.setLocalTranslation(trans);
+        if(node != null){
+            node.attachChild(g);
+        }
+        return g;
+    }
+    public static Geometry createQuad(Node node, String name, float width, float height, Vector3f trans, String tex){
+        Quad b = new Quad(width, height);
+        Geometry g = new Geometry(name, b);
+        Material m = Util.getMaterial(assetManager, tex);
         g.setMaterial(m);
         g.setLocalTranslation(trans);
         if(node != null){
@@ -205,7 +240,7 @@ public class GeoFactory {
     public static Geometry createSphere(Node node, String name, float radius, Vector3f trans, ColorRGBA color){
         Sphere b = new Sphere(16, 16, radius);
         Geometry g = new Geometry(name, b);
-        Material m = Util.getMaterial(Sys.getAssetManager(), color);
+        Material m = Util.getMaterial(assetManager, color);
         g.setMaterial(m);
         g.setLocalTranslation(trans);
         if(node != null) {
@@ -229,7 +264,7 @@ public class GeoFactory {
         Sphere b = new Sphere(16, 16, radius);
         b.setTextureMode(mode);
         Geometry g = new Geometry(name, b);
-        Material m = Util.getMaterial(Sys.getAssetManager(), tex);
+        Material m = Util.getMaterial(assetManager, tex);
         g.setMaterial(m);
         g.setLocalTranslation(trans);
         if(node != null) {

@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import spellforge.SpellMatrix;
 import tools.Util;
-import tools.Util.Vector2i;
+import tools.Vector2i;
 
 /**
  *
@@ -24,6 +24,7 @@ public class SpellNodeData {
     protected Vector2f loc;
     protected String name = "Spell Node";
     protected String type = "Empty Node";
+    protected String icon = "empty";
     protected ColorRGBA typeColor = ColorRGBA.Gray;
     protected boolean[] connected = {false, false, false, false};
     
@@ -62,7 +63,7 @@ public class SpellNodeData {
         return loc;
     }
     public String getIcon(){
-        return "empty";
+        return icon;
     }
     public String getName(){
         return name;
@@ -109,6 +110,9 @@ public class SpellNodeData {
     public HashMap<String,Float> genProperties(int level){
         Util.log("[SpellNodeData] Critical Error: No override on genProperties()");
         return null;
+    }
+    public void preRecalculate(){
+        granted = new ArrayList();
     }
     public void recalculate(SpellMatrix matrix){
         Util.log("Error: Recalculating Empty Node! ["+index.x+", "+index.y+"]");

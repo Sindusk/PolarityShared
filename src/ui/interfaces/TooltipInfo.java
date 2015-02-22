@@ -2,7 +2,7 @@ package ui.interfaces;
 
 import com.jme3.math.ColorRGBA;
 import java.util.HashMap;
-import tools.Util.Vector2i;
+import tools.Vector2i;
 
 /**
  *

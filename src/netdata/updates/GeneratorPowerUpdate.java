@@ -2,7 +2,7 @@ package netdata.updates;
 
 import com.jme3.network.AbstractMessage;
 import com.jme3.network.serializing.Serializable;
-import tools.Util.Vector2i;
+import tools.Vector2i;
 
 /**
  *

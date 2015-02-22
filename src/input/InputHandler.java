@@ -5,7 +5,6 @@ import com.jme3.math.Vector3f;
 import main.GameApplication;
 import screens.Screen;
 import tools.Sys;
-import ui.Frame;
 
 /**
  *
@@ -15,7 +14,6 @@ public abstract class InputHandler {
     public static final float MOUSE_SENSITIVITY = 1;
     protected GameApplication app;
     protected Screen screen;
-    public Frame moving = null;
     
     public InputHandler(GameApplication app){
         this.app = app;
@@ -55,9 +53,8 @@ public abstract class InputHandler {
      * Obtains the cursor location in world space.
      * @return Location (in world space) of the cursor
      */
-    public Vector2f get3DCursorLocation(){
+    public Vector2f getCursorLocWorld(){
         Vector3f worldPos = Sys.getCamera().getWorldCoordinates(app.getInputManager().getCursorPosition(), 0f).clone();
-        Vector2f worldPos2D = new Vector2f(worldPos.x, worldPos.y);
-        return worldPos2D;
+        return new Vector2f(worldPos.x, worldPos.y);
     }
 }

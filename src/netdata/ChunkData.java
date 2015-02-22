@@ -4,8 +4,7 @@ import world.blocks.BlockData;
 import com.jme3.network.AbstractMessage;
 import com.jme3.network.serializing.Serializable;
 import java.util.ArrayList;
-import tools.Util.Vector2i;
-import world.Chunk;
+import tools.Vector2i;
 
 /**
  *

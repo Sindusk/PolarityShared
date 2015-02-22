@@ -11,7 +11,7 @@ import tools.Util;
  *
  * @author SinisteRing
  */
-public class ItemGenerator {
+public class ItemFactory {
     public static ItemData randomItem(Inventory inv, int itemLevel){
         ItemData item;
         //int archetype = FastMath.nextRandomInt(0, 1);

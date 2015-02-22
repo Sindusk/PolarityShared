@@ -1,7 +1,7 @@
 package spellforge;
 
 import spellforge.nodes.SpellNodeData;
-import tools.Util.Vector2i;
+import tools.Vector2i;
 
 /**
  *

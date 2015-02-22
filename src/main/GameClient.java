@@ -1,7 +1,5 @@
 package main;
 
-import com.jme3.renderer.queue.RenderQueue;
-import com.jme3.scene.Spatial;
 import com.jme3.system.AppSettings;
 import input.ClientInputHandler;
 import java.util.logging.Level;
@@ -53,7 +51,7 @@ public class GameClient extends GameApplication {
     }
     
     public ClientNetwork getNetwork(){
-        return (ClientNetwork) clientNetwork;
+        return clientNetwork;
     }
     
     @Override
@@ -72,31 +70,12 @@ public class GameClient extends GameApplication {
     @Override
     public void initialize() {
         super.initialize();
-        Util.log("[GameClient] <initialize> Starting Initialization...", 1);
-        gui.setQueueBucket(RenderQueue.Bucket.Gui);
-        gui.setCullHint(Spatial.CullHint.Never);
-        viewPort.attachScene(root);
-        guiViewPort.attachScene(gui);
-        
-        setPauseOnLostFocus(false);
-        
-        // Initialize system variables
-        Sys.height = settings.getHeight();
-        Sys.width = settings.getWidth();
-        Sys.setAssetManager(assetManager);
-        Sys.setCamera(cam);
-        Sys.setInputManager(inputManager);
-        Sys.setRenderManager(renderManager);
-        Sys.setStateManager(stateManager);
-        Sys.setTimer(timer);
-        Sys.setVersion(VERSION);
-        Sys.setViewPort(viewPort);
-        Sys.setWorld(world);
         
         // Initialize camera
+        Util.log("[GameClient] <initialize> Initializing Camera...", 1);
         cam.setParallelProjection(true);
-        float width=25f*Sys.width/1000f;
-        float height=25f*Sys.height/800f;
+        float width=25f*Sys.width/1200f;
+        float height=25f*Sys.height/1200f;
         cam.setFrustum(1.0f, 100f, -width, width, height, -height);
         cam.update();
         
@@ -114,7 +93,6 @@ public class GameClient extends GameApplication {
         Screen.setNodes(root, gui);
         
         inputHandler.switchScreens(new MenuScreen(this, root, gui));
-        Sys.setInputHandler(inputHandler);
     }
 
     @Override

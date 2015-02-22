@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package stats;
 
 import com.jme3.network.serializing.Serializable;
@@ -15,9 +11,7 @@ public class StatWithMax extends Stat {
     protected float baseMax;    // The base cap for the stat.
     protected float max;        // The current cap for the stat.
     
-    public StatWithMax(){
-        //
-    }
+    public StatWithMax(){}
     // Initialize with stat value and base stat cap.
     public StatWithMax(float amount, float max){
         super(amount);
@@ -51,7 +45,7 @@ public class StatWithMax extends Stat {
     // Override add method to ensure additions do not go over the limit.
     @Override
     public void add(float amount){
-        value += amount;
+        super.add(amount);
         ensureCapacity();
     }
 }

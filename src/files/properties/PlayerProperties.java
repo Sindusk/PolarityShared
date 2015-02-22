@@ -6,7 +6,7 @@ import files.PropertiesFileManager;
 import files.properties.vars.PlayerVar;
 import items.Equipment;
 import items.Weapon;
-import netdata.PlayerData;
+import character.data.PlayerData;
 
 /**
  *

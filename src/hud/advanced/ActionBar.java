@@ -19,12 +19,14 @@ public class ActionBar extends HUDElement {
     public static final int NUM_SLOTS = 4;
     public static final float GEO_SIZE = 25f;
     
+    protected Player player;
     protected Geometry background;
     protected Button[] actions = new Button[NUM_SLOTS];
     protected SinText[] power = new SinText[NUM_SLOTS];
     
-    public ActionBar(Node parent, Vector2f loc){
+    public ActionBar(Node parent, Vector2f loc, Player player){
         super(parent, loc);
+        this.player = player;
         background = GeoFactory.createBox(node, new Vector3f(GEO_SIZE*6, GEO_SIZE*1.5f, 0), Vector3f.ZERO, ColorRGBA.Gray);
         int i = 0;
         float offset = -(GEO_SIZE*3.75f);
@@ -43,10 +45,10 @@ public class ActionBar extends HUDElement {
     }
     
     @Override
-    public void update(Player p, float tpf){
+    public void update(float tpf){
         int i = 0;
         while(i < power.length){
-            power[i].setText(p.getMatrix(i).getStoredPower()+"/"+p.getMatrix(i).getCost());
+            power[i].setText(player.getMatrix(i).getStoredPower()+"/"+player.getMatrix(i).getCost());
             i++;
         }
     }

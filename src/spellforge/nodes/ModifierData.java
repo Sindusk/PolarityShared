@@ -2,7 +2,7 @@ package spellforge.nodes;
 
 import com.jme3.math.ColorRGBA;
 import com.jme3.network.serializing.Serializable;
-import items.creation.ItemGenerator;
+import items.creation.ItemFactory;
 import java.util.HashMap;
 import spellforge.PulseHandler;
 import spellforge.SpellMatrix;
@@ -14,25 +14,26 @@ import tools.Util;
  * @author SinisteRing
  */
 @Serializable
-public class ModifierData extends PowerableData {
+public class ModifierData extends SpellNodeData {
     protected float effectMult = 1;
     protected float multiplier = 1;
+    protected float cost = 1;
     
     public ModifierData(){
         init();
     }
     public ModifierData(SpellNodeData data){
-        super(data);
+        super(data.getX(), data.getY(), data.getLocation());
         init();
     }
     private void init(){
+        icon = "weapons";
         type = "Modifier";
         typeColor = ColorRGBA.Blue;
     }
     
-    @Override
-    public String getIcon(){
-        return "modifier";
+    public float getCost(){
+        return cost;
     }
     
     @Override
@@ -44,7 +45,7 @@ public class ModifierData extends PowerableData {
     }
     @Override
     public boolean canConnect(SpellNodeData data){
-        if(data instanceof ConduitData){
+        if(data instanceof ModifierConduitData){
             return true;
         }
         return false;
@@ -63,10 +64,14 @@ public class ModifierData extends PowerableData {
     }
     
     @Override
+    public HashMap<String,Float> getSpellNodeProperties(){
+        properties.put("Efficiency", Util.roundedFloat(multiplier, 2));
+        return properties;
+    }
+    @Override
     public HashMap<String,Float> genProperties(int level){
         properties = new HashMap();
-        properties.put("Efficiency", multiplier);
-        cost = ItemGenerator.leveledRandomFloat(-5f, level, 2);
+        cost = ItemFactory.leveledRandomFloat(-5f, level, 2);
         properties.put("Cost", cost);
         return properties;
     }
@@ -79,7 +84,6 @@ public class ModifierData extends PowerableData {
         if(granted.size() > 0){
             multiplier = Math.min(1, 2f/granted.size());
         }
-        properties.put("Efficiency", Util.roundedFloat(multiplier, 2));
         CoreData coreData;
         for(SpellNodeData data : granted){
             if(data instanceof CoreData){
@@ -87,6 +91,10 @@ public class ModifierData extends PowerableData {
                 coreData.addModifier(this, multiplier);
             }
         }
+    }
+    
+    public void modifyCore(CoreVals vals){
+        vals.m_effectMult *= effectMult;
     }
     
     @Override

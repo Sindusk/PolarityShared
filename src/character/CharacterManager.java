@@ -1,44 +1,60 @@
 package character;
 
+import character.data.MonsterData;
 import com.jme3.network.HostedConnection;
-import com.jme3.scene.Node;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Set;
 import netdata.DamageData;
 import netdata.updates.MatrixUpdate;
 import netdata.MoveData;
-import netdata.PlayerData;
+import character.data.PlayerData;
+import character.types.CharType;
+import character.types.Owner;
 import tools.Util;
+import world.World;
 
 /**
  * PlayerManager - Used for the creation and management of networked players.
  * @author SinisteRing
  */
 public class CharacterManager{
-    private Node node = new Node("CharacterNode");
     private HashMap<Integer,Integer> playerID = new HashMap();
-    private Set<Integer> playerIDSet = playerID.keySet();
     private ArrayList<Player> players = new ArrayList();
+    
+    private HashMap<Integer,Integer> monsterID = new HashMap();
+    private ArrayList<Monster> monsters = new ArrayList();
+    
     private int myID = -1;
     
     public CharacterManager(){
-        Util.log("[CharacterManager] <Instance> Creating...", 1);
+        Util.log("[CharacterManager] <Constructor> Creating...", 1);
     }
     
-    public Node getNode(){
-        return node;
-    }
     public Player getPlayer(int index){
-        Util.log("[PlayerManager] <getPlayer> Getting player "+index, 4);
         return players.get(playerID.get(index));
     }
     public ArrayList<Player> getPlayers(){
         return players;
     }
+    public Monster getMonster(int index){
+        return monsters.get(monsterID.get(index));
+    }
+    public ArrayList<Monster> getMonsters(){
+        return monsters;
+    }
     
     public void setMyID(int id){
         this.myID = id;
+    }
+    
+    public GameCharacter getOwner(Owner owner){
+        if(owner.getType() == CharType.PLAYER){
+            return getPlayer(owner.getID());
+        }else if(owner.getType() == CharType.MONSTER){
+            return getMonster(owner.getID());
+        }
+        Util.log("[CharacterManager] <getOwner> Critical Error: Could not identify for CharType "+owner.getType().toString());
+        return null;
     }
     
     /**
@@ -46,19 +62,23 @@ public class CharacterManager{
      * @param conn The connection of the player that will recieve the data.
      */
     public void sendData(HostedConnection conn){
-        int i = 0;
-        while(i < players.size()){
-            if(players.get(i).isConnected() && players.get(i).getConnection() != conn){
-                conn.send(players.get(i).getData());
+        for(Player player : players){
+            if(player.isConnected() && player.getConnection() != conn){
+                conn.send(player.getData());
             }
-            i++;
+        }
+        for(Monster monster : monsters){
+            conn.send(monster.getData());
         }
     }
     
-    public void damagePlayer(DamageData d){
-        Util.log("[CharacterManager] <damagePlayer> Damaging player "+d.getID()+" for "+d.getValue(), 1);
-        if(playerID.containsKey(d.getID())){
-            players.get(playerID.get(d.getID())).damage(d.getValue());
+    public void damage(DamageData d){
+        if(d.getType() == CharType.MONSTER){
+            getMonster(d.getID()).damage(d.getValue());
+        }else if(d.getType() == CharType.PLAYER){
+            getPlayer(d.getID()).damage(d.getValue());
+        }else{
+            Util.log("[CharacterManager] <damage> Critical Error: Could not identify EntityType for damage: "+d.getType().toString());
         }
     }
     
@@ -66,51 +86,57 @@ public class CharacterManager{
         players.get(playerID.get(d.getID())).updateMatrix(d);
     }
     public void updatePlayerLocation(MoveData d){
-        Util.log("[PlayerManager] <updatePlayerLocation> Updating player "+d.getID()+" location to "+d.getLocation().toString(), 4);
-        Util.log("playerID = "+playerID.toString(), 4);
         if(playerID.containsKey(d.getID())){
             players.get(playerID.get(d.getID())).updateLocation(d.getLocation());
             players.get(playerID.get(d.getID())).updateRotation(d.getCursorLocation());
-        }else{
-            Util.log("[PlayerManager] <updatePlayerLocation> Key not found: "+d.getID(), 1);
         }
     }
-    public void serverUpdate(float tpf){
-        for(Integer i : playerIDSet){
-            if(i != myID){
-                players.get(playerID.get(i)).serverUpdate(tpf);
-            }
+    public void serverUpdate(World world, float tpf){
+        for(Player player : players){
+            player.serverUpdate(tpf);
         }
-    }
-    public void update(float tpf){
-        for(Integer i : playerIDSet){
-            if(i != myID){
-                players.get(playerID.get(i)).update(tpf);
-            }
+        for(Monster monster : monsters){
+            monster.serverUpdate(world, tpf);
         }
     }
     
-    public int findEmptyID(){
+    // Finds an empty ID slot for the given idList.
+    public int findEmptyID(HashMap<Integer,Integer> idList, int limit){
         int i = 0;
-        while(true){
-            if(!playerID.containsKey(i)){
+        while(i < limit || limit == -1){
+            if(!idList.containsKey(i)){
                 return i;
             }
             i++;
         }
+        return -1;
     }
-    public Player add(PlayerData d){
-        int id = d.getID();
-        Player p = new Player(node, d);
-        p.create();
+    // TODO: Should be limited by server max players
+    public int findEmptyPlayerID(){
+        return findEmptyID(playerID, -1);
+    }
+    public int findEmptyMonsterID(){
+        return findEmptyID(monsterID, -1);
+    }
+    public Player addPlayer(World world, PlayerData d){
+        Player p = new Player(d);
+        p.createEntity(world);
         players.add(p);
-        playerID.put(id,players.indexOf(p));
+        playerID.put(d.getID(), players.indexOf(p));
         return p;
     }
-    public void remove(int id){
+    public Monster addMonster(World world, MonsterData d){
+        Monster m = new Monster(d);
+        m.createEntity(world);
+        monsters.add(m);
+        monsterID.put(d.getID(), monsters.indexOf(m));
+        return m;
+    }
+    
+    public void removePlayer(int id){
         players.get(playerID.get(id)).destroy();
     }
-    public int remove(HostedConnection conn){
+    public int removePlayer(HostedConnection conn){
         int i = 0;
         while(i < players.size()){
             if(players.get(i) != null && conn == players.get(i).getConnection()){

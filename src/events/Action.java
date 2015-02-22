@@ -1,9 +1,7 @@
 package events;
 
 import com.jme3.network.serializing.Serializable;
-import entity.Entity;
 import entity.LivingEntity;
-import java.util.ArrayList;
 
 /**
  *

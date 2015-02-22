@@ -13,8 +13,8 @@ public class Vitals {
     protected Shield shield;
     
     public Vitals(){
-        health = new Health(100, 100);
-        shield = new Shield(100, 100);
+        health = new Health(1000, 1000);
+        shield = new Shield(1000, 1000);
     }
     
     public Health getHealth(){
@@ -28,6 +28,7 @@ public class Vitals {
         if(shield.value() > 0){ // Check shields first
             float remainingShield = shield.subtract(value);    // Subtract from shields, and store how much shield is left
             if(remainingShield < 0){  // If shields went below zero, subtract remainder from health:
+                shield.subtract(remainingShield);
                 float remainingHealth = health.subtract(-remainingShield);  // Subtract the passthrough damage from health.
                 if(remainingHealth < 0){    // If health is below zero, you're dead.
                     dead = true;

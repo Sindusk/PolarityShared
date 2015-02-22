@@ -1,7 +1,10 @@
 package network;
 
+import spellforge.nodes.CoreVals;
+import character.data.MonsterData;
+import character.data.PlayerData;
+import character.types.*;
 import events.Action;
-import world.blocks.BlockData;
 import items.Equipment;
 import items.Inventory;
 import items.ItemData;
@@ -11,6 +14,7 @@ import netdata.*;
 import netdata.destroyers.*;
 import netdata.requests.*;
 import netdata.responses.*;
+import netdata.testing.*;
 import netdata.updates.*;
 import spellforge.nodes.SpellNodeData;
 import spellforge.nodes.conduits.*;
@@ -20,11 +24,8 @@ import spellforge.nodes.generators.*;
 import spellforge.nodes.modifiers.*;
 import stats.Stat;
 import stats.StatWithMax;
-import tools.Util.Vector2i;
-import world.Chunk;
-import world.blocks.ColorBlockData;
-import world.blocks.IconBlockData;
-import world.blocks.WallData;
+import tools.Vector2i;
+import world.blocks.*;
 
 /**
  *
@@ -33,11 +34,9 @@ import world.blocks.WallData;
 public enum NetData {
     // Netdata
     ActionData(ActionData.class),
-    ChunkData(ChunkData.class),
     CommandData(CommandData.class),
     ConnectData(ConnectData.class),
     DamageData(DamageData.class),
-    DevLogData(DevLogData.class),
     DisconnectData(DisconnectData.class),
     MoveData(MoveData.class),
     PingData(PingData.class),
@@ -48,6 +47,13 @@ public enum NetData {
     ServerStatusData(ServerStatusData.class),
     SoundData(SoundData.class),
     
+    // General Characters
+    Owner(Owner.class),
+    
+    // Monsters
+    MonsterData(MonsterData.class),
+    MonsterStateUpdate(MonsterStateUpdate.class),
+    
     // Item system
     Equipment(Equipment.class),
     Inventory(Inventory.class),
@@ -56,19 +62,26 @@ public enum NetData {
     Weapon(Weapon.class),
     
     // Matrix Updates
+    CoreVals(CoreVals.class),
     GeneratorPowerUpdate(GeneratorPowerUpdate.class),
     MatrixUpdate(MatrixUpdate.class),
     
-    // Spell Nodes
-    DamageEffectData(DamageEffectData.class),
+    // - Spell Nodes -
+    SpellNodeData(SpellNodeData.class), // Empty
+    // Conduits
     EffectConduitData(EffectConduitData.class),
-    EnergyGenData(EnergyGenData.class),
     ModifierConduitData(ModifierConduitData.class),
-    MultiModData(MultiModData.class),
     PowerConduitData(PowerConduitData.class),
+    // Cores
     ProjectileCoreData(ProjectileCoreData.class),
+    // Effects
+    DamageEffectData(DamageEffectData.class),
+    PoisonEffectData(PoisonEffectData.class),
+    // Generators
+    EnergyGenData(EnergyGenData.class),
+    // Modifiers
+    MultiModData(MultiModData.class),
     SpeedModData(SpeedModData.class),
-    SpellNodeData(SpellNodeData.class),
     
     // Data properties
     Event(Action.class),
@@ -77,6 +90,7 @@ public enum NetData {
     StatWithMax(StatWithMax.class),
     
     // Requests
+    ChunkRequest(ChunkRequest.class),
     InventoryRequest(InventoryRequest.class),
     SpellMatrixRequest(SpellMatrixRequest.class),
     
@@ -86,17 +100,18 @@ public enum NetData {
     // Destroyers
     DestroyProjectileData(DestroyProjectileData.class),
     
-    // World properties
-    Chunk(Chunk.class),
-    
     // World Blocks
     BlockData(BlockData.class),
-    ColorBlockData(ColorBlockData.class),
-    IconBlockData(IconBlockData.class),
+    ChunkData(ChunkData.class),
+    TerrainBlockData(TerrainData.class),
     WallData(WallData.class),
     
     // Tools/Utility
-    Vector2i(Vector2i.class);
+    Vector2i(Vector2i.class),
+    
+    // Testing
+    DevLogData(DevLogData.class),
+    MobCreateData(MonsterCreateData.class);
     
     public final Class c;
     NetData(Class c){

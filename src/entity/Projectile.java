@@ -6,6 +6,7 @@ import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
+import character.types.CharType;
 import events.Action;
 import java.util.ArrayList;
 import netdata.destroyers.DestroyProjectileData;
@@ -33,11 +34,12 @@ public class Projectile extends Entity{
      * @param attack Data for the projectile, including the method used when the projectile encounters an object.
      */
     public Projectile(Node parent, ProjectileEvent event){
-        super(parent);
+        super(parent, event.getOwner());
         this.event = event;
+        this.type = CharType.PROJECTILE;
     }
     
-    public ProjectileEvent getAttack(){
+    public ProjectileEvent getEvent(){
         return event;
     }
     
@@ -52,7 +54,7 @@ public class Projectile extends Entity{
     public void create(float radius, Vector2f start, Vector2f target){
         direction = target.subtract(start).normalize();
         // Apply a push forward so the projectile spawns infront of the player, instead of on top
-        Vector2f moddedStart = start.add(direction);
+        Vector2f moddedStart = start.add(direction.mult(0.5f));
         node.setLocalTranslation(new Vector3f(moddedStart.x, moddedStart.y, 0));
         geo = GeoFactory.createSphere(node, "projectile", radius, Vector3f.ZERO, ColorRGBA.Pink);
         oldLoc = moddedStart;
@@ -88,8 +90,8 @@ public class Projectile extends Entity{
         collisions = super.checkCollisions(server, collisions);
         int i = 0;
         while(i < collisions.size()){
-            // Filters: Owner of this projectile
-            if(event.getOwner().getEntity() == collisions.get(i)){
+            // Filters: Owner of this projectile, //or not an enemy of the owner
+            if(owner.getEntity() == collisions.get(i) ){// || !owner.isEnemy(collisions.get(i).getOwner())){
                 collisions.remove(i);
             }else{
                 i++;

@@ -1,7 +1,6 @@
 package items;
 
 import com.jme3.network.serializing.Serializable;
-import types.AttackType;
 
 /**
  *
@@ -9,21 +8,14 @@ import types.AttackType;
  */
 @Serializable
 public class Weapon extends ItemData {
-    protected AttackType attackType;
     protected float speed = 10f;
     
-    public Weapon(){
-        this.attackType = AttackType.Normal;
-    }
+    public Weapon(){}
     
-    public Weapon(Inventory inv, int itemLevel, String icon, AttackType attackType){
+    public Weapon(Inventory inv, int itemLevel, String icon){
         super(inv, itemLevel, icon);
-        this.attackType = attackType;
     }
     
-    public AttackType getAttackType(){
-        return attackType;
-    }
     public float getSpeed(){
         return speed;
     }

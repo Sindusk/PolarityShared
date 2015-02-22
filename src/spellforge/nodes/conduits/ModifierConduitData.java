@@ -1,5 +1,6 @@
 package spellforge.nodes.conduits;
 
+import com.jme3.math.ColorRGBA;
 import spellforge.nodes.ConduitData;
 import com.jme3.network.serializing.Serializable;
 import spellforge.nodes.CoreData;
@@ -12,10 +13,17 @@ import spellforge.nodes.SpellNodeData;
  */
 @Serializable
 public class ModifierConduitData extends ConduitData {
-    public ModifierConduitData(){}  // For serialization
+    public ModifierConduitData(){
+        super();
+        init();
+    }
     public ModifierConduitData(SpellNodeData data){
         super(data);
-        type = "Modifier Conduit";
+        init();
+    }
+    private void init(){
+        name = "Modifier Conduit";
+        typeColor = ColorRGBA.Blue;
     }
     
     @Override

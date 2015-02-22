@@ -30,8 +30,9 @@ public class MultiplayerScreen extends Screen {
     @Override
     public void initialize(final InputHandler inputHandler) {
         Util.log("[MultiplayerScreen] Initializing...", 1);
-        Sys.getCamera().setLocation(new Vector3f(0, 0, 50));
-        Sys.getCamera().lookAt(Vector3f.ZERO, Vector3f.UNIT_Y);
+        this.inputHandler = inputHandler;
+        app.getCamera().setLocation(new Vector3f(0, 0, 50));
+        app.getCamera().lookAt(Vector3f.ZERO, Vector3f.UNIT_Y);
         float width = Sys.width;
         float height = Sys.height;
         
@@ -100,7 +101,7 @@ public class MultiplayerScreen extends Screen {
         
         // Default bind back to menu screen
         if(bind.equals(Bind.Escape.toString())){
-            Sys.getInputHandler().switchScreens(new MenuScreen(app, root.getParent(), gui.getParent()));
+            inputHandler.switchScreens(new MenuScreen(app, root.getParent(), gui.getParent()));
         }
     }
     

@@ -3,6 +3,7 @@ package netdata;
 import com.jme3.math.Vector2f;
 import com.jme3.network.AbstractMessage;
 import com.jme3.network.serializing.Serializable;
+import character.types.Owner;
 
 /**
  *
@@ -11,12 +12,12 @@ import com.jme3.network.serializing.Serializable;
 @Serializable
 public class ProjectileData extends AbstractMessage {
     protected int hashCode;
-    protected int owner;
+    protected Owner owner;
     protected Vector2f start;
     protected Vector2f target;
     protected float speed;
     public ProjectileData() {}
-    public ProjectileData(int hashCode, int owner, Vector2f start, Vector2f target, float speed){
+    public ProjectileData(int hashCode, Owner owner, Vector2f start, Vector2f target, float speed){
         this.hashCode = hashCode;
         this.owner = owner;
         this.start = start;
@@ -26,7 +27,7 @@ public class ProjectileData extends AbstractMessage {
     public int getHashCode(){
         return hashCode;
     }
-    public int getOwner(){
+    public Owner getOwner(){
         return owner;
     }
     public Vector2f getStart(){

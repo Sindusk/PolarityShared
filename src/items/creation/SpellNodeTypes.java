@@ -14,11 +14,12 @@ public enum SpellNodeTypes {
     // Generators
     EnergyGenerator(EnergyGenData.class, 4),
     // Cores
-    ProjectileCore(ProjectileCoreData.class, 4),
+    ProjectileCore(ProjectileCoreData.class, 2),
     // Effects
     DamageEffect(DamageEffectData.class, 3),
+    PoisonEffect(PoisonEffectData.class, 3),
     // Modifier
-    MultiplierModifier(MultiModData.class, 0),
+    MultiplierModifier(MultiModData.class, 3),
     SpeedModifier(SpeedModData.class, 3);
 
     protected Class<? extends SpellNodeData> clazz;

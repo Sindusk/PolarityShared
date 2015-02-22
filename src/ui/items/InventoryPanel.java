@@ -1,6 +1,5 @@
 package ui.items;
 
-import character.Player;
 import com.jme3.math.Vector2f;
 import com.jme3.scene.Node;
 import items.Inventory;
@@ -25,8 +24,8 @@ public class InventoryPanel extends Panel {
     public Inventory getInventory(){
         return inventory;
     }
-    public void setInventory(Player p){
-        this.inventory = p.getInventory();
+    public void setInventory(Inventory inventory){
+        this.inventory = inventory;
     }
     
     public void display(){

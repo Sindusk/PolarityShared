@@ -16,7 +16,7 @@ import spellforge.nodes.conduits.EffectConduitData;
 import tools.GeoFactory;
 import tools.SinText;
 import tools.Util;
-import tools.Util.Vector2i;
+import tools.Vector2i;
 import ui.interfaces.TooltipInfo;
 
 /**
@@ -27,8 +27,8 @@ public class SpellNode implements TooltipInfo {
     protected static final ColorRGBA PROPERTY_NAME_COLOR = new ColorRGBA(0.8f, 0, 0.8f, 1);
     protected static final ColorRGBA PROPERTY_VALUE_COLOR = new ColorRGBA(0.9f, 0.4f, 0.9f, 1);
     
-    public static float SIZE;
-    public static float size;
+    //public static float SIZE;
+    //public static float size;
     public static final float CONNECTOR_WIDTH = 0.1f;
     public static final float CONNECTOR_OFFSET_W = 1.0f-CONNECTOR_WIDTH;
     public static final float CONNECTOR_LENGTH = 0.2f;
@@ -36,6 +36,9 @@ public class SpellNode implements TooltipInfo {
     public static final float CONNECTOR_Z = 1f;
     
     protected HashMap<Vector2i,ColorRGBA> colorMap = new HashMap(); // Color map for TooltipInfo
+    
+    protected float SIZE;
+    protected float size;
     
     protected SpellMatrix matrix;
     protected SpellNodeData data;
@@ -46,11 +49,15 @@ public class SpellNode implements TooltipInfo {
     protected Geometry[] connections = new Geometry[4];
     protected SinText text;
     
-    public SpellNode(Node parent, SpellMatrix matrix, SpellNodeData data){
+    public SpellNode(Node parent, SpellMatrix matrix, SpellNodeData data, float nodeSize){
         this.parent = parent;
         this.matrix = matrix;
         this.data = data;
         this.center = data.get3DLocation();
+        
+        this.SIZE = nodeSize;
+        this.size = nodeSize/2f;
+        
         createGeometry();
         Vector3f offset = Util.getOffset(parent);
         bounds = new Vector4f(offset.x+center.x-size, offset.x+center.x+size, offset.y+center.y-size, offset.y+center.y+size);
@@ -77,10 +84,10 @@ public class SpellNode implements TooltipInfo {
         }
         return ColorRGBA.Red;
     }
-    public static void setNodeSize(float size){
+    /*public static void setNodeSize(float size){
         SpellNode.SIZE = size;
         SpellNode.size = SpellNode.SIZE/2f;
-    }
+    }*/
     
     public SpellNodeData getData(){
         return data;

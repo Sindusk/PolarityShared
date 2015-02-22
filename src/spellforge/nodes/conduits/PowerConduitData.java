@@ -1,11 +1,10 @@
 package spellforge.nodes.conduits;
 
+import com.jme3.math.ColorRGBA;
 import spellforge.nodes.ConduitData;
 import com.jme3.network.serializing.Serializable;
 import spellforge.nodes.CoreData;
-import spellforge.nodes.EffectData;
 import spellforge.nodes.GeneratorData;
-import spellforge.nodes.ModifierData;
 import spellforge.nodes.SpellNodeData;
 
 /**
@@ -14,10 +13,18 @@ import spellforge.nodes.SpellNodeData;
  */
 @Serializable
 public class PowerConduitData extends ConduitData {
-    public PowerConduitData(){} // For serialization
+    public PowerConduitData(){
+        super();
+        init();
+    } // For serialization
     public PowerConduitData(SpellNodeData data){
         super(data);
-        type = "Power Conduit";
+        init();
+    }
+    
+    private void init(){
+        name = "Power Conduit";
+        typeColor = new ColorRGBA(0.75f, 0, 0, 1);   // Dark Red
     }
     
     @Override
@@ -27,7 +34,7 @@ public class PowerConduitData extends ConduitData {
     
     @Override
     public boolean canConnect(SpellNodeData data){
-        if(data instanceof GeneratorData || data instanceof CoreData || data instanceof EffectData || data instanceof ModifierData || data instanceof PowerConduitData){
+        if(data instanceof GeneratorData || data instanceof CoreData || data instanceof PowerConduitData){
             return true;
         }
         return false;

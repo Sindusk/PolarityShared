@@ -26,6 +26,19 @@ public enum Bind {
     W(KeyInput.KEY_W, KeyInput.class),
     S(KeyInput.KEY_S, KeyInput.class),
     Escape(KeyInput.KEY_ESCAPE, KeyInput.class),
+    // Numbers
+    One(KeyInput.KEY_1, KeyInput.class),
+    Two(KeyInput.KEY_2, KeyInput.class),
+    Three(KeyInput.KEY_3, KeyInput.class),
+    Four(KeyInput.KEY_4, KeyInput.class),
+    // Extra
+    B(KeyInput.KEY_B, KeyInput.class),
+    M(KeyInput.KEY_M, KeyInput.class),
+    N(KeyInput.KEY_N, KeyInput.class),
+    Y(KeyInput.KEY_Y, KeyInput.class),
+    // Scroll
+    ScrollUp(MouseInput.AXIS_WHEEL, false),
+    ScrollDown(MouseInput.AXIS_WHEEL, true),
     // Unused
     ArrowUp(KeyInput.KEY_UP, KeyInput.class),
     ArrowDown(KeyInput.KEY_DOWN, KeyInput.class),

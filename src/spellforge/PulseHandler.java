@@ -3,7 +3,7 @@ package spellforge;
 import java.util.ArrayList;
 import java.util.HashMap;
 import spellforge.nodes.SpellNodeData;
-import tools.Util.Vector2i;
+import tools.Vector2i;
 
 /**
  *

@@ -7,15 +7,13 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
-import hud.HUDElement;
 import hud.Tooltip;
 import hud.advanced.FPSCounter;
 import input.Bind;
 import input.InputHandler;
 import items.Inventory;
 import items.SpellNodeItemData;
-import items.creation.ItemGenerator;
-import java.util.ArrayList;
+import items.creation.ItemFactory;
 import java.util.concurrent.Callable;
 import main.GameApplication;
 import netdata.updates.MatrixUpdate;
@@ -39,9 +37,9 @@ import ui.items.ItemButton;
  * @author SinisteRing
  */
 public class SpellForgeScreen extends Screen {
-    protected ArrayList<HUDElement> hud = new ArrayList();
-    protected Button[] slots = new Button[4];
     protected GameScreen gameScreen;
+    
+    protected Button[] slots = new Button[4];
     protected Draggable dragging;
     protected InventoryPanel invPanel;
     protected Menu menu;
@@ -57,6 +55,7 @@ public class SpellForgeScreen extends Screen {
         super(app, root, gui);
         this.gameScreen = gameScreen;
         this.player = gameScreen.getPlayer();
+        this.name = "Spell Forge Screen";
     }
     
     public SpellMatrix getMatrix(){
@@ -76,6 +75,7 @@ public class SpellForgeScreen extends Screen {
     @Override
     public void initialize(final InputHandler inputHandler) {
         this.inputHandler = inputHandler;
+        hud.add(new FPSCounter(gui, new Vector2f(10, Sys.height-15), 15));   // Creates the FPS Counter
         
         final Player p = gameScreen.getPlayer();
         float spacing = 0.35f;
@@ -104,10 +104,9 @@ public class SpellForgeScreen extends Screen {
         matrix.setVisible(true);
         invPanel = new InventoryPanel(gui, new Vector2f(Sys.width*0.15f, Sys.height*0.5f), Sys.width*0.25f, Sys.height*0.9f, 0, 5);
         invPanel.setColor(new ColorRGBA(0.1f, 0.1f, 0.1f, 1));
-        invPanel.setInventory(gameScreen.getPlayer());
+        invPanel.setInventory(gameScreen.getPlayer().getData().getInventory());
         invPanel.display();
         ui.add(invPanel);
-        hud.add(new FPSCounter(gui, new Vector2f(10, Sys.height-15), 15));   // Creates the FPS Counter
         tooltip = new Tooltip(gui, new Vector2f(Sys.width*0.75f, Sys.height-50));
         itemTooltip = new Tooltip(gui, Vector2f.ZERO);
         itemTooltip.toggleVisible();
@@ -117,9 +116,9 @@ public class SpellForgeScreen extends Screen {
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
                 app.enqueue(new Callable<Void>(){
                     public Void call() throws Exception{
-                        Inventory inv = p.getInventory();
+                        Inventory inv = p.getData().getInventory();
                         //inv.add(new SpellNodeItem(icon[FastMath.nextRandomInt(0, icon.length-1)], type[FastMath.nextRandomInt(0, type.length-1)]));
-                        inv.add(ItemGenerator.randomItem(inv, FastMath.nextRandomInt(1,50)));
+                        inv.add(ItemFactory.randomItem(inv, FastMath.nextRandomInt(1,50)));
                         invPanel.display();
                         return null;
                     }
@@ -134,7 +133,7 @@ public class SpellForgeScreen extends Screen {
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
                 app.enqueue(new Callable<Void>(){
                     public Void call() throws Exception{
-                        Inventory inv = p.getInventory();
+                        Inventory inv = p.getData().getInventory();
                         inv.removeRandom();
                         invPanel.display();
                         return null;
@@ -169,11 +168,6 @@ public class SpellForgeScreen extends Screen {
             if(spellMatrix != null){
                 spellMatrix.update(tpf);
             }
-        }
-        
-        // Update HUD elements with new data (FPS counter, etc.)
-        for(HUDElement e : hud){
-            e.update(null, tpf);
         }
         
         // Reset the buttons on the menu to white
@@ -228,6 +222,9 @@ public class SpellForgeScreen extends Screen {
             // Else, ensure the tooltip is hidden
             tooltip.toggleVisible();
         }
+        
+        // Super call at end so it has latest info
+        super.update(tpf);
     }
     
     @Override

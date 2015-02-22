@@ -1,5 +1,6 @@
 package spellforge.nodes.conduits;
 
+import com.jme3.math.ColorRGBA;
 import spellforge.nodes.ConduitData;
 import com.jme3.network.serializing.Serializable;
 import spellforge.nodes.CoreData;
@@ -12,10 +13,17 @@ import spellforge.nodes.SpellNodeData;
  */
 @Serializable
 public class EffectConduitData extends ConduitData {
-    public EffectConduitData(){}  // For serialization
+    public EffectConduitData(){
+        super();
+        init();
+    }
     public EffectConduitData(SpellNodeData data){
         super(data);
-        type = "Effect Conduit";
+        init();
+    }
+    private void init(){
+        name = "Effect Conduit";
+        typeColor = ColorRGBA.Orange;
     }
     
     @Override

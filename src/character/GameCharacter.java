@@ -1,18 +1,21 @@
 package character;
 
+import character.types.Owner;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
-import com.jme3.network.serializing.Serializable;
 import entity.Entity;
 
 /**
  *
  * @author SinisteRing
  */
-@Serializable
 public abstract class GameCharacter {
     protected int id;
     protected Entity entity;
+    
+    public GameCharacter(int id){
+        this.id = id;
+    }
     
     public int getID(){
         return id;
@@ -26,6 +29,12 @@ public abstract class GameCharacter {
     public Vector2f getLocation(){
         return entity.getLocation();
     }
+    
+    public Owner asOwner(){
+        return new Owner(id, entity.getType());
+    }
+    
+    public abstract boolean isEnemy(GameCharacter other);
     
     public void update(float tpf){
         entity.update(tpf);

@@ -22,9 +22,7 @@ public class Frame extends Panel {
             @Override
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
                 if(bind.equals(Bind.LClick.toString())){
-                    if(down){
-                        Sys.getInputHandler().moving = frame;
-                    }
+                    // CURRENTLY DEFUNCT
                 }
             }
         };

@@ -8,7 +8,7 @@ import com.jme3.scene.Node;
 import java.util.HashMap;
 import tools.GeoFactory;
 import tools.SinText;
-import tools.Util.Vector2i;
+import tools.Vector2i;
 
 /**
  *

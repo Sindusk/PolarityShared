@@ -3,15 +3,16 @@ package tools;
 import com.jme3.network.HostedConnection;
 import netdata.updates.MatrixUpdate;
 import spellforge.SpellMatrix;
+import spellforge.nodes.CoreData;
+import spellforge.nodes.EffectData;
 import spellforge.nodes.GeneratorData;
-import spellforge.nodes.PowerableData;
+import spellforge.nodes.ModifierData;
 import spellforge.nodes.SpellNodeData;
 import spellforge.nodes.conduits.EffectConduitData;
 import spellforge.nodes.conduits.PowerConduitData;
 import spellforge.nodes.cores.ProjectileCoreData;
 import spellforge.nodes.effect.DamageEffectData;
 import spellforge.nodes.generators.EnergyGenData;
-import tools.Util.Vector2i;
 
 /**
  *
@@ -23,9 +24,7 @@ public class DevCheats {
         SpellNodeData newData = newClass.newInstance();
         newData.setIndex(new Vector2i(x, y));
         newData.setLocation(data.getLocation());
-        if(newData instanceof GeneratorData){
-            newData.genProperties(1);
-        }else if(newData instanceof PowerableData){
+        if(newData instanceof GeneratorData || newData instanceof CoreData || newData instanceof EffectData || newData instanceof ModifierData){
             newData.genProperties(1);
         }
         MatrixUpdate update = new MatrixUpdate(id, 0, newData);
@@ -35,11 +34,11 @@ public class DevCheats {
     // Creates a basic damage projectile for the player, instead of starting the matrix empty.
     public static void initPlayerMatrix(HostedConnection conn, int id, SpellMatrix matrix){
         try{
-            changeMatrixNode(conn, id, matrix, 2, 2, EnergyGenData.class);
-            changeMatrixNode(conn, id, matrix, 2, 3, PowerConduitData.class);
-            changeMatrixNode(conn, id, matrix, 2, 4, ProjectileCoreData.class);
-            changeMatrixNode(conn, id, matrix, 3, 3, DamageEffectData.class);
-            changeMatrixNode(conn, id, matrix, 3, 4, EffectConduitData.class);
+            changeMatrixNode(conn, id, matrix, 3, 3, EnergyGenData.class);
+            changeMatrixNode(conn, id, matrix, 3, 4, PowerConduitData.class);
+            changeMatrixNode(conn, id, matrix, 3, 5, ProjectileCoreData.class);
+            changeMatrixNode(conn, id, matrix, 4, 4, DamageEffectData.class);
+            changeMatrixNode(conn, id, matrix, 4, 5, EffectConduitData.class);
         }catch(Exception ex){
             Util.log(ex);
         }

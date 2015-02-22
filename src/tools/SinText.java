@@ -11,7 +11,7 @@ import com.jme3.scene.Node;
  */
 public class SinText extends BitmapText{
     public static enum Alignment{
-        Left, Right, Center;
+        Left, Center, Right;
     }
     private Node node = new Node();
     private Alignment align = Alignment.Left;
@@ -46,6 +46,10 @@ public class SinText extends BitmapText{
     public void setText(String text){
         super.setText(text);
         setAlignment(align);
+    }
+    @Override
+    public Vector3f getLocalTranslation(){
+        return node.getLocalTranslation();
     }
     @Override
     public void setLocalTranslation(Vector3f trans){

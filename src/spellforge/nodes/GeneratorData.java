@@ -4,7 +4,7 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.network.HostedConnection;
 import spellforge.nodes.conduits.PowerConduitData;
 import com.jme3.network.serializing.Serializable;
-import items.creation.ItemGenerator;
+import items.creation.ItemFactory;
 import java.util.HashMap;
 import netdata.updates.GeneratorPowerUpdate;
 import spellforge.PulseHandler;
@@ -21,6 +21,7 @@ public class GeneratorData extends SpellNodeData {
     protected float maxPower = 100;
     
     public GeneratorData(){
+        super();
         init();
     }
     public GeneratorData(SpellNodeData data){
@@ -29,7 +30,7 @@ public class GeneratorData extends SpellNodeData {
     }
     private void init(){
         type = "Generator";
-        typeColor = ColorRGBA.Green;
+        typeColor = new ColorRGBA(0.75f, 0, 0, 1);   // Dark Red
     }
     
     @Override
@@ -93,9 +94,9 @@ public class GeneratorData extends SpellNodeData {
     @Override
     public HashMap<String,Float> genProperties(int level){
         properties = new HashMap();
-        rate = ItemGenerator.leveledRandomFloat(5f, level, 2);
+        rate = ItemFactory.leveledRandomFloat(5f, level, 2);
         properties.put("Power Rate", rate);
-        maxPower = ItemGenerator.leveledRandomFloat(100f, level, 1);
+        maxPower = ItemFactory.leveledRandomFloat(100f, level, 1);
         properties.put("Maximum Power", maxPower);
         return properties;
     }
@@ -106,9 +107,9 @@ public class GeneratorData extends SpellNodeData {
         handler.createPulse(this);
         granted = handler.getGranted();
         for(SpellNodeData data : granted){
-            if(data instanceof PowerableData){
-                PowerableData p = (PowerableData) data;
-                p.addPowerSource(this);
+            if(data instanceof CoreData){
+                CoreData core = (CoreData) data;
+                core.addPowerSource(this);
             }
         }
     }

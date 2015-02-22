@@ -28,6 +28,7 @@ public class ServerEntryScreen extends Screen {
     @Override
     public void initialize(final InputHandler inputHandler) {
         Util.log("[ServerEntryScreen] Initializing...", 1);
+        this.inputHandler = inputHandler;
         float width = Sys.width;
         float height = Sys.height;
         
@@ -83,7 +84,7 @@ public class ServerEntryScreen extends Screen {
         
         // Default bind back to menu screen
         if(bind.equals(Bind.Escape.toString())){
-            Sys.getInputHandler().switchScreens(new MenuScreen(app, root.getParent(), gui.getParent()));
+            inputHandler.switchScreens(new MenuScreen(app, root.getParent(), gui.getParent()));
         }
     }
 

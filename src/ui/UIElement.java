@@ -1,5 +1,6 @@
 package ui;
 
+import com.jme3.asset.AssetManager;
 import com.jme3.input.event.KeyInputEvent;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
@@ -65,7 +66,7 @@ public class UIElement {
     
     // Changes the color of the main geometry
     public void setColor(ColorRGBA color){
-        geo.setMaterial(Util.getMaterial(Sys.getAssetManager(), color));
+        geo.setMaterial(Util.getMaterial(color));
     }
     // Update the bounds (when UI elements move)
     public void updateBounds(float x, float y){

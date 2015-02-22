@@ -5,7 +5,7 @@ import com.jme3.network.serializing.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import tools.Util;
-import tools.Util.Vector2i;
+import tools.Vector2i;
 import ui.interfaces.TooltipInfo;
 
 /**

@@ -13,14 +13,15 @@ import tools.Util;
  * @author SinisteRing
  */
 @Serializable
-public class EffectData extends PowerableData {
-    protected float multiplier = 0;
+public class EffectData extends SpellNodeData {
+    protected float multiplier = 1;
+    protected float cost = 1;
     
     public EffectData(){
         init();
     }
     public EffectData(SpellNodeData data){
-        super(data);
+        super(data.getX(), data.getY(), data.getLocation());
         init();
     }
     private void init(){
@@ -28,14 +29,13 @@ public class EffectData extends PowerableData {
         typeColor = ColorRGBA.Orange;
     }
     
-    public Action getAction(){
+    public Action getAction(final float mult){
         Util.log("[EffectData] <getAction> Critical error: no override on getAction()!");
         return null;
     }
     
-    @Override
-    public String getIcon(){
-        return "effect";
+    public float getCost(){
+        return cost;
     }
     
     @Override
@@ -47,7 +47,7 @@ public class EffectData extends PowerableData {
     }
     @Override
     public boolean canConnect(SpellNodeData data){
-        if(data instanceof ConduitData){
+        if(data instanceof EffectConduitData){
             return true;
         }
         return false;

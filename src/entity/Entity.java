@@ -1,16 +1,19 @@
 package entity;
 
+import character.GameCharacter;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
+import character.types.CharType;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import network.ClientNetwork;
 import network.GameNetwork;
 import tools.Sys;
-import tools.Util;
+import world.blocks.Block;
+import world.blocks.BlockData;
 import world.blocks.WallData;
 
 /**
@@ -18,18 +21,24 @@ import world.blocks.WallData;
  * @author Sindusk
  */
 public abstract class Entity {
-    protected Node node = new Node("Entity");
+    protected GameCharacter owner;
+    protected Node node = new Node("Root Entity Node");
+    protected Node modelNode = new Node("Entity Model Node");
     protected Rectangle2D.Float bounds;
     protected Vector2f oldLoc = new Vector2f(0, 0);
     protected Vector2f newLoc = new Vector2f(0, 0);
     protected boolean destroyed = false;
     protected float radius = 0.7f;
     
+    protected CharType type;
+    
     protected float interp = 0; // Counter used for interpolation, so movement is smooth(er)
     
-    public Entity(Node parent){
-        Util.log("[Entity] <Constructor> Creating entity: "+this.toString(), 2);
+    public Entity(Node parent, GameCharacter owner){
+        this.owner = owner;
+        this.type = CharType.UNKNOWN;
         parent.attachChild(node); // Attaches the entity node ("node") to the parent passed in
+        node.attachChild(modelNode);
         this.bounds = new Rectangle2D.Float(newLoc.x-radius, newLoc.y-radius, radius*2, radius*2);
     }
     
@@ -39,11 +48,24 @@ public abstract class Entity {
         node.setLocalTranslation(old3D.interpolate(new3D, interp));
         if(interp < 1.0f){
             interp += tpf*ClientNetwork.MOVE_INVERSE;
-        }else{
-            Util.log("[Entity] <update> Late message for movement!", 5);
+            if(interp > 1){
+                interp = 1;
+            }
         }
     }
     
+    public Node getNode(){
+        return node;
+    }
+    public GameCharacter getOwner(){
+        return owner;
+    }
+    public CharType getType(){
+        return type;
+    }
+    public Vector3f getLocalTranslation(){
+        return new Vector3f(newLoc.x, newLoc.y, 0);
+    }
     public Vector2f getLocation(){
         return newLoc.clone();
     }
@@ -55,6 +77,17 @@ public abstract class Entity {
     }
     public boolean isDestroyed(){
         return destroyed;
+    }
+    
+    public boolean canMove(Block block){
+        if(block == null){
+            return false;
+        }
+        BlockData d = block.getData();
+        if(d instanceof WallData){
+            return false;
+        }
+        return true;
     }
     
     public void moveLocation(Vector2f offset){
@@ -85,7 +118,7 @@ public abstract class Entity {
     public void updateRotation(Vector2f loc){
         float dx = loc.x - newLoc.x;
         float dy = loc.y - newLoc.y;
-        node.setLocalRotation(new Quaternion().fromAngleAxis(FastMath.atan2(dy, dx), new Vector3f(0, 0, 1)));
+        modelNode.setLocalRotation(new Quaternion().fromAngleAxis(FastMath.atan2(dy, dx), new Vector3f(0, 0, 1)));
     }
     
     public void move(float x, float y){
@@ -94,6 +127,13 @@ public abstract class Entity {
     }
     public void move(Vector2f vector){
         this.move(vector.x, vector.y);
+    }
+    public void moveInstant(float x, float y){
+        move(x, y);
+        interp = 1;
+    }
+    public void moveInstant(Vector2f vector){
+        moveInstant(vector.x, vector.y);
     }
     /**
      * Method used for checking and handling collisions.

@@ -1,5 +1,7 @@
 package network;
 
+import character.data.PlayerData;
+import netdata.testing.DevLogData;
 import netdata.updates.MatrixUpdate;
 import events.ProjectileEvent;
 import com.jme3.audio.AudioNode;
@@ -21,8 +23,11 @@ import java.util.concurrent.Callable;
 import main.GameClient;
 import netdata.*;
 import character.CharacterManager;
+import character.data.MonsterData;
+import entity.MonsterEntity;
 import netdata.destroyers.DestroyProjectileData;
 import netdata.updates.GeneratorPowerUpdate;
+import netdata.updates.MonsterStateUpdate;
 import screens.GameScreen;
 import screens.MenuScreen;
 import screens.MultiplayerScreen;
@@ -55,11 +60,11 @@ public class ClientNetwork extends GameNetwork{
     // ClientNetwork Variables:
     private boolean CLIENT_CONNECTED = false;
     private int     CLIENT_ID = -1;
-
+    
     // Index Holders:
     private final int PING = 0;
     private final int MOVE = 1;
-
+    
     // Instance Variables:
     private boolean pinging = false;
     private float[] timers = new float[2];
@@ -105,7 +110,7 @@ public class ClientNetwork extends GameNetwork{
         
         // Ping:
         if(timers[PING] >= PING_INTERVAL && !pinging){
-            time = Sys.getTimer().getTimeInSeconds();
+            time = app.getTimer().getTimeInSeconds();
             client.send(new PingData());
             timers[PING] = 0;
         }
@@ -113,7 +118,7 @@ public class ClientNetwork extends GameNetwork{
         // Send updated movement data:
         if(timers[MOVE] >= MOVE_INTERVAL){
             Util.log("[ClientNetwork] <update> Sending my ("+CLIENT_ID+") movement...", 4);
-            client.send(new MoveData(CLIENT_ID, charManager.getPlayer(CLIENT_ID).getLocation(), inputHandler.get3DCursorLocation()));
+            client.send(new MoveData(CLIENT_ID, charManager.getPlayer(CLIENT_ID).getLocation(), inputHandler.getCursorLocWorld()));
             timers[MOVE] = 0;
         }
     }
@@ -180,7 +185,7 @@ public class ClientNetwork extends GameNetwork{
             client.send(d.getPlayerData());
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
-                    charManager.add(d.getPlayerData());
+                    charManager.addPlayer(app.getWorld(), d.getPlayerData());
                     inputHandler.switchScreens(new GameScreen(app, Screen.getTopRoot(), Screen.getTopGUI()));
                     CLIENT_CONNECTED = true;
                     return null;
@@ -202,7 +207,7 @@ public class ClientNetwork extends GameNetwork{
             client.send(pd);
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
-                    charManager.add(pd);
+                    charManager.addPlayer(app.getWorld(), pd);
                     inputHandler.switchScreens(new GameScreen(app, Screen.getTopRoot(), Screen.getTopGUI()));
                     CLIENT_CONNECTED = true;
                     return null;
@@ -235,32 +240,53 @@ public class ClientNetwork extends GameNetwork{
         }
         
         // END SPELL MATRIX
+        // MOB/ENTITIES
         
-        private void ChunkMessage(ChunkData d){
-            final ChunkData m = d;
+        private void MonsterMessage(final MonsterData d){
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
-                    app.updateChunk(m);
+                    charManager.addMonster(app.getWorld(), d);
+                    return null;
+                }
+            });
+        }
+        private void MonsterStateMessage(final MonsterStateUpdate d){
+            app.enqueue(new Callable<Void>(){
+                public Void call() throws Exception{
+                    MonsterEntity entity = (MonsterEntity) charManager.getMonster(d.getID()).getEntity();
+                    entity.getNameplate().updateName(d.getStateName());
                     return null;
                 }
             });
         }
         
-        private void CommandMessage(CommandData d){
-            final CommandData m = d;
+        // END MOB/ENTITES
+        // WORLD
+        
+        private void ChunkMessage(final ChunkData d){
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
-                    Util.handleCommand(m.getCommand());
+                    app.getWorld().updateChunk(d);
                     return null;
                 }
             });
         }
         
-        private void DamageMessage(DamageData d){
-            final DamageData m = d;
+        // END WORLD
+        
+        private void CommandMessage(final CommandData d){
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
-                    charManager.damagePlayer(m);
+                    Util.handleCommand(d.getCommand());
+                    return null;
+                }
+            });
+        }
+        
+        private void DamageMessage(final DamageData d){
+            app.enqueue(new Callable<Void>(){
+                public Void call() throws Exception{
+                    charManager.damage(d);
                     return null;
                 }
             });
@@ -271,12 +297,11 @@ public class ClientNetwork extends GameNetwork{
          * It holds certain data for the disconnect message, and potentially other misc data.
          * @param d The data from the message.
          */
-        private void DisconnectMessage(DisconnectData d){
+        private void DisconnectMessage(final DisconnectData d){
             Util.log("[ClientNetwork] <DisconnectMessage> Recieving DisconnectMessage...", 1);
-            final int id = d.getID();
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
-                    charManager.remove(id);
+                    charManager.removePlayer(d.getID());
                     return null;
                 }
             });
@@ -289,12 +314,10 @@ public class ClientNetwork extends GameNetwork{
          * of where they're at on the server.
          * @param d The data from the message.
          */
-        private void MoveMessage(MoveData d){
-            Util.log("[ClientNetwork] <MoveMessage> Recieving MoveMessage...", 4);
-            final MoveData m = d;
+        private void MoveMessage(final MoveData d){
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
-                    charManager.updatePlayerLocation(m);
+                    charManager.updatePlayerLocation(d);
                     return null;
                 }
             });
@@ -316,15 +339,14 @@ public class ClientNetwork extends GameNetwork{
          * knowledge of what to do when that player makes an action.
          * @param d The data from the message.
          */
-        private void PlayerMessage(PlayerData d){
+        private void PlayerMessage(final PlayerData d){
             Util.log("[ClientNetwork] <PlayerMessage> Recieving new PlayerMessage...", 2);
             if(d.getID() == CLIENT_ID){
                 return;
             }
-            final PlayerData m = d;
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
-                    charManager.add(m);
+                    charManager.addPlayer(app.getWorld(), d);
                     return null;
                 }
             });
@@ -336,12 +358,11 @@ public class ClientNetwork extends GameNetwork{
          * Holds all information necessary to spawn the projectile.
          * @param d The data from the message.
          */
-        private void ProjectileMessage(ProjectileData d){
+        private void ProjectileMessage(final ProjectileData d){
             Util.log("[ClientNetwork] <ProjectileMessage> Recieving new ProjectileMessage...", 2);
-            final ProjectileData m = d;
             app.enqueue(new Callable(){
                 public Void call() throws Exception{
-                    Sys.getWorld().addProjectile(new ProjectileEvent(charManager, m));
+                    app.getWorld().addProjectile(new ProjectileEvent(charManager, d));
                     return null;
                 }
             });
@@ -353,30 +374,28 @@ public class ClientNetwork extends GameNetwork{
          * information before allowing entry to the server.
          * @param d The data from the message.
          */
-        private void ServerStatusMessage(ServerStatusData d){
+        private void ServerStatusMessage(final ServerStatusData d){
             Util.log("[ClientNetwork] <ServerStatusMessage> Recieving new ServerStatusMessage...", 2);
-            final ServerStatusData m = d;
             app.enqueue(new Callable(){
                 public Void call() throws Exception{
                     if(!(inputHandler.getScreen() instanceof MultiplayerScreen)){
                         Util.log("Error 5: Server sent status when multiplayer screen was not open.", 0);
                     }
-                    serverStatus = m.getStatus();
+                    serverStatus = d.getStatus();
                     return null;
                 }
             });
         }
         
         // Recieved when a sound is played in the server world, and the client needs to know.
-        private void SoundMessage(SoundData d){
+        private void SoundMessage(final SoundData d){
             if(d.getID() == CLIENT_ID) {
                 return;
             }
-            final String s = d.getSound();
             final Vector2f loc = charManager.getPlayer(d.getID()).getLocation();
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
-                    AudioNode node = new AudioNode(app.getAssetManager(), s);
+                    AudioNode node = new AudioNode(app.getAssetManager(), d.getSound());
                     node.setPositional(true);
                     node.setLocalTranslation(new Vector3f(loc.x, loc.y, 0));
                     node.playInstance();
@@ -385,11 +404,10 @@ public class ClientNetwork extends GameNetwork{
             });
         }
         
-        private void DestroyProjectile(DestroyProjectileData d){
-            final int hashCode = d.getHashCode();
+        private void DestroyProjectile(final DestroyProjectileData d){
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
-                    Sys.getWorld().destroyProjectile(hashCode);
+                    app.getWorld().destroyProjectile(d.getHashCode());
                     return null;
                 }
             });
@@ -405,16 +423,20 @@ public class ClientNetwork extends GameNetwork{
                 PlayerConnectionMessage((PlayerConnectionData) m);
             }else if(m instanceof PlayerIDData){
                 PlayerIDMessage((PlayerIDData) m);
-            }
             // Spell Matrix Updates
-            else if(m instanceof GeneratorPowerUpdate){
+            }else if(m instanceof GeneratorPowerUpdate){
                 GeneratorPowerMessage((GeneratorPowerUpdate) m);
             }else if(m instanceof MatrixUpdate){
                 MatrixUpdateMessage((MatrixUpdate) m);
-            }
-            // Quick actions and creation messages
-            else if(m instanceof ChunkData){
+            // Entities/Mobs
+            }else if(m instanceof MonsterData){
+                MonsterMessage((MonsterData) m);
+            }else if(m instanceof MonsterStateUpdate){
+                MonsterStateMessage((MonsterStateUpdate) m);
+            // World Messages
+            }else if(m instanceof ChunkData){
                 ChunkMessage((ChunkData) m);
+            // Uncategorized
             }else if(m instanceof CommandData){
                 CommandMessage((CommandData) m);
             }else if(m instanceof DamageData){
@@ -438,7 +460,7 @@ public class ClientNetwork extends GameNetwork{
             else if(m instanceof DestroyProjectileData){
                 DestroyProjectile((DestroyProjectileData) m);
             }
-            // Development message
+            // Development testing
             else if(m instanceof DevLogData){
                 DevLogData d = (DevLogData) m;
                 Util.log(d.getMessage());

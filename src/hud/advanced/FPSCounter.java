@@ -1,10 +1,5 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package hud.advanced;
 
-import character.Player;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.scene.Node;
@@ -27,7 +22,7 @@ public class FPSCounter extends HUDElement {
     }
     
     @Override
-    public void update(Player player, float tpf){
+    public void update(float tpf){
         label.setText("FPS: "+Math.round(1.0/tpf));
     }
 }

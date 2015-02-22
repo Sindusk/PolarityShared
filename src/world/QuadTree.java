@@ -27,6 +27,13 @@ public class QuadTree {
         location = new Vector2f(0, 0);
     }
     
+    public Rectangle2D.Float getBounds(){
+        return bounds;
+    }
+    public void updateBounds(double minX, double maxX, double minY, double maxY){
+        bounds = new Rectangle2D.Float((float)minX, (float)minY, (float)(maxX-minX), (float)(maxY-minY));
+    }
+    
     public void clear() {
         objects.clear();
         int i = 0;
@@ -51,8 +58,7 @@ public class QuadTree {
         nodes[3] = new QuadTree(level+1, new Rectangle2D.Float(x+subWidth, y+subHeight, subWidth, subHeight));
     }
     
-    private int getIndex(Entity e){
-        Rectangle2D.Float pRect = e.getBounds();
+    private int getIndex(Rectangle2D.Float pRect){
         int index = -1;
         double verticalMidpoint = bounds.getX() + (bounds.getWidth()/2);
         double horizontalMidpoint = bounds.getY() + (bounds.getHeight()/2);
@@ -80,6 +86,9 @@ public class QuadTree {
         }
         
         return index;
+    }
+    private int getIndex(Entity e){
+        return getIndex(e.getBounds());
     }
     
     public void insert(Entity e){
@@ -113,14 +122,17 @@ public class QuadTree {
         }
     }
     
-    public ArrayList<Entity> retrieve(ArrayList returnObjects, Entity e){
-        int index = getIndex(e);
+    public ArrayList<Entity> retrieve(ArrayList returnObjects, Rectangle2D.Float bounds){
+        int index = getIndex(bounds);
         if(index != -1 && nodes[0] != null){
-            nodes[index].retrieve(returnObjects, e);
+            nodes[index].retrieve(returnObjects, bounds);
         }
         
         returnObjects.addAll(objects);
         
         return returnObjects;
+    }
+    public ArrayList<Entity> retrieve(ArrayList returnObjects, Entity entity){
+        return retrieve(returnObjects, entity.getBounds());
     }
 }

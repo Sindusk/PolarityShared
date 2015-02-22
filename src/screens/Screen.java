@@ -3,6 +3,7 @@ package screens;
 import com.jme3.input.event.KeyInputEvent;
 import com.jme3.math.Vector2f;
 import com.jme3.scene.Node;
+import hud.HUDElement;
 import input.InputHandler;
 import java.util.ArrayList;
 import main.GameApplication;
@@ -28,6 +29,7 @@ public abstract class Screen {
     protected Node gui = new Node("Screen GUI");
     protected Node root = new Node("Screen Root");
     protected ArrayList<UIElement> ui = new ArrayList();
+    protected ArrayList<HUDElement> hud = new ArrayList();
     protected String name;
     
     // Default constructor
@@ -81,10 +83,15 @@ public abstract class Screen {
         Screen.topGUI = topGUI;
     }
     
+    public void update(float tpf){
+        for(HUDElement e : hud){
+            e.update(tpf);
+        }
+    }
+    
     // Required methods to be implemented
     public abstract void initialize(final InputHandler inputHandler);
     public abstract void changeInit();
-    public abstract void update(float tpf);
     public abstract void onCursorMove(Vector2f cursorLoc);
     public abstract void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf);
     public abstract void onKeyEvent(KeyInputEvent evt);

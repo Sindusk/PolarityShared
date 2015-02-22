@@ -26,88 +26,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import netdata.DevLogData;
+import netdata.testing.DevLogData;
 
 /**
  * T (Tools) - Provides miscellaneous tools for various functions.
  * @author SinisteRing
  */
 public class Util {
+    private static AssetManager assetManager;
     public static final float ROOT_HALF = 1.0f/FastMath.sqrt(2);
     
-    @Serializable
-    public static class Vector2i{
-        public int x;
-        public int y;
-        
-        public Vector2i(){} // For serialization
-        public Vector2i(int x, int y){
-            this.x = x;
-            this.y = y;
-        }
-        
-        public void addLocal(Vector2i other){
-            this.x += other.x;
-            this.y += other.y;
-        }
-        public Vector2i add(Vector2i other){
-            return new Vector2i(x+other.x, y+other.y);
-        }
-        
-        public boolean equalsInverted(Vector2i other){
-            if(other.x != -this.x){
-                return false;
-            }else if(other.y != -this.y){
-                return false;
-            }
-            return true;
-        }
-        
-        @Override
-        public boolean equals(Object o){
-            if (!(o instanceof Vector2i)) {
-                return false;
-            }
-            Vector2i other = (Vector2i) o;
-            if(this == other){
-                return true;
-            }
-            if(other.x != this.x){
-                return false;
-            }
-            if(other.y != this.y){
-                return false;
-            }
-            return true;
-        }
-        
-        public boolean within(Vector2i other, int distance){
-            if(Math.abs(other.x-this.x) <= distance && Math.abs(other.y-this.y) <= distance){
-                return true;
-            }
-            return false;
-        }
-
-        @Override
-        public int hashCode() {
-            int hash = 7;
-            hash = 29 * hash + this.x;
-            hash = 29 * hash + this.y;
-            return hash;
-        }
-        
-        public Vector2i invert(){
-            return new Vector2i(-x, -y);
-        }
-        
-        @Override
-        public Vector2i clone(){
-            return new Vector2i(x, y);
-        }
-        @Override
-        public String toString(){
-            return "("+x+", "+y+")";
-        }
+    // Initialization
+    public static void initialize(AssetManager assetManager){
+        Util.assetManager = assetManager;
     }
     
     // Commands
@@ -152,6 +83,9 @@ public class Util {
             m.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
         }
         return m;
+    }
+    public static Material getMaterial(ColorRGBA color){
+        return getMaterial(assetManager, color);
     }
     public static Material getMaterial(AssetManager assetManager, String tex){
         Material m = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
@@ -264,6 +198,9 @@ public class Util {
     }
     public static void log(float f){
         System.out.println(f);
+    }
+    public static void log(Object o){
+        System.out.println(o.toString());
     }
     public static void log(Throwable t){
         Logger.getLogger("polarity").log(Level.SEVERE, "{0}", t);

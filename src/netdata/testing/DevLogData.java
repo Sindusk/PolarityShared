@@ -1,4 +1,4 @@
-package netdata;
+package netdata.testing;
 
 import com.jme3.network.AbstractMessage;
 import com.jme3.network.serializing.Serializable;

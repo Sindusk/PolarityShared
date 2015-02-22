@@ -1,10 +1,11 @@
 package main;
 
-import com.jme3.math.ColorRGBA;
-import com.jme3.renderer.queue.RenderQueue.Bucket;
+import ai.AIManager;
+import com.jme3.math.Vector2f;
 import com.jme3.scene.Node;
-import com.jme3.scene.Spatial.CullHint;
 import com.jme3.system.AppSettings;
+import events.EventManager;
+import hud.advanced.FPSCounter;
 import input.ServerInputHandler;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
@@ -48,8 +49,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * @author SinisteRing
  */
 public class GameServer extends GameApplication{
+    //protected static GameServer app;
     protected ServerInputHandler inputHandler;
     protected ServerNetwork serverNetwork;
+    
+    protected AIManager aiManager;
+    protected EventManager eventManager;
+    
+    protected FPSCounter fpsCounter;
     
     // Getters for Nodes:
     public Node getGUI(){
@@ -57,6 +64,9 @@ public class GameServer extends GameApplication{
     }
     public Node getRoot(){
         return root;
+    }
+    public EventManager getEventManager(){
+        return eventManager;
     }
     
     public static void main(String[] args){
@@ -69,7 +79,8 @@ public class GameServer extends GameApplication{
         Logger.getLogger("com.jme3").setLevel(Level.WARNING);
         settings = new AppSettings(true);
         settings.setSamples(0);
-        settings.setVSync(true);
+        settings.setVSync(false);
+        settings.setFrameRate(64); // Server tickrate
         settings.setRenderer(AppSettings.LWJGL_OPENGL1);
         settings.setResolution(600, 400);
         settings.setTitle("Reach Server");
@@ -81,31 +92,21 @@ public class GameServer extends GameApplication{
     public void initialize(){
         super.initialize();
         
-        // Initialize Root and GUI:
-        Util.log("[GameServer] <initialize> Creating Viewport...", 1);
-        gui.setQueueBucket(Bucket.Gui);
-        gui.setCullHint(CullHint.Never);
-        viewPort.attachScene(root);
-        guiViewPort.attachScene(gui);
-        
-        // Viewport Init:
-        viewPort.setBackgroundColor(ColorRGBA.Black);
-        setPauseOnLostFocus(false);
-        
-        // Initialize Tools:
-        Sys.setAssetManager(assetManager);
-        Sys.setCamera(cam);
-        Sys.setInputManager(inputManager);
-        
+        // Initialize input handler
         Util.log("[GameServer] <initialize> Creating InputHandler...", 1);
         inputHandler = new ServerInputHandler(this);
+        
+        // Start server network
         Util.log("[GameServer] <initialize> Starting Network...", 1);
         serverNetwork = new ServerNetwork(this);
         Sys.setNetwork(serverNetwork);
         
-        world.generate();
+        // Custom Initialize
+        world.generateStart();
+        aiManager = new AIManager();
+        eventManager = new EventManager();
         
-        Sys.setWorld(world);
+        fpsCounter = new FPSCounter(gui, new Vector2f(30, Sys.height-30), 30);
     }
 
     @Override
@@ -115,20 +116,37 @@ public class GameServer extends GameApplication{
             return;
         }
         final float tpf = timer.getTimePerFrame() * speed;
+        if(timer.getTimePerFrame() >= 1){
+            Util.log("Server is chugging: "+timer.getTimePerFrame());
+        }
         
         // Update States:
         stateManager.update(tpf);
         
         // Custom updates
+        fpsCounter.update(tpf);
+        
         enqueue(new Callable<Void>(){
             public Void call() throws Exception{
-                world.serverUpdate(tpf);
+                aiManager.serverUpdate(getWorld(), charManager.getMonsters(), tpf);
                 return null;
             }
         });
         enqueue(new Callable<Void>(){
             public Void call() throws Exception{
-                charManager.serverUpdate(tpf);
+                charManager.serverUpdate(getWorld(), tpf);
+                return null;
+            }
+        });
+        enqueue(new Callable<Void>(){
+            public Void call() throws Exception{
+                eventManager.serverUpdate(serverNetwork.getServer(), getWorld(), tpf);
+                return null;
+            }
+        });
+        enqueue(new Callable<Void>(){
+            public Void call() throws Exception{
+                world.serverUpdate(tpf);
                 return null;
             }
         });

@@ -1,5 +1,7 @@
 package screens;
 
+import ai.pathfinding.AStarPathFinder;
+import ai.pathfinding.Path;
 import com.jme3.input.event.KeyInputEvent;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
@@ -9,61 +11,78 @@ import input.InputHandler;
 import character.CharacterManager;
 import character.Player;
 import com.jme3.math.ColorRGBA;
+import entity.Entity;
 import hud.advanced.ActionBar;
+import hud.advanced.CameraInfo;
 import hud.advanced.FPSCounter;
-import hud.HUDElement;
 import hud.advanced.Locator;
 import hud.advanced.VitalDisplay;
-import java.util.ArrayList;
 import java.util.concurrent.Callable;
 import main.GameApplication;
 import netdata.requests.SpellMatrixRequest;
+import netdata.testing.MonsterCreateData;
 import spellforge.SpellMatrix;
+import tools.GeoFactory;
 import tools.Sys;
 import tools.Util;
 import ui.Button;
 import ui.UIElement;
 import ui.advanced.GameMenu;
-import world.Chunk;
+import world.Sector;
 
 /**
  * Screen encompassing Gameplay.
  * @author Sindusk
  */
 public class GameScreen extends Screen {
-    protected ArrayList<HUDElement> hud = new ArrayList();
-    protected SpellForgeScreen spellForge;
+    protected InventoryScreen inventoryScreen;
+    protected SpellForgeScreen spellForgeScreen;
     protected GameMenu gameMenu;
     protected CharacterManager charManager;
-    protected Chunk chunk;
     
+    // Camera testing
+    protected boolean unlockedCamera = false;
+    protected float cameraHeight = 40;
     // Movement testing
     protected int playerID;
     
     public GameScreen(GameApplication app, Node rootNode, Node guiNode){
         super(app, rootNode, guiNode);
-        Util.log("[GameScreen] <Initialize> playerID = "+playerID, 3);
         gameMenu = new GameMenu(gui, new Vector2f(Sys.width*0.5f, Sys.height*0.5f), 2);
         charManager = app.getCharManager();
         playerID = clientNetwork.getID();
         charManager.setMyID(playerID);
         name="Game Screen";
     }
+    public int getCameraSetting(){
+        return (int)cameraHeight/4;
+    }
     public Player getPlayer(){
         return charManager.getPlayer(playerID);
     }
     
-    @Override
+    private void updateCamera(){
+        Vector2f tempVect = getPlayer().getLocation();
+        if(unlockedCamera){
+            Vector2f modCursorLoc = app.getInputManager().getCursorPosition().subtract(new Vector2f(Sys.width*0.5f, Sys.height*0.5f)).mult(1/cameraHeight);
+            app.getCamera().getFrustumRight();
+            app.getCamera().setLocation(new Vector3f(tempVect.x+modCursorLoc.x, tempVect.y+modCursorLoc.y, 50));
+        }else{
+            app.getCamera().setLocation(new Vector3f(tempVect.x, tempVect.y, 50));
+        }
+    }
+    
     public void initialize(final InputHandler inputHandler) {
         this.inputHandler = inputHandler;
         hud.add(new FPSCounter(gui, new Vector2f(10, Sys.height-15), 15));  // Creates the FPS Counter
-        hud.add(new Locator(gui, new Vector2f(10, Sys.height-35), 15));     // Creates the Locator
-        hud.add(new VitalDisplay(gui, new Vector2f(150, 50)));              // Creates resource displays
-        hud.add(new ActionBar(gui, new Vector2f(Sys.width*0.5f, ActionBar.GEO_SIZE*1.5f))); // Creates the bottom action bar
+        hud.add(new Locator(gui, new Vector2f(10, Sys.height-35), 15, app.getWorld(), getPlayer()));    // Creates the Locator
+        hud.add(new CameraInfo(gui, new Vector2f(10, Sys.height-95), 15, this));    // Creates the Camera Info text
+        hud.add(new VitalDisplay(gui, new Vector2f(150, 50), getPlayer())); // Creates resource displays
+        hud.add(new ActionBar(gui, new Vector2f(Sys.width*0.5f, ActionBar.GEO_SIZE*1.5f), getPlayer()));// Creates the bottom action bar
         
         // Buttons for Game Menu
         // Return to Game button:
-        Button returnButton = new Button(gameMenu.getNode(), new Vector2f(0, Sys.height*0.08f), Sys.width*0.4f, Sys.height*0.05f, 0){
+        Button returnButton = new Button(gameMenu.getNode(), new Vector2f(0, Sys.height*0.15f), Sys.width*0.4f, Sys.height*0.05f, 0){
             @Override
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
                 if(bind.equals(Bind.LClick.toString()) && down){
@@ -77,12 +96,27 @@ public class GameScreen extends Screen {
         ui.remove(returnButton);
         
         // Spell Matrix button:
-        Button spellMatrixButton = new Button(gameMenu.getNode(), new Vector2f(0, 0), Sys.width*0.4f, Sys.height*0.05f, 0){
+        Button inventoryButton = new Button(gameMenu.getNode(), new Vector2f(0, Sys.height*0.05f), Sys.width*0.4f, Sys.height*0.05f, 0){
             @Override
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
                 if(bind.equals(Bind.LClick.toString()) && down){
                     clientNetwork.send(new SpellMatrixRequest(playerID));
-                    inputHandler.changeScreens(spellForge);
+                    inputHandler.changeScreens(inventoryScreen);
+                }
+            }
+        };
+        inventoryButton.setText("Inventory");
+        inventoryButton.setColor(ColorRGBA.Red);
+        gameMenu.addOption(ui, inventoryButton);
+        ui.remove(inventoryButton);
+        
+        // Spell Matrix button:
+        Button spellMatrixButton = new Button(gameMenu.getNode(), new Vector2f(0, -Sys.height*0.05f), Sys.width*0.4f, Sys.height*0.05f, 0){
+            @Override
+            public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
+                if(bind.equals(Bind.LClick.toString()) && down){
+                    clientNetwork.send(new SpellMatrixRequest(playerID));
+                    inputHandler.changeScreens(spellForgeScreen);
                 }
             }
         };
@@ -91,8 +125,8 @@ public class GameScreen extends Screen {
         gameMenu.addOption(ui, spellMatrixButton);
         ui.remove(spellMatrixButton);
         
-        // Spell Matrix button:
-        Button exitButton = new Button(gameMenu.getNode(), new Vector2f(0, -Sys.height*0.08f), Sys.width*0.4f, Sys.height*0.05f, 0){
+        // Exit Button
+        Button exitButton = new Button(gameMenu.getNode(), new Vector2f(0, -Sys.height*0.15f), Sys.width*0.4f, Sys.height*0.05f, 0){
             @Override
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
                 if(bind.equals(Bind.LClick.toString()) && down){
@@ -105,63 +139,62 @@ public class GameScreen extends Screen {
         gameMenu.addOption(ui, exitButton);
         ui.remove(exitButton);
         
-        spellForge = new SpellForgeScreen(app, this, Screen.getTopRoot(), Screen.getTopGUI());
-        spellForge.initialize(inputHandler);
-        spellForge.setVisible(false);
+        spellForgeScreen = new SpellForgeScreen(app, this, Screen.getTopRoot(), Screen.getTopGUI());
+        spellForgeScreen.initialize(inputHandler);
+        spellForgeScreen.setVisible(false);
+        
+        inventoryScreen = new InventoryScreen(app, this, Screen.getTopRoot(), Screen.getTopGUI());
+        inventoryScreen.initialize(inputHandler);
+        inventoryScreen.setVisible(false);
         
         root.attachChild(app.getWorld().getNode());
-        root.attachChild(charManager.getNode());
     }
     
     @Override
     public void changeInit(){
-        getPlayer().setAttacking(false);
+        getPlayer().setAttacking(0, false);
     }
     
     @Override
     public void update(final float tpf){
-        charManager.getPlayer(playerID).set3DMouseLocation(inputHandler.get3DCursorLocation());
-        charManager.getPlayer(playerID).updateLocal(tpf, app.getInputManager().getCursorPosition());
-        
         // For multithreading of heavy CPU usage loops, create an enqueue:
         app.enqueue(new Callable<Void>(){
             public Void call() throws Exception{
-                charManager.update(tpf);
+                // Update the local player
+                getPlayer().updateLocal(tpf, inputHandler.getCursorLocWorld(), app.getInputManager().getCursorPosition());
                 return null;
             }
         });
         app.enqueue(new Callable<Void>(){
             public Void call() throws Exception{
+                // Update all world-related 
                 app.getWorld().update(tpf);
                 return null;
             }
         });
         app.enqueue(new Callable<Void>(){
             public Void call() throws Exception{
-                app.getWorld().reloadChunks(getPlayer());
+                app.getWorld().checkChunks(getPlayer());
                 return null;
             }
         });
         
-        for(SpellMatrix matrix : charManager.getPlayer(playerID).getMatrixArray()){
+        for(SpellMatrix matrix : getPlayer().getMatrixArray()){
             if(matrix != null){
                 matrix.update(tpf);
             }
         }
         
-        // Update all HUD elements
-        for(HUDElement h : hud){
-            h.update(charManager.getPlayer(playerID), tpf);
+        // Update Camera
+        if(!gameMenu.isActive()){
+            updateCamera();
         }
         
-        Vector2f tempVect = charManager.getPlayer(playerID).getLocation();
-        Sys.getCamera().setLocation(new Vector3f(tempVect.x, tempVect.y, 40));
-        Chunk newChunk = app.getWorld().getChunk(tempVect);
-        if(newChunk != chunk){
-            app.getWorld().reloadChunks(newChunk);
-            chunk = newChunk;
-        }
+        // Update client network
         clientNetwork.update(tpf);
+        
+        // Super call at end so it has latest info
+        super.update(tpf);
     }
     
     @Override
@@ -175,11 +208,32 @@ public class GameScreen extends Screen {
         if(e != null){
             e.onAction(cursorLoc, bind, down, tpf);
         }
+        if(gameMenu.isActive() || e != null){
+            return;
+        }
         // Actions
         if(bind.equals(Bind.LClick.toString())){
-            getPlayer().setAttacking(down);
+            getPlayer().setAttacking(0, down);
+        }else if(bind.equals(Bind.One.toString())){
+            getPlayer().setAttacking(0, down);
+        }else if(bind.equals(Bind.Two.toString())){
+            getPlayer().setAttacking(1, down);
+        }else if(bind.equals(Bind.Three.toString())){
+            getPlayer().setAttacking(2, down);
+        }else if(bind.equals(Bind.Four.toString())){
+            getPlayer().setAttacking(3, down);
+        // Right-Click Testing
         }else if(bind.equals(Bind.RClick.toString()) && down){
-            //app.getWorld().getBlock(Util.getWorldLoc(cursorLoc, Sys.getCamera()));
+            Entity entity = getPlayer().getEntity();
+            Vector3f cursorWorldLoc = Util.getWorldLoc(cursorLoc, app.getCamera()).add(new Vector3f(0.5f, 0.5f, 0));
+            Vector2f eLoc = entity.getLocation().add(new Vector2f(0.5f, 0.5f));
+            
+            Sector sector = new Sector(app.getWorld(), eLoc, new Vector2f(cursorWorldLoc.x, cursorWorldLoc.y));
+            AStarPathFinder finder = new AStarPathFinder(sector, 50, true);
+            Path path = finder.findPath(entity, (int)eLoc.x, (int)eLoc.y, (int)cursorWorldLoc.x, (int)cursorWorldLoc.y);
+            if(path != null){
+                app.getWorld().showPath(path);
+            }
         // Movement
         }else if(bind.equals(Bind.W.toString())){
             getPlayer().setMovement(0, down);
@@ -191,6 +245,32 @@ public class GameScreen extends Screen {
             getPlayer().setMovement(3, down);
         }else if(bind.equals(Bind.Escape.toString()) && down && !gameMenu.isActive()){
             gameMenu.setVisible(ui, true);
+        // Extra (Generally just poorly-coded testing keys)
+        }else if(bind.equals(Bind.ScrollUp.toString()) && down){
+            if(cameraHeight < 80){
+                cameraHeight += 4f;
+            }
+            float width=Sys.width/cameraHeight;
+            float height=Sys.height/cameraHeight;
+            app.getCamera().setFrustum(1.0f, 100f, -width, width, height, -height);
+            app.getCamera().update();
+        }else if(bind.equals(Bind.ScrollDown.toString()) && down){
+            if(cameraHeight > 4){
+                cameraHeight -= 4;
+            }
+            float width=Sys.width/cameraHeight;
+            float height=Sys.height/cameraHeight;
+            app.getCamera().setFrustum(1.0f, 100f, -width, width, height, -height);
+            app.getCamera().update();
+        }else if(bind.equals(Bind.M.toString()) && down){
+            GeoFactory.toggleWireframe();
+        }else if(bind.equals(Bind.N.toString()) && down){
+            Vector3f worldLoc = Util.getWorldLoc(cursorLoc, app.getCamera());
+            clientNetwork.send(new MonsterCreateData(new Vector2f(worldLoc.x, worldLoc.y)));
+        }else if(bind.equals(Bind.B.toString()) && down){
+            getPlayer().updateLocation(inputHandler.getCursorLocWorld());
+        }else if(bind.equals(Bind.Y.toString()) && down){
+            unlockedCamera = !unlockedCamera;
         }
     }
     

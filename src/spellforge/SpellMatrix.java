@@ -26,6 +26,9 @@ import tools.Util;
 public class SpellMatrix {
     protected static final float MATRIX_MAX_HEIGHT = Sys.height*0.9f;
     protected static final float MATRIX_MAX_WIDTH = Sys.width*0.4f;
+    protected static final float SPREAD_MULT = 0.05f;
+    
+    protected float nodeSize;
     
     protected Player owner;
     protected Node parent;
@@ -45,7 +48,7 @@ public class SpellMatrix {
         
         float size = Math.min(MATRIX_MAX_WIDTH/width, MATRIX_MAX_HEIGHT/height);
         
-        SpellNode.setNodeSize(size);
+        nodeSize = size;
         float nodeX = loc.x-(width*size*0.5f)+(size*0.5f);
         float nodeY = Math.max(loc.y-((Sys.height-MATRIX_MAX_HEIGHT)/2f)-(size*height*0.5f), size);
         node.setLocalTranslation(nodeX, nodeY, 0);
@@ -53,7 +56,7 @@ public class SpellMatrix {
             spellNodes.add(new ArrayList());
             y = 0;
             while(y < height){
-                spellNodes.get(x).add(new SpellNode(node, this, new SpellNodeData(x, y, new Vector2f(x*SpellNode.SIZE, y*SpellNode.SIZE))));
+                spellNodes.get(x).add(new SpellNode(node, this, new SpellNodeData(x, y, new Vector2f(x*size, y*size)), size));
                 y++;
             }
             x++;
@@ -105,15 +108,23 @@ public class SpellMatrix {
     public ArrayList<Event> calculateEvents(HostedConnection conn, ActionData actionData){
         if(cores.size() > 0){
             ArrayList<Event> events = new ArrayList();
+            float spread = 0;
             for(SpellNode core : cores){
                 CoreData data = (CoreData) core.getData();
                 if(data.getSources().size() > 0){
-                    Event event = data.getEvent(owner, actionData.getStart(), actionData.getTarget());
+                    int i = 0;
                     ArrayList<Action> actions = data.calculateActions(conn, owner, actionData);
-                    if(actions != null){
-                        event.addActions(actions);
-                        events.add(event);
+                    while(i < data.values.m_count){
+                        Event event = data.getEvent(owner, actionData.getStart(), actionData.getTarget());
+                        event.setExecuteTime(i*data.values.m_interval);
+                        event.offset(spread);
+                        if(actions != null){
+                            event.addActions(actions);
+                            events.add(event);
+                        }
+                        i++;
                     }
+                    spread += actionData.getStart().distance(actionData.getTarget())*SPREAD_MULT;
                 }else{
                     //Util.log(conn, "No generators attached to Core @ "+data.getX()+", "+data.getY());
                 }
@@ -139,6 +150,12 @@ public class SpellMatrix {
         int y;
         SpellNode spellNode;
         SpellNodeData data;
+        // Calls preRecalculate for every node on the matrix. This clears old data before the recalculation.
+        for(ArrayList<SpellNode> sna : spellNodes){
+            for(SpellNode sn : sna){
+                sn.getData().preRecalculate();
+            }
+        }
         while(x < spellNodes.size()){
             y = 0;
             while(y < spellNodes.get(x).size()){

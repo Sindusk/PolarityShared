@@ -34,9 +34,6 @@ public class ClientInputHandler extends InputHandler implements ActionListener, 
         if(screen == null){
             return;
         }
-        if(bind.equals(Bind.LClick.toString()) && !down){
-            moving = null;
-        }
         screen.onAction(app.getInputManager().getCursorPosition(), bind, down, tpf);
     }
     /**
@@ -48,18 +45,6 @@ public class ClientInputHandler extends InputHandler implements ActionListener, 
     public void onAnalog(String name, float value, float tpf){
         if(screen == null){
             return;
-        }
-        value *= 1000f;
-        if(moving != null){
-            if(name.equals(Bind.MouseUp.toString())){
-                moving.move(0, value);
-            }else if(name.equals(Bind.MouseDown.toString())){
-                moving.move(0, -value);
-            }else if(name.equals(Bind.MouseRight.toString())){
-                moving.move(value, 0);
-            }else if(name.equals(Bind.MouseLeft.toString())){
-                moving.move(-value, 0);
-            }
         }
         screen.onCursorMove(app.getInputManager().getCursorPosition());
     }
