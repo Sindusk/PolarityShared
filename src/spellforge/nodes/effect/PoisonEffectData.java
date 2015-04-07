@@ -1,5 +1,6 @@
 package spellforge.nodes.effect;
 
+import character.GameCharacter;
 import com.jme3.network.serializing.Serializable;
 import entity.LivingEntity;
 import events.Action;
@@ -34,7 +35,7 @@ public class PoisonEffectData extends EffectData {
     public Action getAction(final float mult){
         return new Action(){
             @Override
-            public boolean onCollide(LivingEntity entity){
+            public boolean onCollide(GameCharacter owner, LivingEntity entity){
                 entity.applyStatus(new Poison(duration, dps*multiplier*mult));
                 return true;
             }

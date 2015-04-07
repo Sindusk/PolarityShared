@@ -29,7 +29,8 @@ public class ModifierData extends SpellNodeData {
     private void init(){
         icon = "weapons";
         type = "Modifier";
-        typeColor = ColorRGBA.Blue;
+        //typeColor = new ColorRGBA(0.93f, 0.92f, 0, 1);  // Yellow-Gold
+        typeColor = new ColorRGBA(0.73f, 0.73f, 0, 1);  // Yellow-Gold
     }
     
     public float getCost(){

@@ -28,8 +28,12 @@ public class CombatState extends MonsterState {
     
     public void update(World world, float tpf){
         entity.updateRotation(target.getLocation());
-        if(world.clearShot(entity.getLocation(), target.getLocation())){
-            monster.attack(world, target, tpf);
+        if(monster.attackReady(tpf)){
+            if(world.clearShot(entity.getLocation(), target.getLocation())){
+                monster.attack(world, target, tpf);
+            }else{
+                //start moving
+            }
         }
     }
 }

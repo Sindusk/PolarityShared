@@ -1,5 +1,6 @@
 package items;
 
+import items.data.ItemData;
 import com.jme3.math.FastMath;
 import com.jme3.network.serializing.Serializable;
 import java.util.ArrayList;

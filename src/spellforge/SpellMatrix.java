@@ -16,6 +16,8 @@ import spellforge.nodes.GeneratorData;
 import spellforge.nodes.ModifierData;
 import spellforge.nodes.SpellNode;
 import spellforge.nodes.SpellNodeData;
+import spellforge.nodes.generators.EnergyGenData;
+import spellforge.nodes.generators.ManaGenData;
 import tools.Sys;
 import tools.Util;
 
@@ -34,6 +36,8 @@ public class SpellMatrix {
     protected Node parent;
     protected Node node = new Node("SpellMatrix");
     protected ArrayList<ArrayList<SpellNode>> spellNodes = new ArrayList();
+    protected ArrayList<GeneratorData> manaGens = new ArrayList();
+    protected ArrayList<GeneratorData> energyGens = new ArrayList();
     protected ArrayList<SpellNode> conduits = new ArrayList();
     protected ArrayList<SpellNode> generators = new ArrayList();
     protected ArrayList<SpellNode> effects = new ArrayList();
@@ -75,13 +79,7 @@ public class SpellMatrix {
     public float getCost(){
         float power = 0;
         for(SpellNode spellNode : cores){
-            power += ((CoreData)spellNode.getData()).getCost();
-        }
-        for(SpellNode spellNode : effects){
-            power += ((EffectData)spellNode.getData()).getCost();
-        }
-        for(SpellNode spellNode : modifiers){
-            power += ((ModifierData)spellNode.getData()).getCost();
+            power += ((CoreData)spellNode.getData()).getTotalCost();
         }
         return Util.roundedFloat(power, 1);
     }
@@ -143,6 +141,8 @@ public class SpellMatrix {
     public void recalculate(){
         conduits = new ArrayList();
         generators = new ArrayList();
+        energyGens = new ArrayList();
+        manaGens = new ArrayList();
         effects = new ArrayList();
         modifiers = new ArrayList();
         cores = new ArrayList();
@@ -165,6 +165,11 @@ public class SpellMatrix {
                     conduits.add(spellNode);
                 }else if(data instanceof GeneratorData){
                     generators.add(spellNode);
+                    if(data instanceof EnergyGenData){
+                        energyGens.add((EnergyGenData)data);
+                    }else if(data instanceof ManaGenData){
+                        manaGens.add((ManaGenData)data);
+                    }
                     spellNode.recalculate();
                 }else if(data instanceof EffectData){
                     effects.add(spellNode);
@@ -183,6 +188,8 @@ public class SpellMatrix {
     }
     
     public void update(float tpf){
+        owner.getResources().powerGenerators(owner.getResources().getEnergy(), energyGens, tpf);
+        owner.getResources().powerGenerators(owner.getResources().getMana(), manaGens, tpf);
         for(SpellNode spellNode : generators){
             spellNode.update(tpf);
         }

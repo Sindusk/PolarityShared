@@ -1,7 +1,8 @@
-package items;
+package items.data;
 
 import com.jme3.math.ColorRGBA;
 import com.jme3.network.serializing.Serializable;
+import items.Inventory;
 import spellforge.nodes.SpellNodeData;
 
 /**

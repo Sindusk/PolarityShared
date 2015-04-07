@@ -9,11 +9,15 @@ import hud.Tooltip;
 import hud.advanced.FPSCounter;
 import input.Bind;
 import input.InputHandler;
+import items.data.EquipmentItemData;
 import main.GameApplication;
 import tools.Sys;
 import ui.UIElement;
+import ui.interfaces.Draggable;
 import ui.interfaces.TooltipInfo;
+import ui.items.EquipmentPanel;
 import ui.items.InventoryPanel;
+import ui.items.ItemButton;
 
 /**
  *
@@ -24,6 +28,8 @@ public class InventoryScreen extends Screen {
     protected Player player;
     
     protected InventoryPanel invPanel;
+    protected EquipmentPanel equipPanel;
+    protected Draggable dragging;
     protected Tooltip itemTooltip;
     
     public InventoryScreen(GameApplication app, GameScreen gameScreen, Node rootNode, Node guiNode){
@@ -44,16 +50,29 @@ public class InventoryScreen extends Screen {
         itemTooltip.toggleVisible();
         
         // Add the Inventory Panel
-        invPanel = new InventoryPanel(gui, new Vector2f(Sys.width*0.25f, Sys.height*0.5f), Sys.width*0.4f, Sys.height*0.9f, 0, 8);
+        invPanel = new InventoryPanel(gui, new Vector2f(Sys.width*0.15f, Sys.height*0.5f), Sys.width*0.25f, Sys.height*0.9f, 0);
+        invPanel.setItemsPerRow(6);
         invPanel.setColor(new ColorRGBA(0.1f, 0.1f, 0.1f, 1));
         invPanel.setInventory(player.getData().getInventory());
         invPanel.display();
         ui.add(invPanel);
+        
+        // Add the Equipment Panel
+        equipPanel = new EquipmentPanel(gui, new Vector2f(Sys.width*0.5f, Sys.height*0.5f), Sys.width*0.4f, Sys.height*0.9f, 0);
+        equipPanel.setColor(new ColorRGBA(0.1f, 0.1f, 0.1f, 1));
+        equipPanel.setEquipment(player.getData().getEquipment());
+        //equipPanel.display();
+        ui.add(equipPanel);
     }
     
     @Override
     public void update(float tpf) {
         Vector2f cursorLoc = app.getInputManager().getCursorPosition();
+        
+        // Update dragging target location
+        if(dragging != null){
+            dragging.moveWithOffset(cursorLoc);
+        }
         
         // Gets the top UI element that the cursor is currently over
         UIElement e = checkUI(cursorLoc);
@@ -88,13 +107,47 @@ public class InventoryScreen extends Screen {
         super.update(tpf);
     }
     
-    public void changeInit() {}
-    public void onCursorMove(Vector2f cursorLoc) {}
-    public void onKeyEvent(KeyInputEvent evt) {}
-    
     public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf) {
+        UIElement e = checkUI(cursorLoc);
+        if(e != null){
+            if(e instanceof InventoryPanel){
+                InventoryPanel panel = (InventoryPanel) e;
+                e = panel.checkControls(cursorLoc);
+                if(e != null && e instanceof Draggable && down && bind.equals(Bind.LClick.toString())){
+                    dragging = (Draggable) e;
+                }
+            }else if(e instanceof EquipmentPanel){
+                if(dragging == null){
+                    EquipmentPanel panel = (EquipmentPanel) e;
+                    e = panel.checkControls(cursorLoc);
+                    if(e != null && e instanceof Draggable && down && bind.equals(Bind.LClick.toString())){
+                        dragging = (Draggable) e;
+                    }
+                }else if(!down && bind.equals(Bind.LClick.toString()) && dragging instanceof ItemButton){
+                    // If the mouse is released when dragging an item over a spell node, replace the spell node
+                    ItemButton button = (ItemButton) dragging;
+                    if(button.getItem().getData() instanceof EquipmentItemData){
+                        EquipmentItemData data = (EquipmentItemData) button.getItem().getData();
+                        //clientNetwork.send(new EquipmentUpdate(gameScreen.getPlayer().getID(), matrixIndex, data));
+                        //button.getItem().getInventory().remove(item);
+                        //invPanel.display();
+                    }
+                }
+            }else if(down){
+                e.onAction(cursorLoc, bind, down, tpf);
+                return;
+            }
+        }
+        if(dragging != null && !down && bind.equals(Bind.LClick.toString())){
+            dragging.resetDragging();
+            dragging = null;
+        }
         if(bind.equals(Bind.Escape.toString()) && down){
             inputHandler.changeScreens(gameScreen);
         }
     }
+    
+    public void changeInit() {}
+    public void onCursorMove(Vector2f cursorLoc) {}
+    public void onKeyEvent(KeyInputEvent evt) {}
 }

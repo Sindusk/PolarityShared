@@ -24,7 +24,8 @@ public class PowerConduitData extends ConduitData {
     
     private void init(){
         name = "Power Conduit";
-        typeColor = new ColorRGBA(0.75f, 0, 0, 1);   // Dark Red
+        //typeColor = new ColorRGBA(0.76f, 0.15f, 0.97f, 1);  // Purple
+        typeColor = new ColorRGBA(0.58f, 0.11f, 0.73f, 1);  // Purple
     }
     
     @Override

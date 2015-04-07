@@ -1,13 +1,19 @@
 package tools;
 
+import com.jme3.export.InputCapsule;
+import com.jme3.export.JmeExporter;
+import com.jme3.export.JmeImporter;
+import com.jme3.export.OutputCapsule;
+import com.jme3.export.Savable;
 import com.jme3.network.serializing.Serializable;
+import java.io.IOException;
 
 /**
  *
  * @author SinisteRing
  */
 @Serializable
-public class Vector2i{
+public class Vector2i implements Savable{
     public int x;
     public int y;
 
@@ -81,5 +87,17 @@ public class Vector2i{
     @Override
     public String toString(){
         return "("+x+", "+y+")";
+    }
+
+    public void write(JmeExporter ex) throws IOException {
+        OutputCapsule capsule = ex.getCapsule(this);
+        capsule.write(x, "x", 0);
+        capsule.write(y, "y", 0);
+    }
+
+    public void read(JmeImporter im) throws IOException {
+        InputCapsule capsule = im.getCapsule(this);
+        x = capsule.readInt("x", 0);
+        y = capsule.readInt("y", 0);
     }
 }

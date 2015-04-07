@@ -30,12 +30,21 @@ public class GeneratorData extends SpellNodeData {
     }
     private void init(){
         type = "Generator";
-        typeColor = new ColorRGBA(0.75f, 0, 0, 1);   // Dark Red
+        //typeColor = new ColorRGBA(0.76f, 0.15f, 0.97f, 1);  // Purple
+        typeColor = new ColorRGBA(0.58f, 0.11f, 0.73f, 1);  // Purple
     }
     
     @Override
     public String getIcon(){
         return "generator";
+    }
+    public float getChargeCost(float tpf){
+        float checkPower = storedPower+(rate*tpf);
+        if(checkPower <= maxPower){
+            return rate*tpf;
+        }else{
+            return maxPower-storedPower;
+        }
     }
     public float getStoredPower(){
         return storedPower;
@@ -44,7 +53,9 @@ public class GeneratorData extends SpellNodeData {
     public void setStoredPower(float amount){
         this.storedPower = amount;
     }
-    
+    public void addPower(float tpf){
+        storedPower += rate*tpf;
+    }
     public void subtractPower(float amount){
         storedPower -= amount;
     }
@@ -116,7 +127,7 @@ public class GeneratorData extends SpellNodeData {
     
     @Override
     public void update(float tpf){
-        storedPower += rate*tpf;
+        //storedPower += rate*tpf;
         if(storedPower > maxPower){
             storedPower = maxPower;
         }

@@ -26,7 +26,8 @@ public class EffectData extends SpellNodeData {
     }
     private void init(){
         type = "Effect";
-        typeColor = ColorRGBA.Orange;
+        //typeColor = new ColorRGBA(0.22f, 0.80f, 0, 1);  // Green
+        typeColor = new ColorRGBA(0.16f, 0.60f, 0, 1);  // Green
     }
     
     public Action getAction(final float mult){

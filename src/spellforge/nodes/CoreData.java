@@ -51,8 +51,15 @@ public class CoreData extends SpellNodeData {
     public ArrayList<GeneratorData> getSources(){
         return sources;
     }
-    public float getCost(){
-        return cost;
+    public float getTotalCost(){
+        float actionCost = cost;
+        for(EffectData effect : effects){
+            actionCost += effect.getCost();
+        }
+        for(ModifierData mod : mods){
+            actionCost += mod.getCost();
+        }
+        return actionCost;
     }
     
     @Override
@@ -66,7 +73,7 @@ public class CoreData extends SpellNodeData {
     @Override
     public HashMap<String,Float> genProperties(int level){
         properties = new HashMap();
-        values.speed = ItemFactory.leveledRandomFloat(7f, level, 2);
+        values.speed = ItemFactory.leveledRandomPoweredFloat(7f, 0.3f, level, 2);
         properties.put("Speed", values.speed);
         cost = ItemFactory.leveledRandomFloat(-5f, level, 2);
         properties.put("Cost", cost);
@@ -100,18 +107,11 @@ public class CoreData extends SpellNodeData {
     
     public ArrayList<Action> calculateActions(HostedConnection conn, Player owner, ActionData data){
         float storedPower = 0;
-        float actionCost = cost;
+        float actionCost = getTotalCost();
         // Determine the total amount of stored power:
         for(GeneratorData gen : sources){
             storedPower += gen.getStoredPower();
         }
-        for(EffectData effect : effects){
-            actionCost += effect.getCost();
-        }
-        for(ModifierData mod : mods){
-            actionCost += mod.getCost();
-        }
-        //
         if(actionCost < storedPower){
             values.reset();
             ArrayList<Action> actions = new ArrayList();

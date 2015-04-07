@@ -2,8 +2,8 @@ package items.creation;
 
 import com.jme3.math.FastMath;
 import items.Inventory;
-import items.ItemData;
-import items.SpellNodeItemData;
+import items.data.ItemData;
+import items.data.SpellNodeItemData;
 import spellforge.nodes.SpellNodeData;
 import tools.Util;
 
@@ -53,13 +53,14 @@ public class ItemFactory {
         return item;
     }
     
-    private static final float LEVEL_BASE_MULT = 0.05f;     // Changes the baseline value by level
-    private static final float LEVEL_RANGE_MULT = 0.01f;    // Changes the spread of values by level
+    private static final float LEVEL_BASE_MULT = 0.04f;     // Changes the baseline value by level
+    private static final float LEVEL_RANGE_MULT = 0.005f;   // Changes the spread of values by level
     private static final float MAX_INVERSE_PERC = 0.9f;     // Maximum % of baseline to reduce the baseline by when inverse
     private static final float MIN_BASE_MULT = 0.8f;        // Minimum % of baseline for min value
     private static final float MIN_RANGE_MULT = 0.25f;      // Adjusts the min value by level
     private static final float MAX_BASE_MULT = 1.2f;        // Minimum % of baseline for max value
     private static final float MAX_RANGE_MULT = 1.5f;       // Adjusts the max value by level
+    
     public static float leveledRandomFloat(float base, int level, int spaces){
         float mult;
         if(base > 0){
@@ -75,5 +76,12 @@ public class ItemFactory {
         float min = (newBase*MIN_BASE_MULT)*(1+(MIN_RANGE_MULT*range));
         float max = (newBase*MAX_BASE_MULT)*(1+(MAX_RANGE_MULT*range));
         return Util.roundedScaledRandFloat(min, max, spaces);
+    }
+    public static float leveledRandomPoweredFloat(float base, float power, int level, int spaces){
+        float value = leveledRandomFloat(base, level, spaces);
+        float diff = value - base;
+        float multedDiff = diff * power;
+        float newValue = value + multedDiff;
+        return Util.roundedFloat(newValue, spaces);
     }
 }

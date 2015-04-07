@@ -25,6 +25,8 @@ public enum Bind {
     A(KeyInput.KEY_A, KeyInput.class),
     W(KeyInput.KEY_W, KeyInput.class),
     S(KeyInput.KEY_S, KeyInput.class),
+    // Important Function Keys
+    Enter(KeyInput.KEY_RETURN, KeyInput.class),
     Escape(KeyInput.KEY_ESCAPE, KeyInput.class),
     // Numbers
     One(KeyInput.KEY_1, KeyInput.class),
@@ -33,6 +35,8 @@ public enum Bind {
     Four(KeyInput.KEY_4, KeyInput.class),
     // Extra
     B(KeyInput.KEY_B, KeyInput.class),
+    J(KeyInput.KEY_J, KeyInput.class),
+    K(KeyInput.KEY_K, KeyInput.class),
     M(KeyInput.KEY_M, KeyInput.class),
     N(KeyInput.KEY_N, KeyInput.class),
     Y(KeyInput.KEY_Y, KeyInput.class),

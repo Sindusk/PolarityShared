@@ -1,16 +1,20 @@
 package status;
 
 import character.LivingCharacter;
+import character.data.CharacterStatistics;
+import com.jme3.network.serializing.Serializable;
 
 /**
  *
  * @author SinisteRing
  */
+@Serializable
 public abstract class Status {
     protected float timer = 0;
     protected float duration;
     protected boolean finished = false;
-    public Status(){}
+    
+    public Status(){}   // For serialization
     public Status(float duration){
         this.duration = duration;
     }
@@ -30,9 +34,13 @@ public abstract class Status {
         return finished;
     }
     
+    public void modifyCharStats(CharacterStatistics stats){}
     public void onApply(LivingCharacter tar){}
-    public void onTick(LivingCharacter tar, float tpf){}
-    public void onFinish(LivingCharacter tar){}
+    public void onServerTick(LivingCharacter tar, float tpf){}
+    public void onClientTick(LivingCharacter tar, float tpf){}
+    public void onFinish(LivingCharacter tar){
+        tar.removeStatus(this);
+    }
     
     public abstract Status merge(Status other);
 }

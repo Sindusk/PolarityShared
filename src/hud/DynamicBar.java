@@ -6,6 +6,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import tools.GeoFactory;
+import tools.Util;
 
 /**
  *
@@ -28,13 +29,16 @@ public class DynamicBar extends HUDElement {
     
     public void setAlign(Alignment align){
         if(align == Alignment.Left){
-            geo.setLocalTranslation(new Vector3f(percent*(size.x*0.5f)-size.x*0.5f, 0, priority));
+            geo.setLocalTranslation(new Vector3f((percent*(size.x*0.5f))-size.x*0.5f, 0, priority));
         }else if(align == Alignment.Center){
             geo.setLocalTranslation(new Vector3f(0, 0, priority));
         }else if(align == Alignment.Right){
-            geo.setLocalTranslation(new Vector3f(-percent*(size.x*0.5f)+size.x*0.5f, 0, priority));
+            geo.setLocalTranslation(new Vector3f((-percent*(size.x*0.5f))+size.x*0.5f, 0, priority));
         }
         this.align = align;
+    }
+    public void setColor(ColorRGBA color){
+        geo.setMaterial(Util.getMaterial(color));
     }
     
     public void updateSize(float percent){

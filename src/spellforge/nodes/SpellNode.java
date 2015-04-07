@@ -1,7 +1,5 @@
 package spellforge.nodes;
 
-import spellforge.nodes.conduits.ModifierConduitData;
-import spellforge.nodes.conduits.PowerConduitData;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
@@ -9,10 +7,9 @@ import com.jme3.math.Vector4f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import items.Item;
-import items.SpellNodeItemData;
+import items.data.SpellNodeItemData;
 import java.util.HashMap;
 import spellforge.SpellMatrix;
-import spellforge.nodes.conduits.EffectConduitData;
 import tools.GeoFactory;
 import tools.SinText;
 import tools.Util;
@@ -27,8 +24,6 @@ public class SpellNode implements TooltipInfo {
     protected static final ColorRGBA PROPERTY_NAME_COLOR = new ColorRGBA(0.8f, 0, 0.8f, 1);
     protected static final ColorRGBA PROPERTY_VALUE_COLOR = new ColorRGBA(0.9f, 0.4f, 0.9f, 1);
     
-    //public static float SIZE;
-    //public static float size;
     public static final float CONNECTOR_WIDTH = 0.1f;
     public static final float CONNECTOR_OFFSET_W = 1.0f-CONNECTOR_WIDTH;
     public static final float CONNECTOR_LENGTH = 0.2f;
@@ -73,21 +68,6 @@ public class SpellNode implements TooltipInfo {
         text = GeoFactory.createSinText(parent, size*0.3f, center.add(new Vector3f(0, -size*0.7f, 2f)), "AW32", ColorRGBA.White, SinText.Alignment.Center);
         text.setText(" ");
     }
-    
-    public static ColorRGBA getConnectionColor(SpellNodeData data){
-        if(data instanceof PowerConduitData){
-            return ColorRGBA.Red;
-        }else if(data instanceof ModifierConduitData){
-            return ColorRGBA.Blue;
-        }else if(data instanceof EffectConduitData){
-            return ColorRGBA.Orange;
-        }
-        return ColorRGBA.Red;
-    }
-    /*public static void setNodeSize(float size){
-        SpellNode.SIZE = size;
-        SpellNode.size = SpellNode.SIZE/2f;
-    }*/
     
     public SpellNodeData getData(){
         return data;
@@ -142,9 +122,7 @@ public class SpellNode implements TooltipInfo {
         return info;
     }
     
-    public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
-        //
-    }
+    public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){}
     
     public void createConnection(int index, ColorRGBA color){
         if(connections[index] != null){
@@ -185,9 +163,11 @@ public class SpellNode implements TooltipInfo {
                 if(data.canConnect(spellNodes[i].getData())){
                     ColorRGBA color = ColorRGBA.Red;
                     if(data instanceof ConduitData){
-                        color = getConnectionColor(data);
+                        ConduitData conduit = (ConduitData) data;
+                        color = conduit.getTypeColor();
                     }else if(spellNodes[i].getData() instanceof ConduitData){
-                        color = getConnectionColor(spellNodes[i].getData());
+                        ConduitData conduit = (ConduitData) spellNodes[i].getData();
+                        color = conduit.getTypeColor();
                     }
                     createConnection(i, color);
                     spellNodes[i].createConnection((i+2)%4, color);

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import netdata.ChunkData;
 import netdata.requests.ChunkRequest;
+import network.ClientNetwork;
 import tools.GeoFactory;
 import tools.Sys;
 import tools.Vector2i;
@@ -159,6 +160,7 @@ public class World {
         return true;
     }
     // [Server-Side] Finds and returns the closest enemy of the passed in Entity owner
+    // *** REWRITE TO USE CHUNK FIND INSTEAD OF QUADTREE ***
     public LivingEntity findClosestEnemy(Entity entity, float range){
         GameCharacter owner = entity.getOwner();
         Vector2f loc = entity.getLocation();
@@ -234,22 +236,22 @@ public class World {
     }
     
     // [Client-Side] Checks the chunks around a players position when it changes to load new chunks
-    public void checkChunks(Player p) {
-        Vector2f loc = p.getLocation();
-        Vector2i chunkKey = getChunkKey(loc);
-        if(p.getChunkKey() == null || !chunkKey.equals(p.getChunkKey())){
+    public void checkChunks(Player p, ClientNetwork network) {
+        Vector2i chunkKey = getChunkKey(p.getLocation());   // Finds the key of the chunk the player is currently on.
+        if(p.getChunkKey() == null || !chunkKey.equals(p.getChunkKey())){   // If player switched chunks...
+            // Get new bounds for chunks around the player
             int minX = chunkKey.x-LOAD_DISTANCE;
             int maxX = chunkKey.x+LOAD_DISTANCE;
             int minY = chunkKey.y-LOAD_DISTANCE;
             int maxY = chunkKey.y+LOAD_DISTANCE;
-            // Reload the surrounding chunks
+            // Check all chunks within the bounds specified
             int x = minX;
             while(x <= maxX){
                 int y = minY;
                 while(y <= maxY){
                     Vector2i newKey = new Vector2i(x, y);
-                    if(!chunkMap.containsKey(newKey) || chunkMap.get(newKey) == null){
-                        Sys.getNetwork().send(new ChunkRequest(newKey));
+                    if(!chunkMap.containsKey(newKey) || chunkMap.get(newKey) == null){  // If the player does not have a chunk within bounds,
+                        network.send(new ChunkRequest(newKey));                         // Request an update from the server
                     }
                     y++;
                 }

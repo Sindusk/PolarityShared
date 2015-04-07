@@ -23,7 +23,8 @@ public class ModifierConduitData extends ConduitData {
     }
     private void init(){
         name = "Modifier Conduit";
-        typeColor = ColorRGBA.Blue;
+        //typeColor = new ColorRGBA(0.93f, 0.92f, 0, 1);  // Yellow-Gold
+        typeColor = new ColorRGBA(0.73f, 0.73f, 0, 1);  // Yellow-Gold
     }
     
     @Override

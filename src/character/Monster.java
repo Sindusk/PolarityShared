@@ -61,23 +61,27 @@ public class Monster extends LivingCharacter {
         return false;
     }
     
-    public void attack(World world, LivingEntity target, float tpf){
+    public boolean attackReady(float tpf){
         if(attackTimer > attackCD){
             attackTimer -= attackCD;
-            ProjectileEvent event = new ProjectileEvent(this, entity.getLocation(), target.getLocation(), new CoreVals());
-            event.addAction(new Action(){
-                @Override
-                public boolean onCollide(LivingEntity entity){
-                    entity.damage(25);
-                    return false;
-                }
-            });
-            if(Sys.getNetwork() instanceof ServerNetwork){
-                ServerNetwork network = (ServerNetwork) Sys.getNetwork();
-                event.execute(network.getServer(), world);
-            }
+            return true;
         }
         attackTimer += tpf;
+        return false;
+    }
+    public void attack(World world, LivingEntity target, float tpf){
+        ProjectileEvent event = new ProjectileEvent(this, entity.getLocation(), target.getLocation(), new CoreVals());
+        event.addAction(new Action(){
+            @Override
+            public boolean onCollide(GameCharacter owner, LivingEntity entity){
+                entity.damage(25);
+                return false;
+            }
+        });
+        if(Sys.getNetwork() instanceof ServerNetwork){
+            ServerNetwork network = (ServerNetwork) Sys.getNetwork();
+            event.execute(network.getServer(), world);
+        }
     }
     
     public void serverUpdate(World world, float tpf){

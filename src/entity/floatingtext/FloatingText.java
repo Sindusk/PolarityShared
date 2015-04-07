@@ -1,7 +1,6 @@
 package entity.floatingtext;
 
 import com.jme3.math.ColorRGBA;
-import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import tools.GeoFactory;
@@ -21,11 +20,15 @@ public class FloatingText {
     protected Vector3f vector;
     protected float timer = 0;
     
-    public FloatingText(Node parent, float value, int spaces){
+    public FloatingText(Node parent, ColorRGBA color, float value, int spaces){
         value = Util.roundedFloat(value, spaces);
         vector = new Vector3f(Util.randFloat(-2, 2), HOVER_HEIGHT+3, 3);
-        label = GeoFactory.createSinTextAlpha(node, 0.7f, Vector3f.ZERO, "AW32", ColorRGBA.Blue, SinText.Alignment.Center);
-        label.setText(String.valueOf(value));
+        label = GeoFactory.createSinTextAlpha(node, 0.7f, Vector3f.ZERO, "AW32", color, SinText.Alignment.Center);
+        if(spaces == 0){
+            label.setText(String.valueOf((int) value));
+        }else{
+            label.setText(String.valueOf(value));
+        }
         node.setLocalTranslation(new Vector3f(0, HOVER_HEIGHT, 3));
         parent.attachChild(node);
     }

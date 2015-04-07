@@ -21,19 +21,19 @@ public class ProjectileEvent extends Event {
     protected float speed;
     
     public ProjectileEvent(GameCharacter owner, Vector2f start, Vector2f target, CoreVals values){
-        super(owner, start, target);
+        super(owner, start, target, values);
         this.speed = values.m_speed;
     }
     public ProjectileEvent(CharacterManager charManager, ProjectileData data){
-        super(charManager.getOwner(data.getOwner()), data.getStart(), data.getTarget());
+        super(charManager.getOwner(data.getOwner()), data.getStart(), data.getTarget(), data.getValues());
         this.hashCode = data.getHashCode();
-        this.speed = data.getSpeed();
+        this.speed = values.m_speed;
     }
     
     @Override
     public void execute(Server server, World world){
         Projectile p = world.addProjectile(this);
-        server.broadcast(new ProjectileData(p.hashCode(), owner.asOwner(), start, target, speed));
+        server.broadcast(new ProjectileData(p.hashCode(), owner.asOwner(), start, target, values));
     }
     
     public int getHashCode(){

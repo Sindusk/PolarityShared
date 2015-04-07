@@ -3,7 +3,7 @@ package ui.items;
 import com.jme3.math.Vector2f;
 import com.jme3.scene.Node;
 import items.Inventory;
-import items.ItemData;
+import items.data.ItemData;
 import java.util.ArrayList;
 import tools.Util;
 import ui.Panel;
@@ -15,17 +15,19 @@ import ui.UIElement;
  */
 public class InventoryPanel extends Panel {
     protected Inventory inventory;
-    protected int itemsPerRow;
+    protected int itemsPerRow = 10;
     
-    public InventoryPanel(Node parent, Vector2f loc, float x, float y, float z, int itemsPerRow){
+    public InventoryPanel(Node parent, Vector2f loc, float x, float y, float z){
         super(parent, loc, x, y, z);
-        this.itemsPerRow = itemsPerRow;
     }
     public Inventory getInventory(){
         return inventory;
     }
     public void setInventory(Inventory inventory){
         this.inventory = inventory;
+    }
+    public void setItemsPerRow(int itemsPerRow){
+        this.itemsPerRow = itemsPerRow;
     }
     
     public void display(){

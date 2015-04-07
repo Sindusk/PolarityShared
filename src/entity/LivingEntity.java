@@ -4,8 +4,10 @@ import character.LivingCharacter;
 import com.jme3.scene.Node;
 import entity.nameplates.Nameplate;
 import character.types.CharType;
+import com.jme3.math.ColorRGBA;
 import entity.floatingtext.FloatingTextManager;
 import netdata.DamageData;
+import netdata.HealData;
 import network.ServerNetwork;
 import stats.advanced.Vitals;
 import status.Status;
@@ -45,9 +47,16 @@ public class LivingEntity extends Entity {
     public void applyStatus(Status status){
         ((LivingCharacter)owner).applyStatus(status);
     }
+    public void heal(float value){
+        vitals.heal(value);
+        fTextManager.queue("heal", ColorRGBA.Green, value);
+        if(Sys.getNetwork() instanceof ServerNetwork){
+            Sys.getNetwork().send(new HealData(owner.getID(), type, value));
+        }
+    }
     public void damage(float value){
         vitals.damage(value);
-        fTextManager.queue("damage", value);
+        fTextManager.queue("damage", ColorRGBA.Red, value);
         if(Sys.getNetwork() instanceof ServerNetwork){
             Sys.getNetwork().send(new DamageData(owner.getID(), type, value));
         }

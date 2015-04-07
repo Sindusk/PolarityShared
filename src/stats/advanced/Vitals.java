@@ -24,6 +24,11 @@ public class Vitals {
         return shield;
     }
     
+    public void heal(float value){
+        if(health.value() < health.getMax()){
+            health.add(value);
+        }
+    }
     public void damage(float value){
         if(shield.value() > 0){ // Check shields first
             float remainingShield = shield.subtract(value);    // Subtract from shields, and store how much shield is left

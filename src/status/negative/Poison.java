@@ -1,15 +1,18 @@
 package status.negative;
 
 import character.LivingCharacter;
+import com.jme3.network.serializing.Serializable;
 import status.Status;
 
 /**
  *
  * @author SinisteRing
  */
+@Serializable
 public class Poison extends Status {
     protected float dps;
     
+    public Poison(){}   // For serialization
     public Poison(float duration, float dps){
         super(duration);
         this.dps = dps;
@@ -20,7 +23,7 @@ public class Poison extends Status {
     }
     
     @Override
-    public void onTick(LivingCharacter tar, float tpf){
+    public void onServerTick(LivingCharacter tar, float tpf){
         tar.damage(dps*tpf);
     }
     

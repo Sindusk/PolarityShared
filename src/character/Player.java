@@ -5,13 +5,13 @@ import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.network.HostedConnection;
 import com.jme3.scene.Node;
-import items.Equipment;
-import items.Weapon;
+import items.data.equipment.WeaponItemData;
 import netdata.ActionData;
 import netdata.updates.MatrixUpdate;
 import character.data.PlayerData;
 import screens.Screen;
 import spellforge.SpellMatrix;
+import stats.advanced.Resources;
 import tools.Sys;
 import tools.Util;
 import tools.Vector2i;
@@ -23,7 +23,7 @@ import world.World;
  */
 public class Player extends LivingCharacter{
     protected SpellMatrix[] matrix = new SpellMatrix[4];
-    protected Equipment equipment;
+    protected Resources resources = new Resources();
     protected PlayerData data;
     protected HostedConnection conn;
     
@@ -44,12 +44,14 @@ public class Player extends LivingCharacter{
             movement[i] = false;
             i++;
         }
-        equipment = d.getEquipment();
     }
     public void createEntity(World world){
         entity = world.addPlayerEntity(this, ColorRGBA.Orange);
     }
     
+    public Resources getResources(){
+        return resources;
+    }
     public Vector2i getChunkKey(){
         return chunkKey;
     }
@@ -108,14 +110,14 @@ public class Player extends LivingCharacter{
     public void initializeMatrixArray(Node parent){
         int i = 0;
         while(i < matrix.length){
-            matrix[i] = new SpellMatrix(parent, this, new Vector2f(Sys.width*0.5f, Sys.height*0.5f), i+8, i+8);
+            matrix[i] = new SpellMatrix(parent, this, new Vector2f(Sys.width*0.5f, Sys.height*0.55f), i+6, i+6);
             matrix[i].setVisible(false);
             i++;
         }
     }
     
     public void attack(Vector2f cursorLoc){
-        Weapon weapon = equipment.getWeapon();
+        WeaponItemData weapon = data.getEquipment().getWeapon();
         if(weapon == null){
             Util.log("Error: No weapon ["+id+"]");
             return;
@@ -128,6 +130,7 @@ public class Player extends LivingCharacter{
     @Override
     public void serverUpdate(float tpf){
         super.serverUpdate(tpf);
+        updateResources(tpf);
         for(SpellMatrix spellMatrix : matrix){
             if(spellMatrix != null){
                 spellMatrix.update(tpf);
@@ -135,6 +138,9 @@ public class Player extends LivingCharacter{
         }
     }
     
+    public void updateResources(float tpf){
+        resources.update(tpf);
+    }
     public void updateLocal(float tpf, Vector2f cursorLocWorld, Vector2f cursorLoc){
         // Attacking & Global Cooldown Calculations
         if(attacking && gcd <= 0){
@@ -151,7 +157,7 @@ public class Player extends LivingCharacter{
         
         // Movement Calculations
         Vector2f move = new Vector2f(0, 0);
-        tpf *= 3; //Temporary, for scaling.
+        tpf *= charStats.getMovementSpeed(); //Temporary, for scaling.
         if(movement[0]){
             move.y += tpf;
         }

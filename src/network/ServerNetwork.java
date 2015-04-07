@@ -37,8 +37,8 @@ import tools.Util;
  */
 public class ServerNetwork extends GameNetwork{
     // Constants:
-    private static final String SERVER_PROPERTIES_FILENAME  = "properties/server/server.properties";
-    private static final String PLAYER_PROPERTIES_PATH      = "properties/player/";
+    private static final String SERVER_PROPERTIES_FILENAME  = "data/properties/server/server.properties";
+    private static final String PLAYER_PROPERTIES_PATH      = "data/properties/player/";
     private static final String PLAYER_DATA_PATH            = "data/player/";
     
     // Important variables:
@@ -220,6 +220,14 @@ public class ServerNetwork extends GameNetwork{
         }
         
         // END WORLD
+        // BEGIN CHAT
+        
+        private void ChatMessage(final HostedConnection source, final ChatMessage d){
+            server.broadcast(Filters.notEqualTo(source), d);
+            Util.log(charManager.getOwner(d.getOwner()).getName()+": "+d.getMessage());
+        }
+        
+        // END CHAT
         
         /** Recieved when a player moves.
          * <p>
@@ -289,6 +297,8 @@ public class ServerNetwork extends GameNetwork{
             }else if(m instanceof ActionData){
                 ActionMessage(source, (ActionData) m);
             // World
+            }else if(m instanceof ChatMessage){
+                ChatMessage(source, (ChatMessage) m);
             }else if(m instanceof ChunkRequest){
                 ChunkRequestMessage(source, (ChunkRequest) m);
             }else if(m instanceof MoveData){

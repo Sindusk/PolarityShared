@@ -23,7 +23,8 @@ public class EffectConduitData extends ConduitData {
     }
     private void init(){
         name = "Effect Conduit";
-        typeColor = ColorRGBA.Orange;
+        //typeColor = new ColorRGBA(0.22f, 0.80f, 0, 1);  // Green
+        typeColor = new ColorRGBA(0.16f, 0.60f, 0, 1);  // Green
     }
     
     @Override

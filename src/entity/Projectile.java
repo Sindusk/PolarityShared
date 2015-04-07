@@ -1,5 +1,7 @@
 package entity;
 
+import character.Monster;
+import character.Player;
 import events.ProjectileEvent;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
@@ -11,6 +13,7 @@ import events.Action;
 import java.util.ArrayList;
 import netdata.destroyers.DestroyProjectileData;
 import network.GameNetwork;
+import spellforge.nodes.CoreVals;
 import tools.GeoFactory;
 import tools.Sys;
 import world.blocks.WallData;
@@ -21,6 +24,7 @@ import world.blocks.WallData;
  */
 public class Projectile extends Entity{
     protected ProjectileEvent event;
+    protected CoreVals values;
     protected Geometry geo;
     protected Vector2f direction;       // Normalized vector for directional movement.
     protected float lifetime = 5.0f;    // How long (in seconds) the projectile is to last.
@@ -36,6 +40,8 @@ public class Projectile extends Entity{
     public Projectile(Node parent, ProjectileEvent event){
         super(parent, event.getOwner());
         this.event = event;
+        this.values = event.getValues();
+        this.radius = radius*values.m_radiusMult;
         this.type = CharType.PROJECTILE;
     }
     
@@ -56,7 +62,13 @@ public class Projectile extends Entity{
         // Apply a push forward so the projectile spawns infront of the player, instead of on top
         Vector2f moddedStart = start.add(direction.mult(0.5f));
         node.setLocalTranslation(new Vector3f(moddedStart.x, moddedStart.y, 0));
-        geo = GeoFactory.createSphere(node, "projectile", radius, Vector3f.ZERO, ColorRGBA.Pink);
+        ColorRGBA color = ColorRGBA.Pink;
+        if(event.getOwner() instanceof Player){
+            color = ColorRGBA.Blue;
+        }else if(event.getOwner() instanceof Monster){
+            color = ColorRGBA.Red;
+        }
+        geo = GeoFactory.createSphere(node, "projectile", radius*event.getValues().m_radiusMult, Vector3f.ZERO, color);
         oldLoc = moddedStart;
         newLoc = moddedStart;
     }
@@ -105,7 +117,7 @@ public class Projectile extends Entity{
                 if(t instanceof LivingEntity){
                     LivingEntity livingEntity = (LivingEntity) t; // Cast the Entity to a PlayerEntity to open up specific methods
                     for(Action action : event.getActions()){
-                        action.onCollide(livingEntity);
+                        action.onCollide(owner, livingEntity);
                     }
                     destroy();
                     server.send(new DestroyProjectileData(this.hashCode()));

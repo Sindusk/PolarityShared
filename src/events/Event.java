@@ -5,6 +5,7 @@ import com.jme3.math.Vector2f;
 import com.jme3.network.Server;
 import com.jme3.network.serializing.Serializable;
 import java.util.ArrayList;
+import spellforge.nodes.CoreVals;
 import tools.Util;
 import world.World;
 
@@ -19,13 +20,15 @@ public class Event {
     protected GameCharacter owner;
     protected Vector2f start;
     protected Vector2f target;
+    protected CoreVals values;
     protected float timer = 0;
     protected float executeTime;
     
-    public Event(GameCharacter owner, Vector2f start, Vector2f target){
+    public Event(GameCharacter owner, Vector2f start, Vector2f target, CoreVals values){
         this.owner = owner;
         this.start = start.clone();
         this.target = target.clone();
+        this.values = values;
     }
     
     public GameCharacter getOwner(){
@@ -36,6 +39,9 @@ public class Event {
     }
     public Vector2f getTarget(){
         return target;
+    }
+    public CoreVals getValues(){
+        return values;
     }
     public ArrayList<Action> getActions(){
         return actions;

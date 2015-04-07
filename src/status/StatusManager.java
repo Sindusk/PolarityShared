@@ -16,24 +16,47 @@ public class StatusManager {
         this.owner = owner;
     }
     
+    public Status get(Class clazz){
+        return effects.get(clazz);
+    }
+    
     public void apply(Status status){
         Class clazz = status.getClass();
         if(effects.containsKey(clazz)){
             Status other = effects.get(clazz);
-            effects.put(clazz, other.merge(status));
+            other.onFinish(owner);
+            effects.put(clazz, status.merge(other));
+            effects.get(clazz).onApply(owner);
         }else{
             effects.put(clazz, status);
             status.onApply(owner);
         }
     }
+    protected void endStatus(Class clazz){
+        Status s = effects.get(clazz);
+        effects.remove(clazz);
+        s.onFinish(owner);
+    }
+    public void remove(Status status){
+        Class clazz = status.getClass();
+        if(effects.containsKey(clazz)){
+            endStatus(clazz);
+        }
+    }
     
     public void update(float tpf){
         for(Class clazz : effects.keySet()){
+            if(effects.get(clazz).update(tpf)){
+                endStatus(clazz);
+            }
+        }
+    }
+    public void serverUpdate(float tpf){
+        for(Class clazz : effects.keySet()){
             if(effects.get(clazz).update(tpf)){ // If the status is finished
-                effects.get(clazz).onFinish(owner);
-                effects.remove(clazz);
+                endStatus(clazz);
             }else{  // Status is not finished
-                effects.get(clazz).onTick(owner, tpf);
+                effects.get(clazz).onServerTick(owner, tpf);
             }
         }
     }

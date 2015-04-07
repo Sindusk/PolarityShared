@@ -10,6 +10,7 @@ import netdata.MoveData;
 import character.data.PlayerData;
 import character.types.CharType;
 import character.types.Owner;
+import netdata.HealData;
 import tools.Util;
 import world.World;
 
@@ -72,6 +73,15 @@ public class CharacterManager{
         }
     }
     
+    public void heal(HealData d){
+        if(d.getType() == CharType.MONSTER){
+            getMonster(d.getID()).heal(d.getValue());
+        }else if(d.getType() == CharType.PLAYER){
+            getPlayer(d.getID()).heal(d.getValue());
+        }else{
+            Util.log("[CharacterManager] <damage> Critical Error: Could not identify EntityType for damage: "+d.getType().toString());
+        }
+    }
     public void damage(DamageData d){
         if(d.getType() == CharType.MONSTER){
             getMonster(d.getID()).damage(d.getValue());

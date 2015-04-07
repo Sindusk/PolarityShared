@@ -4,7 +4,7 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.network.serializing.Serializable;
-import items.SpellNodeItemData;
+import items.data.SpellNodeItemData;
 import java.util.ArrayList;
 import java.util.HashMap;
 import spellforge.SpellMatrix;

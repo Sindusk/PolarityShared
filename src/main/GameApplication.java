@@ -24,8 +24,6 @@ public class GameApplication extends Application {
     
     @Override
     public void start(){
-        //world = new World(50);
-        //charManager = new CharacterManager();
         super.start();
     }
     

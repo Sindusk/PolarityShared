@@ -7,9 +7,9 @@ import character.types.*;
 import events.Action;
 import items.Equipment;
 import items.Inventory;
-import items.ItemData;
-import items.SpellNodeItemData;
-import items.Weapon;
+import items.data.ItemData;
+import items.data.SpellNodeItemData;
+import items.data.equipment.WeaponItemData;
 import netdata.*;
 import netdata.destroyers.*;
 import netdata.requests.*;
@@ -24,6 +24,9 @@ import spellforge.nodes.generators.*;
 import spellforge.nodes.modifiers.*;
 import stats.Stat;
 import stats.StatWithMax;
+import status.Status;
+import status.negative.Poison;
+import status.negative.Slow;
 import tools.Vector2i;
 import world.blocks.*;
 
@@ -38,6 +41,7 @@ public enum NetData {
     ConnectData(ConnectData.class),
     DamageData(DamageData.class),
     DisconnectData(DisconnectData.class),
+    HealData(HealData.class),
     MoveData(MoveData.class),
     PingData(PingData.class),
     PlayerData(PlayerData.class),
@@ -46,6 +50,9 @@ public enum NetData {
     ProjectileData(ProjectileData.class),
     ServerStatusData(ServerStatusData.class),
     SoundData(SoundData.class),
+    
+    // Chat Messages
+    ChatMessage(ChatMessage.class),
     
     // General Characters
     Owner(Owner.class),
@@ -59,7 +66,7 @@ public enum NetData {
     Inventory(Inventory.class),
     ItemData(ItemData.class),
     SpellNodeItem(SpellNodeItemData.class),
-    Weapon(Weapon.class),
+    Weapon(WeaponItemData.class),
     
     // Matrix Updates
     CoreVals(CoreVals.class),
@@ -77,11 +84,21 @@ public enum NetData {
     // Effects
     DamageEffectData(DamageEffectData.class),
     PoisonEffectData(PoisonEffectData.class),
+    SlowEffectData(SlowEffectData.class),
+    VampEffectData(VampEffectData.class),
     // Generators
     EnergyGenData(EnergyGenData.class),
+    ManaGenData(ManaGenData.class),
     // Modifiers
     MultiModData(MultiModData.class),
+    RadiusModData(RadiusModData.class),
     SpeedModData(SpeedModData.class),
+    
+    // Status System
+    StatusData(StatusData.class),
+    Status(Status.class),
+    Poison(Poison.class),
+    Slow(Slow.class),
     
     // Data properties
     Event(Action.class),
@@ -99,6 +116,7 @@ public enum NetData {
     
     // Destroyers
     DestroyProjectileData(DestroyProjectileData.class),
+    DestroyStatusData(DestroyStatusData.class),
     
     // World Blocks
     BlockData(BlockData.class),

@@ -3,7 +3,6 @@ package screens;
 import character.Player;
 import com.jme3.input.event.KeyInputEvent;
 import com.jme3.math.ColorRGBA;
-import com.jme3.math.FastMath;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
@@ -12,7 +11,7 @@ import hud.advanced.FPSCounter;
 import input.Bind;
 import input.InputHandler;
 import items.Inventory;
-import items.SpellNodeItemData;
+import items.data.SpellNodeItemData;
 import items.creation.ItemFactory;
 import java.util.concurrent.Callable;
 import main.GameApplication;
@@ -24,6 +23,7 @@ import spellforge.nodes.conduits.EffectConduitData;
 import spellforge.nodes.conduits.ModifierConduitData;
 import spellforge.nodes.conduits.PowerConduitData;
 import tools.Sys;
+import tools.Util;
 import ui.Button;
 import ui.Menu;
 import ui.UIElement;
@@ -102,7 +102,8 @@ public class SpellForgeScreen extends Screen {
         player.initializeMatrixArray(gui);
         matrix = player.getMatrix(0);
         matrix.setVisible(true);
-        invPanel = new InventoryPanel(gui, new Vector2f(Sys.width*0.15f, Sys.height*0.5f), Sys.width*0.25f, Sys.height*0.9f, 0, 5);
+        invPanel = new InventoryPanel(gui, new Vector2f(Sys.width*0.15f, Sys.height*0.5f), Sys.width*0.25f, Sys.height*0.9f, 0);
+        invPanel.setItemsPerRow(5);
         invPanel.setColor(new ColorRGBA(0.1f, 0.1f, 0.1f, 1));
         invPanel.setInventory(gameScreen.getPlayer().getData().getInventory());
         invPanel.display();
@@ -118,7 +119,7 @@ public class SpellForgeScreen extends Screen {
                     public Void call() throws Exception{
                         Inventory inv = p.getData().getInventory();
                         //inv.add(new SpellNodeItem(icon[FastMath.nextRandomInt(0, icon.length-1)], type[FastMath.nextRandomInt(0, type.length-1)]));
-                        inv.add(ItemFactory.randomItem(inv, FastMath.nextRandomInt(1,50)));
+                        inv.add(ItemFactory.randomItem(inv, (int) Util.scaledRandFloat(1, 200)));
                         invPanel.display();
                         return null;
                     }
@@ -147,11 +148,6 @@ public class SpellForgeScreen extends Screen {
     }
     
     @Override
-    public void changeInit(){
-        //
-    }
-    
-    @Override
     public void update(float tpf) {
         Vector2f cursorLoc = app.getInputManager().getCursorPosition();
         
@@ -164,6 +160,7 @@ public class SpellForgeScreen extends Screen {
         }
         
         // Update spell matricies
+        player.updateResources(tpf);
         for(SpellMatrix spellMatrix : player.getMatrixArray()){
             if(spellMatrix != null){
                 spellMatrix.update(tpf);
@@ -235,11 +232,6 @@ public class SpellForgeScreen extends Screen {
             Sys.getCamera().lookAt(Vector3f.ZERO, Vector3f.UNIT_Y);
         }
     }
-
-    @Override
-    public void onCursorMove(Vector2f cursorLoc) {
-        //
-    }
     
     private void createMenu(SpellNode spellNode, Vector2f cursorLoc){
         if(menu != null){
@@ -280,7 +272,6 @@ public class SpellForgeScreen extends Screen {
                 if(button.getItem().getData() instanceof SpellNodeItemData){
                     SpellNodeItemData item = (SpellNodeItemData) button.getItem().getData();
                     SpellNodeData data = item.getData().cleanData(spellNode.getData());
-                    //spellNode.changeData(button.getItem());
                     clientNetwork.send(new MatrixUpdate(gameScreen.getPlayer().getID(), matrixIndex, data));
                     button.getItem().getInventory().remove(item);
                     invPanel.display();
@@ -300,11 +291,6 @@ public class SpellForgeScreen extends Screen {
         if(bind.equals(Bind.Escape.toString()) && down){
             inputHandler.changeScreens(gameScreen);
         }
-    }
-
-    @Override
-    public void onKeyEvent(KeyInputEvent evt) {
-        // implement
     }
     
     public Button addPowerConduitOption(Menu menu, final SpellNode spellNode){
@@ -382,4 +368,8 @@ public class SpellForgeScreen extends Screen {
         b.setTextColor(ColorRGBA.White);
         return b;
     }
+    
+    public void changeInit(){}
+    public void onCursorMove(Vector2f cursorLoc) {}
+    public void onKeyEvent(KeyInputEvent evt) {}
 }

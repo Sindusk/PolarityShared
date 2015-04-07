@@ -12,13 +12,16 @@ import character.CharacterManager;
 import character.Player;
 import com.jme3.math.ColorRGBA;
 import entity.Entity;
+import files.ChunkFileManager;
 import hud.advanced.ActionBar;
 import hud.advanced.CameraInfo;
+import hud.advanced.ChatBox;
 import hud.advanced.FPSCounter;
 import hud.advanced.Locator;
 import hud.advanced.VitalDisplay;
 import java.util.concurrent.Callable;
 import main.GameApplication;
+import netdata.ChatMessage;
 import netdata.requests.SpellMatrixRequest;
 import netdata.testing.MonsterCreateData;
 import spellforge.SpellMatrix;
@@ -40,8 +43,16 @@ public class GameScreen extends Screen {
     protected GameMenu gameMenu;
     protected CharacterManager charManager;
     
+    // HUD Elements
+    protected FPSCounter fpsCounter;
+    protected Locator locator;
+    protected CameraInfo cameraInfo;
+    protected VitalDisplay vitalDisplay;
+    protected ActionBar actionBar;
+    protected ChatBox chatBox;
+    
     // Camera testing
-    protected boolean unlockedCamera = false;
+    protected boolean unlockedCamera = true;
     protected float cameraHeight = 40;
     // Movement testing
     protected int playerID;
@@ -61,6 +72,9 @@ public class GameScreen extends Screen {
         return charManager.getPlayer(playerID);
     }
     
+    public void chatMessage(ChatMessage d){
+        chatBox.addMessage(charManager.getOwner(d.getOwner()).getName()+": "+d.getMessage());
+    }
     private void updateCamera(){
         Vector2f tempVect = getPlayer().getLocation();
         if(unlockedCamera){
@@ -74,11 +88,20 @@ public class GameScreen extends Screen {
     
     public void initialize(final InputHandler inputHandler) {
         this.inputHandler = inputHandler;
-        hud.add(new FPSCounter(gui, new Vector2f(10, Sys.height-15), 15));  // Creates the FPS Counter
-        hud.add(new Locator(gui, new Vector2f(10, Sys.height-35), 15, app.getWorld(), getPlayer()));    // Creates the Locator
-        hud.add(new CameraInfo(gui, new Vector2f(10, Sys.height-95), 15, this));    // Creates the Camera Info text
-        hud.add(new VitalDisplay(gui, new Vector2f(150, 50), getPlayer())); // Creates resource displays
-        hud.add(new ActionBar(gui, new Vector2f(Sys.width*0.5f, ActionBar.GEO_SIZE*1.5f), getPlayer()));// Creates the bottom action bar
+        
+        // Add HUD elements
+        fpsCounter = new FPSCounter(gui, new Vector2f(10, Sys.height-15), 15);
+        hud.add(fpsCounter);
+        locator = new Locator(gui, new Vector2f(10, Sys.height-35), 15, app.getWorld(), getPlayer());
+        hud.add(locator);
+        cameraInfo = new CameraInfo(gui, new Vector2f(10, Sys.height-95), 15, this);
+        hud.add(cameraInfo);
+        vitalDisplay = new VitalDisplay(gui, new Vector2f(150, 50), getPlayer());
+        hud.add(vitalDisplay);
+        actionBar = new ActionBar(gui, new Vector2f(Sys.width*0.5f, ActionBar.GEO_SIZE*1.5f), getPlayer());
+        hud.add(actionBar);
+        chatBox = new ChatBox(gui, new Vector2f(Sys.width*0.2f, Sys.height*0.4f), new Vector2f(Sys.width*0.175f, Sys.height*0.15f));
+        hud.add(chatBox);
         
         // Buttons for Game Menu
         // Return to Game button:
@@ -100,7 +123,7 @@ public class GameScreen extends Screen {
             @Override
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
                 if(bind.equals(Bind.LClick.toString()) && down){
-                    clientNetwork.send(new SpellMatrixRequest(playerID));
+                    //clientNetwork.send(new SpellMatrixRequest(playerID));
                     inputHandler.changeScreens(inventoryScreen);
                 }
             }
@@ -167,18 +190,18 @@ public class GameScreen extends Screen {
         });
         app.enqueue(new Callable<Void>(){
             public Void call() throws Exception{
-                // Update all world-related 
                 app.getWorld().update(tpf);
                 return null;
             }
         });
         app.enqueue(new Callable<Void>(){
             public Void call() throws Exception{
-                app.getWorld().checkChunks(getPlayer());
+                app.getWorld().checkChunks(getPlayer(), clientNetwork);
                 return null;
             }
         });
         
+        getPlayer().updateResources(tpf);
         for(SpellMatrix matrix : getPlayer().getMatrixArray()){
             if(matrix != null){
                 matrix.update(tpf);
@@ -197,13 +220,13 @@ public class GameScreen extends Screen {
         super.update(tpf);
     }
     
-    @Override
-    public void onCursorMove(Vector2f cursorLoc) {
-        //
-    }
+    public void onCursorMove(Vector2f cursorLoc) {}
     
     @Override
     public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf) {
+        if(chatBox.isActive() && !bind.equals(Bind.Enter.toString())){
+            return;
+        }
         UIElement e = checkUI(cursorLoc);
         if(e != null){
             e.onAction(cursorLoc, bind, down, tpf);
@@ -245,6 +268,15 @@ public class GameScreen extends Screen {
             getPlayer().setMovement(3, down);
         }else if(bind.equals(Bind.Escape.toString()) && down && !gameMenu.isActive()){
             gameMenu.setVisible(ui, true);
+        }else if(bind.equals(Bind.Enter.toString()) && down){
+            if(chatBox.isActive()){
+                String message = chatBox.getNewMessage();
+                chatBox.endMessage();
+                chatBox.addMessage(getPlayer().getName()+": "+message);
+                clientNetwork.send(new ChatMessage(getPlayer().asOwner(), message));
+            }else{
+                chatBox.startNewMessage();
+            }
         // Extra (Generally just poorly-coded testing keys)
         }else if(bind.equals(Bind.ScrollUp.toString()) && down){
             if(cameraHeight < 80){
@@ -271,11 +303,24 @@ public class GameScreen extends Screen {
             getPlayer().updateLocation(inputHandler.getCursorLocWorld());
         }else if(bind.equals(Bind.Y.toString()) && down){
             unlockedCamera = !unlockedCamera;
+        }else if(bind.equals(Bind.K.toString()) && down){
+            ChunkFileManager cfm = new ChunkFileManager("data/chunktest.data", app.getWorld().getChunk(getPlayer().getLocation()));
+            cfm.save();
+        }else if(bind.equals(Bind.J.toString()) && down){
+            app.enqueue(new Callable<Void>(){
+                public Void call() throws Exception{
+                    ChunkFileManager cfm = new ChunkFileManager("data/chunktest.data", app.getWorld().getChunk(getPlayer().getLocation()));
+                    cfm.load();
+                    return null;
+                }
+            });
         }
     }
     
     @Override
     public void onKeyEvent(KeyInputEvent evt){
-        // implement
+        if(chatBox.isActive()){
+            chatBox.addToMessage(evt);
+        }
     }
 }

@@ -1,5 +1,6 @@
 package items;
 
+import items.data.equipment.WeaponItemData;
 import com.jme3.network.serializing.Serializable;
 
 /**
@@ -8,17 +9,17 @@ import com.jme3.network.serializing.Serializable;
  */
 @Serializable
 public class Equipment {
-    protected Weapon weapon;
+    protected WeaponItemData weapon;
     
     public Equipment(){}
-    public Equipment(Weapon weapon){
+    public Equipment(WeaponItemData weapon){
         this.weapon = weapon;
     }
     
-    public Weapon getWeapon(){
+    public WeaponItemData getWeapon(){
         return weapon;
     }
-    public void equipWeapon(Weapon weapon){
+    public void equipWeapon(WeaponItemData weapon){
         this.weapon = weapon;
     }
 }

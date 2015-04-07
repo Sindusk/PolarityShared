@@ -1,9 +1,14 @@
 package character;
 
 import entity.LivingEntity;
+import java.util.HashMap;
+import netdata.StatusData;
+import netdata.destroyers.DestroyStatusData;
+import network.ServerNetwork;
 import stats.advanced.Vitals;
 import status.Status;
 import status.StatusManager;
+import tools.Sys;
 import tools.Util;
 
 /**
@@ -11,8 +16,9 @@ import tools.Util;
  * @author SinisteRing
  */
 public class LivingCharacter extends GameCharacter {
+    protected float moveSpeedMult = 1;
+    protected HashMap<Status,Float> moveMods = new HashMap();
     protected StatusManager statusManager;
-    protected String name;
     
     public LivingCharacter(int id, String name){
         super(id);
@@ -20,9 +26,6 @@ public class LivingCharacter extends GameCharacter {
         this.name = name;
     }
     
-    public String getName(){
-        return name;
-    }
     public Vitals getVitals(){
         return ((LivingEntity)entity).getVitals();
     }
@@ -32,12 +35,34 @@ public class LivingCharacter extends GameCharacter {
         return false;
     }
     
-    public void serverUpdate(float tpf){
+    @Override
+    public void update(float tpf){
         statusManager.update(tpf);
     }
+    public void serverUpdate(float tpf){
+        statusManager.serverUpdate(tpf);
+    }
     
+    public void updateMovementSpeed(){
+        moveSpeedMult = 1;
+        for(Status s : moveMods.keySet()){
+            moveSpeedMult *= moveMods.get(s);
+        }
+    }
     public void applyStatus(Status status){
         statusManager.apply(status);
+        if(Sys.getNetwork() instanceof ServerNetwork){
+            Sys.getNetwork().send(new StatusData(this.asOwner(), status));
+        }
+    }
+    public void removeStatus(Status status){
+        statusManager.remove(status);
+        if(Sys.getNetwork() instanceof ServerNetwork){
+            Sys.getNetwork().send(new DestroyStatusData(this.asOwner(), status));
+        }
+    }
+    public void heal(float value){
+        ((LivingEntity)entity).heal(value);
     }
     public void damage(float value){
         ((LivingEntity)entity).damage(value);

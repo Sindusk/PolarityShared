@@ -17,15 +17,17 @@ import com.jme3.network.serializing.Serializer;
 import com.jme3.scene.Node;
 import input.InputHandler;
 import items.Equipment;
-import items.Weapon;
+import items.data.equipment.WeaponItemData;
 import java.io.IOException;
 import java.util.concurrent.Callable;
 import main.GameClient;
 import netdata.*;
 import character.CharacterManager;
+import character.LivingCharacter;
 import character.data.MonsterData;
 import entity.MonsterEntity;
 import netdata.destroyers.DestroyProjectileData;
+import netdata.destroyers.DestroyStatusData;
 import netdata.updates.GeneratorPowerUpdate;
 import netdata.updates.MonsterStateUpdate;
 import screens.GameScreen;
@@ -203,7 +205,7 @@ public class ClientNetwork extends GameNetwork{
         private void PlayerIDMessage(final PlayerIDData d){
             Util.log("[ClientNetwork] <PlayerIDMessage> Recieving PlayerIDMessage...", 4);
             CLIENT_ID = d.getID();
-            final PlayerData pd = new PlayerData(CLIENT_ID, "Player "+CLIENT_ID, new Vector2f(0, 0), new Equipment(new Weapon()));
+            final PlayerData pd = new PlayerData(CLIENT_ID, "Player "+CLIENT_ID, new Vector2f(0, 0), new Equipment(new WeaponItemData()));
             client.send(pd);
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
@@ -273,6 +275,21 @@ public class ClientNetwork extends GameNetwork{
         }
         
         // END WORLD
+        // CHAT
+        
+        private void ChatMessage(final ChatMessage d){
+            app.enqueue(new Callable<Void>(){
+                public Void call() throws Exception{
+                    if(inputHandler.getScreen() instanceof GameScreen){
+                        GameScreen screen = (GameScreen) inputHandler.getScreen();
+                        screen.chatMessage(d);
+                    }
+                    return null;
+                }
+            });
+        }
+        
+        //END CHAT
         
         private void CommandMessage(final CommandData d){
             app.enqueue(new Callable<Void>(){
@@ -302,6 +319,15 @@ public class ClientNetwork extends GameNetwork{
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
                     charManager.removePlayer(d.getID());
+                    return null;
+                }
+            });
+        }
+        
+        private void HealMessage(final HealData d){
+            app.enqueue(new Callable<Void>(){
+                public Void call() throws Exception{
+                    charManager.heal(d);
                     return null;
                 }
             });
@@ -404,10 +430,27 @@ public class ClientNetwork extends GameNetwork{
             });
         }
         
+        private void StatusMessage(final StatusData d){
+            app.enqueue(new Callable<Void>(){
+                public Void call() throws Exception{
+                    ((LivingCharacter)charManager.getOwner(d.getOwner())).applyStatus(d.getStatus());
+                    return null;
+                }
+            });
+        }
+        
         private void DestroyProjectile(final DestroyProjectileData d){
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
                     app.getWorld().destroyProjectile(d.getHashCode());
+                    return null;
+                }
+            });
+        }
+        private void DestroyStatus(final DestroyStatusData d){
+            app.enqueue(new Callable<Void>(){
+                public Void call() throws Exception{
+                    ((LivingCharacter)charManager.getOwner(d.getOwner())).removeStatus(d.getStatus());
                     return null;
                 }
             });
@@ -436,6 +479,8 @@ public class ClientNetwork extends GameNetwork{
             // World Messages
             }else if(m instanceof ChunkData){
                 ChunkMessage((ChunkData) m);
+            }else if(m instanceof ChatMessage){
+                ChatMessage((ChatMessage) m);
             // Uncategorized
             }else if(m instanceof CommandData){
                 CommandMessage((CommandData) m);
@@ -443,6 +488,8 @@ public class ClientNetwork extends GameNetwork{
                 DamageMessage((DamageData) m);
             }else if(m instanceof DisconnectData){
                 DisconnectMessage((DisconnectData) m);
+            }else if(m instanceof HealData){
+                HealMessage((HealData) m);
             }else if(m instanceof MoveData){
                 MoveMessage((MoveData) m);
             }else if(m instanceof PingData){
@@ -455,10 +502,14 @@ public class ClientNetwork extends GameNetwork{
                 ServerStatusMessage((ServerStatusData) m);
             }else if(m instanceof SoundData){
                 SoundMessage((SoundData) m);
+            }else if(m instanceof StatusData){
+                StatusMessage((StatusData) m);
             }
             // Data cleanup/destruction messages
             else if(m instanceof DestroyProjectileData){
                 DestroyProjectile((DestroyProjectileData) m);
+            }else if(m instanceof DestroyStatusData){
+                DestroyStatus((DestroyStatusData) m);
             }
             // Development testing
             else if(m instanceof DevLogData){

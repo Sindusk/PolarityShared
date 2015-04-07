@@ -28,6 +28,13 @@ public abstract class Stat {
         return base;
     }
     
+    public void reset(){
+        value = base;
+    }
+    public void set(float amount){
+        value = amount;
+    }
+    
     // Adds onto the value, which is independent of the base.
     public void add(float amount){
         value += amount;
@@ -51,5 +58,9 @@ public abstract class Stat {
         if(value < 0){
             value = 0;
         }
+    }
+    
+    public void multiply(float amount){
+        value *= amount;
     }
 }

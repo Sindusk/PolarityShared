@@ -30,9 +30,9 @@ public class SpeedModData extends ModifierData {
     @Override
     public HashMap<String,Float> genProperties(int level){
         super.genProperties(level);
-        effectMult = ItemFactory.leveledRandomFloat(1f, level, 2);
+        effectMult = ItemFactory.leveledRandomPoweredFloat(1f, 0.3f, level, 2);
         properties.put("Effect Multiplier", effectMult);
-        speedMult = ItemFactory.leveledRandomFloat(1f, level, 2);
+        speedMult = ItemFactory.leveledRandomPoweredFloat(1f, 0.6f, level, 2);
         properties.put("Speed Multiplier", speedMult);
         return properties;
     }

@@ -1,5 +1,7 @@
 package items;
 
+import items.data.ItemData;
+
 /**
  *
  * @author SinisteRing

@@ -12,7 +12,7 @@ public class ConduitData extends SpellNodeData {
     public ConduitData(){
         super();
         init();
-    }  // For serialization
+    }
     public ConduitData(SpellNodeData data){
         super(data.getX(), data.getY(), data.getLocation());
         init();

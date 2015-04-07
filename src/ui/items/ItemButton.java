@@ -6,7 +6,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import items.Inventory;
 import items.Item;
-import items.ItemData;
+import items.data.ItemData;
 import java.util.HashMap;
 import tools.GeoFactory;
 import tools.SinText;
