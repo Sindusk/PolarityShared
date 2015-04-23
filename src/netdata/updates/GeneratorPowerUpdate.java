@@ -18,6 +18,7 @@ public class GeneratorPowerUpdate extends AbstractMessage {
         this.slot = slot;
         this.index = index;
         this.power = power;
+        setReliable(false);
     }
     public int getSlot(){
         return slot;

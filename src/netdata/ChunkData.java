@@ -20,6 +20,7 @@ public class ChunkData extends AbstractMessage {
         this.x = x;
         this.y = y;
         this.blocks = blocks;
+        setReliable(false);
     }
     public Vector2i getKey(){
         return new Vector2i(x, y);

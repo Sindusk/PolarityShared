@@ -15,7 +15,6 @@ public class ConnectData extends AbstractMessage {
     public ConnectData(String version, String name){
         this.version = version;
         this.name = name;
-        this.setReliable(true);
     }
     public String getVersion(){
         return version;

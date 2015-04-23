@@ -96,6 +96,9 @@ public class Util {
     public static String getBlockIcon(String tex){
         return "Interface/Icons/Blocks/"+tex+".png";
     }
+    public static String getEquipmentIcon(String tex){
+        return "Interface/Icons/Equipment/"+tex+".png";
+    }
     public static String getItemIcon(String tex){
         return "Interface/Icons/Items/"+tex+".png";
     }

@@ -4,6 +4,7 @@ import ai.AIManager;
 import com.jme3.math.Vector2f;
 import com.jme3.scene.Node;
 import com.jme3.system.AppSettings;
+import com.jme3.system.JmeContext;
 import events.EventManager;
 import hud.advanced.FPSCounter;
 import input.ServerInputHandler;
@@ -70,12 +71,14 @@ public class GameServer extends GameApplication{
     }
     
     public static void main(String[] args){
+        Util.log("Testing!!");
         GameServer app = new GameServer();
-        app.start();
+        app.start(JmeContext.Type.Headless);
     }
     
     @Override
     public void start(){
+        Util.log("Testing!");
         Logger.getLogger("com.jme3").setLevel(Level.WARNING);
         settings = new AppSettings(true);
         settings.setSamples(0);

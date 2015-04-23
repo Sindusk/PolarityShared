@@ -9,9 +9,9 @@ import hud.Tooltip;
 import hud.advanced.FPSCounter;
 import input.Bind;
 import input.InputHandler;
-import items.data.EquipmentItemData;
 import main.GameApplication;
 import tools.Sys;
+import tools.Vector2i;
 import ui.UIElement;
 import ui.interfaces.Draggable;
 import ui.interfaces.TooltipInfo;
@@ -58,10 +58,10 @@ public class InventoryScreen extends Screen {
         ui.add(invPanel);
         
         // Add the Equipment Panel
-        equipPanel = new EquipmentPanel(gui, new Vector2f(Sys.width*0.5f, Sys.height*0.5f), Sys.width*0.4f, Sys.height*0.9f, 0);
+        equipPanel = new EquipmentPanel(gui, new Vector2f(Sys.width*0.85f, Sys.height*0.35f), Sys.width*0.25f, Sys.height*0.6f, 0);
         equipPanel.setColor(new ColorRGBA(0.1f, 0.1f, 0.1f, 1));
         equipPanel.setEquipment(player.getData().getEquipment());
-        //equipPanel.display();
+        equipPanel.display(new Vector2i(0, 0));
         ui.add(equipPanel);
     }
     
@@ -126,12 +126,12 @@ public class InventoryScreen extends Screen {
                 }else if(!down && bind.equals(Bind.LClick.toString()) && dragging instanceof ItemButton){
                     // If the mouse is released when dragging an item over a spell node, replace the spell node
                     ItemButton button = (ItemButton) dragging;
-                    if(button.getItem().getData() instanceof EquipmentItemData){
-                        EquipmentItemData data = (EquipmentItemData) button.getItem().getData();
+                    //if(button.getItem().getData() instanceof EquipmentData){
+                        //EquipmentData data = (EquipmentData) button.getItem().getData();
                         //clientNetwork.send(new EquipmentUpdate(gameScreen.getPlayer().getID(), matrixIndex, data));
                         //button.getItem().getInventory().remove(item);
                         //invPanel.display();
-                    }
+                    //}
                 }
             }else if(down){
                 e.onAction(cursorLoc, bind, down, tpf);

@@ -18,6 +18,7 @@ public class MoveData extends AbstractMessage {
       loc = location;
       cLoc = cursorLoc;
       id = ID;
+      setReliable(false);
   }
   public int getID(){
       return id;

@@ -9,5 +9,7 @@ import com.jme3.network.serializing.Serializable;
  */
 @Serializable
 public class PingData extends AbstractMessage {
-    public PingData(){}
+    public PingData(){
+        setReliable(false);
+    }
 }

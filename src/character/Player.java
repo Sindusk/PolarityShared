@@ -5,7 +5,7 @@ import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.network.HostedConnection;
 import com.jme3.scene.Node;
-import items.data.equipment.WeaponItemData;
+import equipment.WeaponData;
 import netdata.ActionData;
 import netdata.updates.MatrixUpdate;
 import character.data.PlayerData;
@@ -117,7 +117,7 @@ public class Player extends LivingCharacter{
     }
     
     public void attack(Vector2f cursorLoc){
-        WeaponItemData weapon = data.getEquipment().getWeapon();
+        WeaponData weapon = data.getEquipment().getWeapon(attackIndex);
         if(weapon == null){
             Util.log("Error: No weapon ["+id+"]");
             return;

@@ -13,7 +13,6 @@ public class CommandData extends AbstractMessage {
     public CommandData() {}
     public CommandData(String command){
         this.command = command;
-        this.setReliable(true);
     }
     public String getCommand(){
         return command;

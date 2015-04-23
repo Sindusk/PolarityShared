@@ -1,6 +1,6 @@
 package character;
 
-import character.data.CharacterStatistics;
+import character.data.Attributes;
 import character.types.Owner;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
@@ -11,7 +11,7 @@ import entity.Entity;
  * @author SinisteRing
  */
 public abstract class GameCharacter {
-    protected CharacterStatistics charStats = new CharacterStatistics();
+    protected Attributes charStats = new Attributes();
     protected int id;
     protected String name;
     protected Entity entity;
@@ -20,7 +20,7 @@ public abstract class GameCharacter {
         this.id = id;
     }
     
-    public CharacterStatistics getCharStats(){
+    public Attributes getCharStats(){
         return charStats;
     }
     public int getID(){

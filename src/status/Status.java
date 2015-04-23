@@ -1,7 +1,7 @@
 package status;
 
 import character.LivingCharacter;
-import character.data.CharacterStatistics;
+import character.data.Attributes;
 import com.jme3.network.serializing.Serializable;
 
 /**
@@ -34,7 +34,7 @@ public abstract class Status {
         return finished;
     }
     
-    public void modifyCharStats(CharacterStatistics stats){}
+    public void modifyCharStats(Attributes stats){}
     public void onApply(LivingCharacter tar){}
     public void onServerTick(LivingCharacter tar, float tpf){}
     public void onClientTick(LivingCharacter tar, float tpf){}

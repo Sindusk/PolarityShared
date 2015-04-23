@@ -6,6 +6,10 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
+import equipment.AccessoryData;
+import equipment.ArmorData;
+import equipment.EquipmentData;
+import equipment.WeaponData;
 import hud.Tooltip;
 import hud.advanced.FPSCounter;
 import input.Bind;
@@ -24,11 +28,14 @@ import spellforge.nodes.conduits.ModifierConduitData;
 import spellforge.nodes.conduits.PowerConduitData;
 import tools.Sys;
 import tools.Util;
+import tools.Vector2i;
 import ui.Button;
 import ui.Menu;
 import ui.UIElement;
 import ui.interfaces.Draggable;
 import ui.interfaces.TooltipInfo;
+import ui.items.EquipmentButton;
+import ui.items.EquipmentPanel;
 import ui.items.InventoryPanel;
 import ui.items.ItemButton;
 
@@ -39,9 +46,9 @@ import ui.items.ItemButton;
 public class SpellForgeScreen extends Screen {
     protected GameScreen gameScreen;
     
-    protected Button[] slots = new Button[4];
     protected Draggable dragging;
     protected InventoryPanel invPanel;
+    protected EquipmentPanel equipPanel;
     protected Menu menu;
     protected Tooltip tooltip;
     protected Tooltip itemTooltip;
@@ -78,36 +85,23 @@ public class SpellForgeScreen extends Screen {
         hud.add(new FPSCounter(gui, new Vector2f(10, Sys.height-15), 15));   // Creates the FPS Counter
         
         final Player p = gameScreen.getPlayer();
-        float spacing = 0.35f;
-        int i = 0;
-        while(i < slots.length){
-            final int slot = i;
-            slots[i] = new Button(gui, new Vector2f(Sys.width*spacing, Sys.height*0.9f), 50, 50, 0){
-                @Override
-                public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
-                    slots[matrixIndex].setColor(ColorRGBA.Blue);
-                    loadMatrix(slot);
-                    this.setColor(ColorRGBA.Orange);
-                }
-            };
-            if(i == 0){
-                slots[i].setColor(ColorRGBA.Orange);
-            }
-            slots[i].setText(""+(i+1));
-            slots[i].setTextColor(ColorRGBA.Green);
-            spacing += 0.1f;
-            ui.add(slots[i]);
-            i++;
-        }
         player.initializeMatrixArray(gui);
         matrix = player.getMatrix(0);
         matrix.setVisible(true);
+        
         invPanel = new InventoryPanel(gui, new Vector2f(Sys.width*0.15f, Sys.height*0.5f), Sys.width*0.25f, Sys.height*0.9f, 0);
         invPanel.setItemsPerRow(5);
         invPanel.setColor(new ColorRGBA(0.1f, 0.1f, 0.1f, 1));
         invPanel.setInventory(gameScreen.getPlayer().getData().getInventory());
         invPanel.display();
         ui.add(invPanel);
+        
+        equipPanel = new EquipmentPanel(gui, new Vector2f(Sys.width*0.85f, Sys.height*0.35f), Sys.width*0.25f, Sys.height*0.6f, 0);
+        equipPanel.setColor(new ColorRGBA(0.1f, 0.1f, 0.1f, 1));
+        equipPanel.setEquipment(player.getData().getEquipment());
+        equipPanel.display(new Vector2i(0, 0));
+        ui.add(equipPanel);
+        
         tooltip = new Tooltip(gui, new Vector2f(Sys.width*0.75f, Sys.height-50));
         itemTooltip = new Tooltip(gui, Vector2f.ZERO);
         itemTooltip.toggleVisible();
@@ -256,6 +250,22 @@ public class SpellForgeScreen extends Screen {
                 if(e != null && e instanceof Draggable && down && bind.equals(Bind.LClick.toString())){
                     dragging = (Draggable) e;
                 }
+            }else if(e instanceof EquipmentPanel){
+                EquipmentPanel panel = (EquipmentPanel) e;
+                e = panel.checkControls(cursorLoc);
+                if(e instanceof EquipmentButton && down && bind.equals(Bind.LClick.toString())){
+                    EquipmentButton button = (EquipmentButton) e;
+                    EquipmentData data = button.getGear();
+                    if(data instanceof WeaponData){
+                        int index = panel.getWeaponIndex(button);
+                        loadMatrix(index);
+                        equipPanel.display(new Vector2i(0, index));
+                    }else if(data instanceof AccessoryData){
+                        Util.log("Accessory");
+                    }else if(data instanceof ArmorData){
+                        Util.log("Armor");
+                    }
+                }
             }else if(down){
                 e.onAction(cursorLoc, bind, down, tpf);
                 if(menu != null){
@@ -306,7 +316,7 @@ public class SpellForgeScreen extends Screen {
                 invPanel.display();
             }
         };
-        b.setColor(new ColorRGBA(0.5f, 0, 0, 1));
+        b.setColor(new ColorRGBA(0.58f, 0.11f, 0.73f, 1));
         b.setText("Power Conduit");
         b.setTextColor(ColorRGBA.White);
         return b;
@@ -325,7 +335,7 @@ public class SpellForgeScreen extends Screen {
                 invPanel.display();
             }
         };
-        b.setColor(new ColorRGBA(0, 0, 0.5f, 1));
+        b.setColor(new ColorRGBA(0.73f, 0.73f, 0, 1));
         b.setText("Modifier Conduit");
         b.setTextColor(ColorRGBA.White);
         return b;
@@ -344,7 +354,7 @@ public class SpellForgeScreen extends Screen {
                 invPanel.display();
             }
         };
-        b.setColor(new ColorRGBA(1, 0.5f, 0, 1));
+        b.setColor(new ColorRGBA(0.16f, 0.60f, 0, 1));
         b.setText("Effect Conduit");
         b.setTextColor(ColorRGBA.White);
         return b;

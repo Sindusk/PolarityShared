@@ -6,7 +6,6 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import tools.GeoFactory;
 import tools.SinText;
-import tools.Util;
 
 /**
  *
@@ -27,7 +26,7 @@ public class Button extends UIElement {
         x /= 2.0f;
         y /= 2.0f;
         text = GeoFactory.createSinText(node, y*1.5f, new Vector3f(0, 0, 0.01f), "AW32", ColorRGBA.Blue, SinText.Alignment.Center);
-        geo = GeoFactory.createBox(node, "test", new Vector3f(x, y, 0), Vector3f.ZERO, Util.getItemIcon(icon), new Vector2f(1, 1));
+        geo = GeoFactory.createBox(node, "test", new Vector3f(x, y, 0), Vector3f.ZERO, icon, new Vector2f(1, 1));
     }
     
     // Sets the location of the button (centered)
@@ -41,5 +40,9 @@ public class Button extends UIElement {
     // Sets the color of the text
     public void setTextColor(ColorRGBA color){
         text.setColor(color);
+    }
+    
+    public Vector3f getLocation(){
+        return node.getLocalTranslation().clone();
     }
 }

@@ -15,6 +15,7 @@ public class SoundData extends AbstractMessage {
     public SoundData(int id, String sound){
         this.id = id;
         this.sound = sound;
+        setReliable(false);
     }
     public int getID(){
         return id;

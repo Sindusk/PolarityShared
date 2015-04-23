@@ -16,8 +16,7 @@ import com.jme3.network.Network;
 import com.jme3.network.serializing.Serializer;
 import com.jme3.scene.Node;
 import input.InputHandler;
-import items.Equipment;
-import items.data.equipment.WeaponItemData;
+import equipment.Equipment;
 import java.io.IOException;
 import java.util.concurrent.Callable;
 import main.GameClient;
@@ -205,7 +204,7 @@ public class ClientNetwork extends GameNetwork{
         private void PlayerIDMessage(final PlayerIDData d){
             Util.log("[ClientNetwork] <PlayerIDMessage> Recieving PlayerIDMessage...", 4);
             CLIENT_ID = d.getID();
-            final PlayerData pd = new PlayerData(CLIENT_ID, "Player "+CLIENT_ID, new Vector2f(0, 0), new Equipment(new WeaponItemData()));
+            final PlayerData pd = new PlayerData(CLIENT_ID, "Player "+CLIENT_ID, new Vector2f(0, 0), new Equipment());
             client.send(pd);
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{

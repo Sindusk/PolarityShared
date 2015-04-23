@@ -1,7 +1,7 @@
 package status.negative;
 
 import character.LivingCharacter;
-import character.data.CharacterStatistics;
+import character.data.Attributes;
 import com.jme3.network.serializing.Serializable;
 import status.Status;
 
@@ -24,7 +24,7 @@ public class Slow extends Status {
     }
     
     @Override
-    public void modifyCharStats(CharacterStatistics charStats){
+    public void modifyCharStats(Attributes charStats){
         charStats.get("Movement Speed").multiply(multiplier);
     }
     

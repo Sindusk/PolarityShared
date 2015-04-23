@@ -10,6 +10,7 @@ import items.data.ItemData;
 import java.util.HashMap;
 import tools.GeoFactory;
 import tools.SinText;
+import tools.Util;
 import tools.Vector2i;
 import ui.Button;
 import ui.interfaces.Draggable;
@@ -24,7 +25,7 @@ public class ItemButton extends Button implements TooltipInfo, Draggable {
     protected SinText levelDisplay;
     
     public ItemButton(Node parent, Inventory inv, ItemData itemData, Vector2f loc, float x, float y, float z){
-        super(parent, itemData.getIcon(), loc, x, y, z);
+        super(parent, Util.getItemIcon(itemData.getIcon()), loc, x, y, z);
         this.item = new Item(inv, itemData);
         levelDisplay = GeoFactory.createSinText(node, y*0.2f, new Vector3f(x*0.5f, y*0.4f, 2), "ES32", ColorRGBA.White, SinText.Alignment.Right);
         levelDisplay.setText(itemData.getItemLevel()+"");

@@ -12,18 +12,20 @@ import status.Status;
  * @author Sindusk
  */
 @Serializable
-public class CharacterStatistics {
+public class Attributes {
     protected HashMap<String,Stat> stats = new HashMap();
     protected ArrayList<Status> modifiers = new ArrayList();
     
     protected MovementSpeed moveSpeed = new MovementSpeed(3);
+    // Armor
+    // Tenacity
     
     private void reset(){
         for(String s : stats.keySet()){
             stats.get(s).reset();
         }
     }
-    public CharacterStatistics(){
+    public Attributes(){
         stats.put("Movement Speed", moveSpeed);
     }
     

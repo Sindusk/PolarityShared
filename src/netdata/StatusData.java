@@ -17,6 +17,7 @@ public class StatusData extends AbstractMessage {
     public StatusData(Owner owner, Status status){
         this.owner = owner;
         this.status = status;
+        setReliable(false);
     }
     public Owner getOwner(){
         return owner;

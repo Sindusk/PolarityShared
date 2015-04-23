@@ -18,6 +18,7 @@ public class DamageData extends AbstractMessage {
         this.id = id;
         this.type = type;
         this.value = value;
+        setReliable(false);
     }
     public int getID(){
         return id;

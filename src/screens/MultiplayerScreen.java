@@ -54,7 +54,7 @@ public class MultiplayerScreen extends Screen {
             @Override
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
                 if(bind.equals(Bind.LClick.toString()) && down){
-                    clientNetwork.connect("25.183.100.124");
+                    clientNetwork.connect("192.95.31.54");
                 }
             }
         };

@@ -4,12 +4,14 @@ import spellforge.nodes.CoreVals;
 import character.data.MonsterData;
 import character.data.PlayerData;
 import character.types.*;
+import equipment.AccessoryData;
+import equipment.ArmorData;
 import events.Action;
-import items.Equipment;
+import equipment.Equipment;
 import items.Inventory;
 import items.data.ItemData;
 import items.data.SpellNodeItemData;
-import items.data.equipment.WeaponItemData;
+import equipment.WeaponData;
 import netdata.*;
 import netdata.destroyers.*;
 import netdata.requests.*;
@@ -61,12 +63,16 @@ public enum NetData {
     MonsterData(MonsterData.class),
     MonsterStateUpdate(MonsterStateUpdate.class),
     
-    // Item system
+    // Equipment
     Equipment(Equipment.class),
+    AccessoryData(AccessoryData.class),
+    ArmorData(ArmorData.class),
+    WeaponData(WeaponData.class),
+    
+    // Item system
     Inventory(Inventory.class),
     ItemData(ItemData.class),
     SpellNodeItem(SpellNodeItemData.class),
-    Weapon(WeaponItemData.class),
     
     // Matrix Updates
     CoreVals(CoreVals.class),
