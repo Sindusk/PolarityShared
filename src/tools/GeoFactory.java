@@ -2,6 +2,7 @@ package tools;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
+import com.jme3.material.RenderState.BlendMode;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
@@ -146,6 +147,7 @@ public class GeoFactory {
         b.scaleTextureCoordinates(scale);
         Geometry g = new Geometry(name, b);
         Material m = Util.getMaterial(assetManager, tex);
+        m.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
         materials.add(m);
         g.setMaterial(m);
         g.setLocalTranslation(trans);
@@ -159,6 +161,21 @@ public class GeoFactory {
     }
     public static Geometry createBox(Node node, Vector3f size, Vector3f trans, String tex){
         return createBox(node, "", size, trans, tex, new Vector2f(1, 1));
+    }
+    /**
+     * Creates a Box geometry (solid color version, transparent)
+     * @param node Parent node - this is the node that the geometry will attach to.
+     * @param name Name of the geometry - Useful for organization, but otherwise not very useful.
+     * @param size Size of the geometry. Keep in mind that the resulting size is twice the input value.
+     * The Geometry is generated from the center and extends to (input value) in each direction along that axis.
+     * @param trans Position of the geometry in 3D space. Note that this is affected by the location of the parent node.
+     * @param color ColorRGBA for the color of the sphere. Use new ColorRGBA(Red,Green,Blue,Alpha) or a ColorRGBA static field.
+     * @return Returns the resulting geometry.
+     */
+    public static Geometry createBoxAlpha(Node node, Vector3f size, Vector3f trans, String tex){
+        Geometry g = createBox(node, size, trans, tex);
+        g.setQueueBucket(Bucket.Transparent);
+        return g;
     }
 
     // Cylinders:

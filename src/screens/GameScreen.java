@@ -38,7 +38,6 @@ import world.Sector;
  * @author Sindusk
  */
 public class GameScreen extends Screen {
-    protected InventoryScreen inventoryScreen;
     protected SpellForgeScreen spellForgeScreen;
     protected GameMenu gameMenu;
     protected CharacterManager charManager;
@@ -105,7 +104,7 @@ public class GameScreen extends Screen {
         
         // Buttons for Game Menu
         // Return to Game button:
-        Button returnButton = new Button(gameMenu.getNode(), new Vector2f(0, Sys.height*0.15f), Sys.width*0.4f, Sys.height*0.05f, 0){
+        Button returnButton = new Button(gameMenu.getNode(), new Vector2f(0, Sys.height*0.1f), Sys.width*0.4f, Sys.height*0.05f, 0){
             @Override
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
                 if(bind.equals(Bind.LClick.toString()) && down){
@@ -119,22 +118,7 @@ public class GameScreen extends Screen {
         ui.remove(returnButton);
         
         // Spell Matrix button:
-        Button inventoryButton = new Button(gameMenu.getNode(), new Vector2f(0, Sys.height*0.05f), Sys.width*0.4f, Sys.height*0.05f, 0){
-            @Override
-            public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
-                if(bind.equals(Bind.LClick.toString()) && down){
-                    //clientNetwork.send(new SpellMatrixRequest(playerID));
-                    inputHandler.changeScreens(inventoryScreen);
-                }
-            }
-        };
-        inventoryButton.setText("Inventory");
-        inventoryButton.setColor(ColorRGBA.Red);
-        gameMenu.addOption(ui, inventoryButton);
-        ui.remove(inventoryButton);
-        
-        // Spell Matrix button:
-        Button spellMatrixButton = new Button(gameMenu.getNode(), new Vector2f(0, -Sys.height*0.05f), Sys.width*0.4f, Sys.height*0.05f, 0){
+        Button spellMatrixButton = new Button(gameMenu.getNode(), new Vector2f(0, -Sys.height*0f), Sys.width*0.4f, Sys.height*0.05f, 0){
             @Override
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
                 if(bind.equals(Bind.LClick.toString()) && down){
@@ -149,7 +133,7 @@ public class GameScreen extends Screen {
         ui.remove(spellMatrixButton);
         
         // Exit Button
-        Button exitButton = new Button(gameMenu.getNode(), new Vector2f(0, -Sys.height*0.15f), Sys.width*0.4f, Sys.height*0.05f, 0){
+        Button exitButton = new Button(gameMenu.getNode(), new Vector2f(0, -Sys.height*0.1f), Sys.width*0.4f, Sys.height*0.05f, 0){
             @Override
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
                 if(bind.equals(Bind.LClick.toString()) && down){
@@ -165,10 +149,6 @@ public class GameScreen extends Screen {
         spellForgeScreen = new SpellForgeScreen(app, this, Screen.getTopRoot(), Screen.getTopGUI());
         spellForgeScreen.initialize(inputHandler);
         spellForgeScreen.setVisible(false);
-        
-        inventoryScreen = new InventoryScreen(app, this, Screen.getTopRoot(), Screen.getTopGUI());
-        inventoryScreen.initialize(inputHandler);
-        inventoryScreen.setVisible(false);
         
         root.attachChild(app.getWorld().getNode());
     }

@@ -71,20 +71,18 @@ public class GameServer extends GameApplication{
     }
     
     public static void main(String[] args){
-        Util.log("Testing!!");
         GameServer app = new GameServer();
         app.start(JmeContext.Type.Headless);
     }
     
     @Override
     public void start(){
-        Util.log("Testing!");
         Logger.getLogger("com.jme3").setLevel(Level.WARNING);
         settings = new AppSettings(true);
         settings.setSamples(0);
         settings.setVSync(false);
         settings.setFrameRate(64); // Server tickrate
-        settings.setRenderer(AppSettings.LWJGL_OPENGL1);
+        //settings.setRenderer(AppSettings.LWJGL_OPENGL1);
         settings.setResolution(600, 400);
         settings.setTitle("Reach Server");
         this.setSettings(settings);

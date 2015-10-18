@@ -24,6 +24,14 @@ public class UIElement {
     protected float localZ;
     protected float priority;
     
+    /**
+     * 
+     * @param parent Parent node. Should usually be a Root or GUI node.
+     * @param center Position in space on the screen to center the UIElement.
+     * @param x Size in units X
+     * @param y Size in units Y
+     * @param z Priority. Overlapping elements will display the element with the higher Z value on top.
+     */
     public UIElement(Node parent, Vector2f center, float x, float y, float z){
         sizeX = x;
         sizeY = y;

@@ -19,7 +19,7 @@ import ui.UIElement;
  */
 public class MultiplayerScreen extends Screen {
     private Button localButton;
-    private Button hamachiButton;
+    private Button serverButton;
     private Button addServerButton;
     
     public MultiplayerScreen(GameApplication app, Node rootNode, Node guiNode){
@@ -50,7 +50,7 @@ public class MultiplayerScreen extends Screen {
         ui.add(localButton);
         
         // Hamachi button:
-        hamachiButton = new Button(gui, new Vector2f(width*0.5f, height*0.6f), width*0.4f, height*0.05f, 0){
+        serverButton = new Button(gui, new Vector2f(width*0.5f, height*0.6f), width*0.4f, height*0.05f, 0){
             @Override
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
                 if(bind.equals(Bind.LClick.toString()) && down){
@@ -58,9 +58,9 @@ public class MultiplayerScreen extends Screen {
                 }
             }
         };
-        hamachiButton.setColor(new ColorRGBA(0.4f, 0.4f, 0.8f, 1));
-        hamachiButton.setText("Hamachi");
-        ui.add(hamachiButton);// Hamachi button:
+        serverButton.setColor(new ColorRGBA(0.4f, 0.4f, 0.8f, 1));
+        serverButton.setText("Server");
+        ui.add(serverButton);// Hamachi button:
         
         addServerButton = new Button(gui, new Vector2f(width*0.35f, height*0.3f), width*0.2f, height*0.05f, 0){
             @Override

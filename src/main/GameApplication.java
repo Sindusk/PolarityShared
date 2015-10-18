@@ -24,6 +24,7 @@ public class GameApplication extends Application {
     
     @Override
     public void start(){
+        Util.log("GameApplication start()");
         super.start();
     }
     

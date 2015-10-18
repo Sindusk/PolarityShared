@@ -5,7 +5,6 @@ import spellforge.nodes.GeneratorData;
 import stats.Energy;
 import stats.Mana;
 import stats.Resource;
-import tools.Util;
 
 /**
  * Contains the actual values of the character's resources.
@@ -16,8 +15,8 @@ public class Resources {
     protected Mana mana;
     
     public Resources(){
-        energy = new Energy(100, 100);
-        mana = new Mana(1000, 1000);
+        energy = new Energy(50, 50);
+        mana = new Mana(300, 300);
     }
     
     public Energy getEnergy(){

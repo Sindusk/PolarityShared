@@ -170,12 +170,12 @@ public class ServerNetwork extends GameNetwork{
                     player.setConnection(source);
                     player.initializeMatrixArray(new Node());
                     DevCheats.initPlayerMatrix(source, d.getID(), player.getMatrix(0));
+                    server.broadcast(Filters.notEqualTo(source), d);
+                    app.getWorld().sendData(source);
+                    charManager.sendData(source);
                     return null;
                 }
             });
-            server.broadcast(Filters.notEqualTo(source), d);
-            app.getWorld().sendData(source);
-            charManager.sendData(source);
         }
         
         // HANDSHAKING PROCESS ENDS

@@ -265,6 +265,7 @@ public class World {
                     //Sys.getNetwork().send(new ChunkUnload(key));
                 }
             }
+            p.setChunkKey(chunkKey);
         }
     }
     

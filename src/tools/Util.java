@@ -102,6 +102,9 @@ public class Util {
     public static String getItemIcon(String tex){
         return "Interface/Icons/Items/"+tex+".png";
     }
+    public static String getTexture(String tex){
+        return "Textures/"+tex+".png";
+    }
     
     // Key Mappings:
     public static void createMapping(InputManager inputManager, ActionListener listener, String name, KeyTrigger trigger){

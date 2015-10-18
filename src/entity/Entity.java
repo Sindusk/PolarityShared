@@ -45,7 +45,7 @@ public abstract class Entity {
     public void update(float tpf){
         Vector3f old3D = new Vector3f(oldLoc.x, oldLoc.y, 0);
         Vector3f new3D = new Vector3f(newLoc.x, newLoc.y, 0);
-        node.setLocalTranslation(old3D.interpolate(new3D, interp));
+        node.setLocalTranslation(old3D.interpolateLocal(new3D, interp));
         if(interp < 1.0f){
             interp += tpf*ClientNetwork.MOVE_INVERSE;
             if(interp > 1){

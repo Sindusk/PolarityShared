@@ -10,6 +10,7 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import character.types.CharType;
 import events.Action;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import netdata.destroyers.DestroyProjectileData;
 import network.GameNetwork;
@@ -43,6 +44,7 @@ public class Projectile extends Entity{
         this.values = event.getValues();
         this.radius = radius*values.m_radiusMult;
         this.type = CharType.PROJECTILE;
+        this.bounds = new Rectangle2D.Float(newLoc.x-radius, newLoc.y-radius, radius*2, radius*2);
     }
     
     public ProjectileEvent getEvent(){

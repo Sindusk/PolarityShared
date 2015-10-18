@@ -1,5 +1,6 @@
 package main;
 
+import com.jme3.app.Application;
 import com.jme3.system.AppSettings;
 import input.ClientInputHandler;
 import java.util.logging.Level;
@@ -45,7 +46,7 @@ public class GameClient extends GameApplication {
     protected ClientInputHandler inputHandler;
     protected ClientNetwork clientNetwork;
     
-    public static void main(String[] args){
+    public static void main(String[] args) throws InterruptedException{
         GameClient app = new GameClient();
         app.start();
     }
@@ -68,6 +69,7 @@ public class GameClient extends GameApplication {
         //settings.setFullscreen(true);
         settings.setTitle("Polarity");
         this.setSettings(settings);
+        Util.log("GameClient start()");
         super.start();
     }
     

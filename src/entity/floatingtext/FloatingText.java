@@ -36,7 +36,7 @@ public class FloatingText {
     // Returns true if it needs to be destroyed.
     public boolean update(float tpf){
         timer += tpf;
-        node.setLocalTranslation(new Vector3f(0, HOVER_HEIGHT, 3).interpolate(vector, timer/FLOAT_TIME));
+        node.setLocalTranslation(new Vector3f(0, HOVER_HEIGHT, 3).interpolateLocal(vector, timer/FLOAT_TIME));
         if(timer > FLOAT_TIME){
             return true;
         }

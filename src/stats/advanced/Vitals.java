@@ -13,8 +13,8 @@ public class Vitals {
     protected Shield shield;
     
     public Vitals(){
-        health = new Health(1000, 1000);
-        shield = new Shield(1000, 1000);
+        health = new Health(100, 100);
+        shield = new Shield(50, 50);
     }
     
     public Health getHealth(){
