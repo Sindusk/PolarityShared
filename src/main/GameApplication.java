@@ -1,7 +1,7 @@
 package main;
 
 import character.CharacterManager;
-import com.jme3.app.Application;
+import com.jme3.app.LegacyApplication;
 import com.jme3.math.ColorRGBA;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Node;
@@ -13,9 +13,9 @@ import world.World;
 
 /**
  *
- * @author SinisteRing
+ * @author Sindusk
  */
-public class GameApplication extends Application {
+public class GameApplication extends LegacyApplication {
     protected static final String VERSION = "0.04";
     protected CharacterManager charManager;
     protected World world;
