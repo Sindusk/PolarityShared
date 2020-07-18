@@ -8,7 +8,6 @@ import com.jme3.math.ColorRGBA;
 import entity.floatingtext.FloatingTextManager;
 import netdata.DamageData;
 import netdata.HealData;
-import network.ServerNetwork;
 import stats.advanced.Vitals;
 import status.Status;
 import tools.Sys;
@@ -50,14 +49,14 @@ public class LivingEntity extends Entity {
     public void heal(float value){
         vitals.heal(value);
         fTextManager.queue("heal", ColorRGBA.Green, value);
-        if(Sys.getNetwork() instanceof ServerNetwork){
+        if(!Sys.getNetwork().isClient()){ // Server message
             Sys.getNetwork().send(new HealData(owner.getID(), type, value));
         }
     }
     public void damage(float value){
         vitals.damage(value);
         fTextManager.queue("damage", ColorRGBA.Red, value);
-        if(Sys.getNetwork() instanceof ServerNetwork){
+        if(!Sys.getNetwork().isClient()){ // Server message
             Sys.getNetwork().send(new DamageData(owner.getID(), type, value));
         }
     }

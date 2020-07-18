@@ -4,7 +4,6 @@ import entity.LivingEntity;
 import java.util.HashMap;
 import netdata.StatusData;
 import netdata.destroyers.DestroyStatusData;
-import network.ServerNetwork;
 import stats.advanced.Vitals;
 import status.Status;
 import status.StatusManager;
@@ -51,13 +50,13 @@ public class LivingCharacter extends GameCharacter {
     }
     public void applyStatus(Status status){
         statusManager.apply(status);
-        if(Sys.getNetwork() instanceof ServerNetwork){
+        if(!Sys.getNetwork().isClient()){ // Server Message
             Sys.getNetwork().send(new StatusData(this.asOwner(), status));
         }
     }
     public void removeStatus(Status status){
         statusManager.remove(status);
-        if(Sys.getNetwork() instanceof ServerNetwork){
+        if(!Sys.getNetwork().isClient()){ // Server Message
             Sys.getNetwork().send(new DestroyStatusData(this.asOwner(), status));
         }
     }

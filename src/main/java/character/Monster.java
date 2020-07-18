@@ -6,7 +6,6 @@ import character.data.MonsterData;
 import entity.LivingEntity;
 import events.Action;
 import events.ProjectileEvent;
-import network.ServerNetwork;
 import spellforge.nodes.CoreVals;
 import tools.Sys;
 import world.World;
@@ -78,10 +77,11 @@ public class Monster extends LivingCharacter {
                 return false;
             }
         });
-        if(Sys.getNetwork() instanceof ServerNetwork){
+        // TODO: Re-implement
+        /*if(Sys.getNetwork() instanceof ServerNetwork){
             ServerNetwork network = (ServerNetwork) Sys.getNetwork();
             event.execute(network.getServer(), world);
-        }
+        }*/
     }
     
     public void serverUpdate(World world, float tpf){
