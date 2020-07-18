@@ -7,8 +7,6 @@ import hud.HUDElement;
 import input.InputHandler;
 import java.util.ArrayList;
 import main.GameApplication;
-import network.ClientNetwork;
-import network.ServerNetwork;
 import tools.Util;
 import ui.UIElement;
 
@@ -20,8 +18,6 @@ public abstract class Screen {
     // Top-level variables
     protected static Node topRoot;
     protected static Node topGUI;
-    protected static ClientNetwork clientNetwork;
-    protected static ServerNetwork serverNetwork;
     
     // Class-level variables
     protected GameApplication app;
@@ -71,12 +67,6 @@ public abstract class Screen {
     
     public void setApplication(GameApplication app){
         this.app = app;
-    }
-    public static ClientNetwork getClientNetwork(){
-        return Screen.clientNetwork;
-    }
-    public static void setClientNetwork(ClientNetwork clientNetwork){
-        Screen.clientNetwork = clientNetwork;
     }
     public static void setNodes(Node topRoot, Node topGUI){
         Screen.topRoot = topRoot;

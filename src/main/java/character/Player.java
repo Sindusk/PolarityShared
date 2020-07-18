@@ -124,7 +124,7 @@ public class Player extends LivingCharacter{
         }
         Vector3f worldTarget = Util.getWorldLoc(cursorLoc, Sys.getCamera());    // Analyzes where in world space the player clicked.
         Vector2f target = new Vector2f(worldTarget.x, worldTarget.y);
-        Screen.getClientNetwork().send(new ActionData(getID(), attackIndex, getLocation(), target));
+        Sys.getNetwork().send(new ActionData(getID(), attackIndex, getLocation(), target));
     }
     
     @Override

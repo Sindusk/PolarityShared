@@ -9,7 +9,6 @@ import com.jme3.scene.Node;
 import character.types.CharType;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
-import network.ClientNetwork;
 import network.GameNetwork;
 import tools.Sys;
 import world.blocks.Block;
@@ -47,7 +46,7 @@ public abstract class Entity {
         Vector3f new3D = new Vector3f(newLoc.x, newLoc.y, 0);
         node.setLocalTranslation(old3D.interpolateLocal(new3D, interp));
         if(interp < 1.0f){
-            interp += tpf*ClientNetwork.MOVE_INVERSE;
+            interp += tpf*GameNetwork.MOVE_INVERSE;
             if(interp > 1){
                 interp = 1;
             }

@@ -3,6 +3,7 @@ package world;
 import ai.pathfinding.Path;
 import character.GameCharacter;
 import character.Monster;
+import network.GameNetwork;
 import world.blocks.Block;
 import events.ProjectileEvent;
 import character.Player;
@@ -21,7 +22,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import netdata.ChunkData;
 import netdata.requests.ChunkRequest;
-import network.ClientNetwork;
 import tools.GeoFactory;
 import tools.Sys;
 import tools.Vector2i;
@@ -236,7 +236,7 @@ public class World {
     }
     
     // [Client-Side] Checks the chunks around a players position when it changes to load new chunks
-    public void checkChunks(Player p, ClientNetwork network) {
+    public void checkChunks(Player p, GameNetwork network) {
         Vector2i chunkKey = getChunkKey(p.getLocation());   // Finds the key of the chunk the player is currently on.
         if(p.getChunkKey() == null || !chunkKey.equals(p.getChunkKey())){   // If player switched chunks...
             // Get new bounds for chunks around the player

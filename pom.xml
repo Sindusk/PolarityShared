@@ -8,7 +8,7 @@
     <artifactId>Polarity</artifactId>
     <version>1.0-SNAPSHOT</version>
 
-    <name>JME3 maven project</name>
+    <name>Polarity Shared</name>
 
     <properties>
         <jme3_g>org.jmonkeyengine</jme3_g>

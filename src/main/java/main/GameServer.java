@@ -56,7 +56,7 @@ public class GameServer extends GameApplication{
     
     protected AIManager aiManager;
     protected EventManager eventManager;
-    
+
     protected FPSCounter fpsCounter;
     
     // Getters for Nodes:
