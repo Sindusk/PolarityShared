@@ -7,7 +7,7 @@ package polarity.shared.ui.advanced;
 import com.jme3.math.Vector2f;
 import com.jme3.scene.Node;
 import java.util.ArrayList;
-import polarity.shared.network.ServerStatus;
+import polarity.shared.netdata.ServerStatusData;
 import polarity.shared.ui.Panel;
 
 /**
@@ -22,7 +22,7 @@ public class ServerList extends Panel {
         super(parent, loc, x, y, z);
     }
     
-    public void addEntry(ServerStatus status){
+    public void addEntry(ServerStatusData status){
         ServerEntry entry = new ServerEntry(entries[0], new Vector2f(0, 0), 5, 5, 5);
     }
 }

@@ -108,7 +108,6 @@ public enum NetData {
     
     // Data properties
     Event(Action.class),
-    ServerStatus(ServerStatus.class),
     Stat(Stat.class),
     StatWithMax(StatWithMax.class),
     
