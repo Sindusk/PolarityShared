@@ -49,9 +49,9 @@ public enum Bind {
     ArrowRight(KeyInput.KEY_RIGHT, KeyInput.class),
     ArrowLeft(KeyInput.KEY_LEFT, KeyInput.class);
     
-    protected final String mapping;
-    protected final int key;
-    protected final Trigger trigger;
+    public final String mapping;
+    public final int key;
+    public final Trigger trigger;
     
     Bind(int key, boolean dir){
         mapping = this.toString();
