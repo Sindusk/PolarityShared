@@ -49,16 +49,18 @@ public class LivingEntity extends Entity {
     public void heal(float value){
         vitals.heal(value);
         fTextManager.queue("heal", ColorRGBA.Green, value);
-        if(!Sys.getNetwork().isClient()){ // Server message
+        // TODO: Re-implement better.
+        /*if(!Sys.getNetwork().isClient()){ // Server message
             Sys.getNetwork().send(new HealData(owner.getID(), type, value));
-        }
+        }*/
     }
     public void damage(float value){
         vitals.damage(value);
         fTextManager.queue("damage", ColorRGBA.Red, value);
-        if(!Sys.getNetwork().isClient()){ // Server message
+        // TODO: Re-implement better.
+        /*if(!Sys.getNetwork().isClient()){ // Server message
             Sys.getNetwork().send(new DamageData(owner.getID(), type, value));
-        }
+        }*/
     }
     
     @Override

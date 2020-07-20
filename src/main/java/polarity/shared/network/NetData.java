@@ -51,7 +51,7 @@ public enum NetData {
     PlayerIDData(PlayerIDData.class),
     ProjectileData(ProjectileData.class),
     ServerStatusData(ServerStatusData.class),
-    SoundData(SoundData.class),
+    SoundData(SoundLocationalData.class),
     
     // Chat Messages
     ChatMessage(ChatMessage.class),

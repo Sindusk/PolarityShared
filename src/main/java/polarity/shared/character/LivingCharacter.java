@@ -2,12 +2,9 @@ package polarity.shared.character;
 
 import polarity.shared.entity.LivingEntity;
 import java.util.HashMap;
-import polarity.shared.netdata.StatusData;
-import polarity.shared.netdata.destroyers.DestroyStatusData;
 import polarity.shared.stats.advanced.Vitals;
 import polarity.shared.status.Status;
 import polarity.shared.status.StatusManager;
-import polarity.shared.tools.Sys;
 import polarity.shared.tools.Util;
 
 /**
@@ -50,15 +47,17 @@ public class LivingCharacter extends GameCharacter {
     }
     public void applyStatus(Status status){
         statusManager.apply(status);
-        if(!Sys.getNetwork().isClient()){ // Server Message
+        // TODO: Re-implement better.
+        /*if(!Sys.getNetwork().isClient()){ // Server Message
             Sys.getNetwork().send(new StatusData(this.asOwner(), status));
-        }
+        }*/
     }
     public void removeStatus(Status status){
         statusManager.remove(status);
-        if(!Sys.getNetwork().isClient()){ // Server Message
+        // TODO: Re-implement better.
+        /*if(!Sys.getNetwork().isClient()){ // Server Message
             Sys.getNetwork().send(new DestroyStatusData(this.asOwner(), status));
-        }
+        }*/
     }
     public void heal(float value){
         ((LivingEntity)entity).heal(value);

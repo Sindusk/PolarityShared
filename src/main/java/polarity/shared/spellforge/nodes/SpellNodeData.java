@@ -17,9 +17,9 @@ import polarity.shared.tools.Vector2i;
  */
 @Serializable
 public class SpellNodeData {
-    protected ArrayList<SpellNodeData> granted = new ArrayList();
+    protected ArrayList<SpellNodeData> granted = new ArrayList<>();
     protected SpellNodeItemData item;
-    protected HashMap<String,Float> properties = new HashMap();
+    protected HashMap<String,Float> properties = new HashMap<>();
     protected Vector2i index;
     protected Vector2f loc;
     protected String name = "Spell Node";

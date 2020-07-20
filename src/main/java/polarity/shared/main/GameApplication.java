@@ -1,6 +1,5 @@
 package polarity.shared.main;
 
-import polarity.shared.character.CharacterManager;
 import com.jme3.app.LegacyApplication;
 import com.jme3.math.ColorRGBA;
 import com.jme3.renderer.queue.RenderQueue;
@@ -17,7 +16,6 @@ import polarity.shared.world.GameWorld;
  */
 public class GameApplication extends LegacyApplication {
     protected static final String VERSION = "0.04";
-    protected CharacterManager charManager;
     protected GameWorld world;
     protected Node root = new Node("Root");
     protected Node gui = new Node("GUI");
@@ -52,19 +50,15 @@ public class GameApplication extends LegacyApplication {
         
         //world = new GameWorld(50);
         //Sys.setWorld(world);
-        charManager = new CharacterManager();
     }
     
     public String getVersion(){
         return VERSION;
     }
-    public CharacterManager getCharManager(){
-        return charManager;
-    }
     public GameWorld getWorld(){
         return world;
     }
-    
+
     public void updateNodeStates(float tpf){
         root.updateLogicalState(tpf);
         gui.updateLogicalState(tpf);
