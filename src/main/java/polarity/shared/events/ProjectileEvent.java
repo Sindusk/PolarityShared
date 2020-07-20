@@ -6,7 +6,6 @@ import com.jme3.network.serializing.Serializable;
 import polarity.shared.character.GameCharacter;
 import polarity.shared.entity.Projectile;
 import polarity.shared.netdata.ProjectileData;
-import polarity.shared.network.GameNetwork;
 import polarity.shared.spellforge.nodes.CoreVals;
 import polarity.shared.world.GameWorld;
 
@@ -19,13 +18,22 @@ import polarity.shared.world.GameWorld;
 public class ProjectileEvent extends Event {
     protected int hashCode;
     protected float speed;
-    
+
+    /**
+     * Client constructor.
+     */
     public ProjectileEvent(GameCharacter owner, Vector2f start, Vector2f target, CoreVals values){
         super(owner, start, target, values);
         this.speed = values.m_speed;
     }
-    public ProjectileEvent(GameNetwork gameNetwork, ProjectileData data){
-        super(gameNetwork.getOwner(data.getOwner()), data.getStart(), data.getTarget(), data.getValues());
+
+    /**
+     * Server constructor.
+     * @param owner Owner of the projectile.
+     * @param data Data for the projectile.
+     */
+    public ProjectileEvent(GameCharacter owner, ProjectileData data){
+        super(owner, data.getStart(), data.getTarget(), data.getValues());
         this.hashCode = data.getHashCode();
         this.speed = values.m_speed;
     }
