@@ -12,8 +12,8 @@ import java.util.HashMap;
  * @author Sindusk
  */
 public class MonsterMediator {
-    private HashMap<Integer,Integer> monsterID = new HashMap<>();
-    private ArrayList<Monster> monsters = new ArrayList<>();
+    protected HashMap<Integer,Integer> monsterID = new HashMap<>();
+    protected ArrayList<Monster> monsters = new ArrayList<>();
 
     public MonsterMediator(){
         // Called from child classes.

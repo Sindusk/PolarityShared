@@ -15,8 +15,8 @@ import java.util.HashMap;
  * @author Sindusk
  */
 public class PlayerMediator {
-    private HashMap<Integer,Integer> playerID = new HashMap<>();
-    private ArrayList<Player> players = new ArrayList<>();
+    protected HashMap<Integer,Integer> playerID = new HashMap<>();
+    protected ArrayList<Player> players = new ArrayList<>();
 
     public PlayerMediator(){
         // Called from child classes.
